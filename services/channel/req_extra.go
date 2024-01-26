@@ -1,0 +1,74 @@
+// Copyright 2024 unipay Author. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//      http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package channel
+
+import (
+	"errors"
+	"github.com/rwscode/unipay/deps/models"
+	"github.com/rwscode/unipay/deps/pkg"
+	"github.com/rwscode/unipay/services/base"
+	"net/http"
+)
+
+func (r *AddReq) Check() (err error) {
+	if cond := r.AmountValidateCond; cond != "" {
+		if !pkg.ValidAmountCond(cond) {
+			return errors.New("支付金额验证条件格式不合法")
+		}
+	}
+	if r.ReqPayPageUrlExpr == "" && r.ReqPayQrUrlExpr == "" {
+		return errors.New("支付页面Url获取表达式和支付二维码Url获取表达式不能同时为空")
+	}
+	if r.ReqChannel == http.MethodGet && r.ReqContentType != "urlencoded" {
+		return errors.New("当请求类型为GET时，请求数据类型仅支持urlencoded")
+	}
+	return
+}
+
+func (r *UpdateReq) Check() (err error) { return base.CheckChannelExist(r.Id) }
+
+func (r *DelReq) Check() (err error) { return base.CheckChannelExist(r.Id) }
+
+func (r *AddReq) Transform() *models.Channel {
+	return &models.Channel{
+		Name:                       r.Name,
+		AdminUrl:                   r.AdminUrl,
+		AdminUser:                  r.AdminUser,
+		AdminPasswd:                r.AdminPasswd,
+		LogoUrl:                    r.LogoUrl,
+		AmountType:                 r.AmountType,
+		AmountValidateCond:         r.AmountValidateCond,
+		ReqUrl:                     r.ReqUrl,
+		ReqMethod:                  r.ReqChannel,
+		ReqContentType:             r.ReqContentType,
+		ReqSuccessExpr:             r.ReqSuccessExpr,
+		ReqPayPageUrlExpr:          r.ReqPayPageUrlExpr,
+		ReqPayQrUrlExpr:            r.ReqPayQrUrlExpr,
+		ReqPayMessageExpr:          r.ReqPayMessageExpr,
+		NotifyPayContentType:       r.NotifyPayContentType,
+		NotifyPaySuccessExpr:       r.NotifyPaySuccessExpr,
+		NotifyPayIdExpr:            r.NotifyPayIdExpr,
+		NotifyPayReturnContent:     r.NotifyPayReturnContent,
+		NotifyPayReturnContentType: r.NotifyPayReturnContentType,
+		State:                      r.State,
+		Sort:                       r.Sort,
+		Remark:                     r.Remark,
+		CreateTime:                 pkg.TimeNowStr(),
+		UpdateTime:                 pkg.TimeNowStr(),
+	}
+}
+
+func (r *UpdateReq) Transform() *models.Channel {
+	m := r.AddReq.Transform()
+	m.Id = r.Id
+	return m
+}
