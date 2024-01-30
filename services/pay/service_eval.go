@@ -41,9 +41,7 @@ func evalParams(req Req, pm channel.GetResp, pmm channelparam.GetChannelIdResp, 
 	params := getParams(pmm)
 	sortParams(params)
 	paramMap := map[string]any{}
-	data := map[string]any{
-		"Time": pkg.GetTimeMap(), "Channel": pm.ToMap(), "Pay": req.ToMap(orderId), "Param": paramMap,
-	}
+	data := map[string]any{"Time": pkg.GetTimeMap(), "Channel": pm.ToMap(), "Pay": req.ToMap(orderId), "Param": paramMap}
 	for i, p := range params {
 		if !strings.Contains(p.Value, "$") {
 			data["__self__"] = p.Value

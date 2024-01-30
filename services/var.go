@@ -11,16 +11,9 @@
 
 package services
 
-import (
-	"github.com/rwscode/unipay/services/channel"
-	"github.com/rwscode/unipay/services/channelparam"
-	"github.com/rwscode/unipay/services/order"
-	"github.com/rwscode/unipay/services/pay"
-)
-
 var (
-	ChannelService      = channel.Service
-	ChannelParamService = channelparam.Service
-	OrderService        = order.Service
-	PayService          = pay.Service
+// ChannelService      = channel.Service
+// ChannelParamService = channelparam.Service
+// OrderService        = order.Service
+// PayService          = pay.Service
 )

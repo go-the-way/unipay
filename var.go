@@ -11,13 +11,18 @@
 
 package unipay
 
-import "github.com/rwscode/unipay/services"
+import (
+	"github.com/rwscode/unipay/services/channel"
+	"github.com/rwscode/unipay/services/channelparam"
+	"github.com/rwscode/unipay/services/order"
+	"github.com/rwscode/unipay/services/pay"
+)
 
 var (
-	PayService          = services.PayService
-	ChannelService      = services.ChannelService
-	ChannelParamService = services.ChannelParamService
-	OrderService        = services.OrderService
+	PayService          = pay.Service
+	ChannelService      = channel.Service
+	ChannelParamService = channelparam.Service
+	OrderService        = order.Service
 )
 
 var (
