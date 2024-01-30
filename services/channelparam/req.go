@@ -29,12 +29,12 @@ type (
 		Remark    string `validate:"maxlength(500,备注长度不能超过500)" json:"remark"`                        // 备注
 		Pass      byte   `validate:"enum(1|2,是否传递不合法)" json:"pass"`                                   // 1传递2不传递
 	}
-	idReq struct {
+	IdReq struct {
 		Id uint `validate:"min(1,支付通道参数id不能为空)" json:"id"`
 	}
 	UpdateReq struct {
-		idReq  `validate:"valid(T)"`
+		IdReq  `validate:"valid(T)"`
 		AddReq `validate:"valid(T)"`
 	}
-	DelReq idReq
+	DelReq IdReq
 )

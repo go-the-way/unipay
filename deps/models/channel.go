@@ -46,7 +46,7 @@ type (
 
 func (c *Channel) ToMap() map[string]any {
 	return map[string]any{
-		"Id":                         c.Id,
+		"Id":                         fmt.Sprintf("%d", c.Id),
 		"Name":                       c.Name,
 		"AdminUrl":                   c.AdminUrl,
 		"AdminUser":                  c.AdminUser,

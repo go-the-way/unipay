@@ -62,6 +62,19 @@ func (s *impl) Get(req GetReq) (resp GetResp, err error) {
 	return
 }
 
+func (s *impl) GetBusinessId(req GetBusinessIdReq) (resp GetBusinessIdResp, err error) {
+	var list []models.Order
+	if err = db.GetDb().Model(new(models.Order)).Where("id=? and business_id=?", req.Id, req.BusinessId).Find(&list).Error; err != nil {
+		return
+	}
+	if len(list) == 0 {
+		err = errors.New(fmt.Sprintf("支付订单[%s]不存在", req.Id))
+		return
+	}
+	resp.Order = list[0]
+	return
+}
+
 func (s *impl) Add(req AddReq) (err error) {
 	return db.GetDb().Create(req.Transform()).Error
 }

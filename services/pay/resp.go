@@ -9,19 +9,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package order
+package pay
 
-import "github.com/rwscode/unipay/deps/models"
-
-type (
-	GetPageResp struct {
-		Total int64          `json:"total"`
-		List  []models.Order `json:"list"`
-	}
-	GetResp           struct{ models.Order }
-	GetBusinessIdResp struct{ models.Order }
-	GetPayStateResp   struct {
-		State   byte   `json:"state"`   // 是否支付
-		Message string `json:"message"` // 支付信息
-	}
-)
+type Resp struct {
+	OrderId    string `json:"order_id"`     // 订单Id
+	PayPageUrl string `json:"pay_page_url"` // 页面url
+	PayQrUrl   string `json:"pay_qr_url"`   // 二维码url
+	Message    string `json:"message"`      // 支付信息
+}

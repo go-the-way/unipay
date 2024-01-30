@@ -46,6 +46,8 @@ func (r *AddReq) Transform() *models.Order {
 		AmountYuan:     r.Amount * 100,
 		AmountFen:      r.Amount,
 		Message:        r.Message,
+		PayPageUrl:     r.PayPageUrl,
+		PayQrUrl:       r.PayQrUrl,
 		State:          models.OrderStateWaitPay,
 		Remark:         r.Remark,
 		CreateTime:     pkg.TimeNowStr(),

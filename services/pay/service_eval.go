@@ -9,7 +9,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package unipay
+package pay
 
 import (
 	"errors"
@@ -37,12 +37,18 @@ type (
 	}
 )
 
-func evalParams(req ReqPayReq, pm channel.GetResp, pmm channelparam.GetChannelIdResp, orderId string) (map[string]any, error) {
+func evalParams(req Req, pm channel.GetResp, pmm channelparam.GetChannelIdResp, orderId string) (map[string]any, error) {
 	params := getParams(pmm)
 	sortParams(params)
 	paramMap := map[string]any{}
-	data := map[string]any{"Time": pkg.GetTimeMap(), "Channel": pm.ToMap(), "Pay": req.ToMap(orderId), "Param": paramMap}
+	data := map[string]any{
+		"Time": pkg.GetTimeMap(), "Channel": pm.ToMap(), "Pay": req.ToMap(orderId), "Param": paramMap,
+	}
 	for i, p := range params {
+		if !strings.Contains(p.Value, "$") {
+			data["__self__"] = p.Value
+			p.Value = "$__self__"
+		}
 		output, err := script.Eval(p.Value, data)
 		if err != nil {
 			return nil, errors.New(fmt.Sprintf("解析参数[%s]表达式[%s]错误：%s", p.Name, p.Value, err.Error()))

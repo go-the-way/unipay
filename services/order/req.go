@@ -37,6 +37,10 @@ type (
 	GetReq struct {
 		Id string `validate:"minlength(1,订单id不能为空)" form:"id"`
 	}
+	GetBusinessIdReq struct {
+		Id         string `validate:"minlength(1,订单id不能为空)" form:"id"`
+		BusinessId string `validate:"minlength(1,业务id不能为空)" form:"business_id"`
+	}
 	AddReq struct {
 		PayChannelId   uint   `validate:"min(1,支付通道id不能为空)" json:"pay_channel_id"` // 支付通道Id
 		PayChannelName string `json:"-"`
@@ -45,24 +49,26 @@ type (
 		Message        string `validate:"maxlength(500,支付结果信息长度不能超过500)" json:"message"`                       // 支付结果信息
 		Remark         string `validate:"maxlength(500,备注长度不能超过500)" json:"remark"`                            // 备注
 
-		OrderId string `json:"-"`
+		OrderId    string `json:"-"`
+		PayPageUrl string `json:"-"`
+		PayQrUrl   string `json:"-"`
 	}
-	idReq struct {
+	IdReq struct {
 		Id string `validate:"minlength(1,订单id不能为空) maxlength(50,订单id长度不能超过50)" json:"id"` // 订单id
 	}
 	UpdateReq struct {
-		idReq  `validate:"valid(T)"`
+		IdReq  `validate:"valid(T)"`
 		AddReq `validate:"valid(T)"`
 	}
-	DelReq        idReq
+	DelReq        IdReq
 	PaySuccessReq struct {
-		idReq   `validate:"valid(T)"`
+		IdReq   `validate:"valid(T)"`
 		TradeId string `validate:"minlength(1,第三方支付平台id不能为空) maxlength(50,第三方支付平台id长度不能超过50)" json:"trade_id"` // 第三方支付平台id
 		Message string `json:"message"`                                                                        // 支付信息
 	}
 	PayFailureReq struct {
-		idReq   `validate:"valid(T)"`
+		IdReq   `validate:"valid(T)"`
 		Message string `json:"message"` // 支付信息
 	}
-	GetPayStateReq idReq
+	GetPayStateReq IdReq
 )

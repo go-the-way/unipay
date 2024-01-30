@@ -69,16 +69,16 @@ type (
 		State                      byte   `validate:"enum(1|2,状态不合法)" json:"state"`                                                                     // 状态：1启用2禁用
 		Sort                       byte   `json:"sort"`                                                                                                 // 升序排序值
 	}
-	idReq struct {
+	IdReq struct {
 		Id uint `validate:"min(1,支付通道id不能为空)" json:"id"`
 	}
 	UpdateReq struct {
-		idReq  `validate:"valid(T)"`
+		IdReq  `validate:"valid(T)"`
 		AddReq `validate:"valid(T)"`
 	}
-	DelReq        idReq
-	EnableReq     idReq
-	DisableReq    idReq
+	DelReq        IdReq
+	EnableReq     IdReq
+	DisableReq    IdReq
 	GetMatchesReq struct {
 		Amount uint   `form:"amount" json:"amount"` // 支付金额：单位分
 		Order  string `form:"order" json:"order"`   // 排序规则

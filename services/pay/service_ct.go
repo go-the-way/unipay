@@ -9,11 +9,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package unipay
+package pay
 
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"net/url"
 
 	"github.com/rwscode/unipay/services/channel"
@@ -45,9 +47,17 @@ var (
 		"form":       buildFormCT,
 		"urlencoded": buildUrlencodedCT,
 	}
+	ctRespFuncMap = map[string]ctRespFunc{
+		"json":       parseJsonCTResp,
+		"form":       parseFormCTResp,
+		"urlencoded": parseUrlencodedCTResp,
+	}
 )
 
-type ctFunc func(passMap map[string]struct{}, params map[string]any) (body string, form url.Values)
+type (
+	ctFunc     func(passMap map[string]struct{}, params map[string]any) (body string, form url.Values)
+	ctRespFunc func(req *http.Request) map[string]any
+)
 
 func getPassMap(cp channelparam.GetChannelIdResp) (passMap map[string]struct{}) {
 	passMap = map[string]struct{}{}
@@ -91,4 +101,27 @@ func buildUrlencodedCT(passMap map[string]struct{}, params map[string]any) (body
 	}
 	body = values.Encode()
 	return
+}
+
+func parseJsonCTResp(req *http.Request) map[string]any {
+	var m map[string]any
+	buf, _ := io.ReadAll(req.Body)
+	_ = json.Unmarshal(buf, &m)
+	return m
+}
+
+func parseFormCTResp(req *http.Request) map[string]any {
+	var m map[string]any
+	for k := range req.PostForm {
+		m[k] = req.PostFormValue(k)
+	}
+	return m
+}
+
+func parseUrlencodedCTResp(req *http.Request) map[string]any {
+	var m map[string]any
+	for k := range req.Form {
+		m[k] = req.FormValue(k)
+	}
+	return m
 }

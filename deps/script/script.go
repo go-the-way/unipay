@@ -19,7 +19,7 @@ import (
 	"github.com/d5/tengo/v2"
 	"github.com/d5/tengo/v2/stdlib"
 
-	_ "github.com/rwscode/unipay/script/extra"
+	_ "github.com/rwscode/unipay/deps/script/extra"
 )
 
 var (
@@ -70,6 +70,16 @@ func EvalInt(content string, in map[string]any) (out int, err error) {
 		return
 	}
 	out = evalEd.(int)
+	return
+}
+
+func EvalBool(content string, in map[string]any) (out bool, err error) {
+	evalEd, eErr := Eval(content, in)
+	if eErr != nil {
+		err = eErr
+		return
+	}
+	out = evalEd.(bool)
 	return
 }
 

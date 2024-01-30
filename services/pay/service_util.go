@@ -9,28 +9,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package unipay
+package pay
 
 import (
 	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/rwscode/unipay/deps/pkg"
-	"github.com/rwscode/unipay/services/order"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
 
+	"github.com/rwscode/unipay"
 	"github.com/rwscode/unipay/deps/models"
+	"github.com/rwscode/unipay/deps/pkg"
 	"github.com/rwscode/unipay/deps/script"
 	"github.com/rwscode/unipay/services/channel"
 	"github.com/rwscode/unipay/services/channelparam"
+	"github.com/rwscode/unipay/services/order"
 )
 
-func channelValid(c channel.GetResp, req ReqPayReq) (err error) {
+func channelValid(c channel.GetResp, req Req) (err error) {
 	if err = channelStateValid(c); err != nil {
 		return
 	}
@@ -45,31 +46,7 @@ func channelStateValid(c channel.GetResp) (err error) {
 	return
 }
 
-type (
-	condExpr       interface{ Valid(value uint) (valid bool) }
-	rangeCondExpr  struct{ R1, R2 uint }
-	valuesCondExpr struct{ Vs map[uint]struct{} }
-)
-
-func newValuesCondExpr(values ...uint) *valuesCondExpr {
-	var m map[uint]struct{}
-	if values != nil {
-		for _, v := range values {
-			m[v] = struct{}{}
-		}
-	}
-	return &valuesCondExpr{m}
-}
-
-func newRangeCondExpr(r1 uint, r2 uint) *rangeCondExpr { return &rangeCondExpr{R1: r1, R2: r2} }
-
-func (c *rangeCondExpr) v1(value uint) (valid bool)     { return c.R2 == 0 && value >= c.R1 }
-func (c *rangeCondExpr) v2(value uint) (valid bool)     { return value >= c.R1 && value <= c.R2 }
-func (c *rangeCondExpr) Valid(value uint) (valid bool)  { return c.v1(value) || c.v2(value) }
-func (c *valuesCondExpr) Add(value uint)                { c.Vs[value] = struct{}{} }
-func (c *valuesCondExpr) Valid(value uint) (valid bool) { _, ok := c.Vs[value]; return ok }
-
-func channelAmountValid(c channel.GetResp, req ReqPayReq) (err error) {
+func channelAmountValid(c channel.GetResp, req Req) (err error) {
 	avCond := c.AmountValidateCond
 	if avCond == "" {
 		return
@@ -122,14 +99,13 @@ func reqDo(c channel.GetResp, cp channelparam.GetChannelIdResp, params map[strin
 	return
 }
 
-func reqCallback(req ReqPayReq, c channel.GetResp, respMap map[string]any, orderId string) (resp ReqPayResp, err error) {
-	reqSuccess, pErr := script.Eval(c.ReqSuccessExpr, respMap)
+func reqCallback(req Req, c channel.GetResp, respMap map[string]any, orderId string) (resp Resp, err error) {
+	reqSuccess, pErr := script.EvalBool(c.ReqSuccessExpr, respMap)
 	if pErr != nil {
 		err = errors.New(fmt.Sprintf("支付请求成功，但是解析请求成功计算表达式：%s，错误：%s", c.ReqSuccessExpr, pErr.Error()))
 		return
 	}
-
-	if fmt.Sprintf("%v", reqSuccess) != "true" {
+	if !reqSuccess {
 		err = errors.New(fmt.Sprintf("支付请求成功，但是解析请求成功计算表达式：%s，计算结果：%v,为不成功", c.ReqSuccessExpr, reqSuccess))
 		return
 	}
@@ -162,24 +138,27 @@ func reqCallback(req ReqPayReq, c channel.GetResp, respMap map[string]any, order
 		}
 	}
 
-	if err = OrderService.Add(buildOrderAddReq(c, req, resp)); err != nil {
+	resp.OrderId = orderId
+	resp.PayPageUrl = pageUrl
+	resp.PayQrUrl = qrUrl
+	resp.Message = message
+
+	if err = unipay.OrderService.Add(buildOrderAddReq(c, req, resp)); err != nil {
 		return
 	}
-
-	resp.OrderId = orderId
-	resp.PageUrl = pageUrl
-	resp.QrUrl = qrUrl
-	resp.Message = message
 
 	return
 }
 
-func buildOrderAddReq(c channel.GetResp, req ReqPayReq, resp ReqPayResp) order.AddReq {
+func buildOrderAddReq(c channel.GetResp, req Req, resp Resp) order.AddReq {
 	return order.AddReq{
 		PayChannelId:   c.Id,
 		PayChannelName: c.Name,
 		BusinessId:     req.BusinessId,
 		Amount:         req.Amount,
 		Message:        resp.Message,
+		OrderId:        resp.OrderId,
+		PayPageUrl:     resp.PayPageUrl,
+		PayQrUrl:       resp.PayQrUrl,
 	}
 }

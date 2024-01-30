@@ -14,7 +14,45 @@ package unipay
 import "github.com/rwscode/unipay/services"
 
 var (
+	PayService          = services.PayService
 	ChannelService      = services.ChannelService
 	ChannelParamService = services.ChannelParamService
 	OrderService        = services.OrderService
+)
+
+var (
+	ReqPay    = PayService.ReqPay
+	NotifyPay = PayService.NotifyPay
+)
+
+var (
+	ChannelGetPage    = ChannelService.GetPage
+	ChannelGet        = ChannelService.Get
+	ChannelAdd        = ChannelService.Add
+	ChannelUpdate     = ChannelService.Update
+	ChannelDel        = ChannelService.Del
+	ChannelEnable     = ChannelService.Enable
+	ChannelDisable    = ChannelService.Disable
+	ChannelGetMatches = ChannelService.GetMatches
+)
+
+var (
+	ChannelParamGet          = ChannelParamService.Get
+	ChannelParamGetChannelId = ChannelParamService.GetChannelId
+	ChannelParamGetName      = ChannelParamService.GetName
+	ChannelParamAdd          = ChannelParamService.Add
+	ChannelParamUpdate       = ChannelParamService.Update
+	ChannelParamDel          = ChannelParamService.Del
+)
+
+var (
+	OrderGetPage       = OrderService.GetPage
+	OrderGet           = OrderService.Get
+	OrderGetBusinessId = OrderService.GetBusinessId
+	OrderAdd           = OrderService.Add
+	OrderUpdate        = OrderService.Update
+	OrderDel           = OrderService.Del
+	OrderPaySuccess    = OrderService.PaySuccess
+	OrderPayFailure    = OrderService.PayFailure
+	OrderGetPayState   = OrderService.GetPayState
 )

@@ -46,4 +46,6 @@
 // # 支付参数变量：=> $Param.
 //
 // ref => models.ChannelParam
+//
+// # NotifyPay 回调支付接口 unipay.NotifyPay
 package unipay
