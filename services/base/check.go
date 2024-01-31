@@ -40,6 +40,17 @@ func CheckChannelParamExist(channelParamId uint) (err error) {
 	return
 }
 
+func CheckChannelParamNameExist(channelId, channelParamId uint, name string) (err error) {
+	var cc int64
+	if err = db.GetDb().Model(new(models.ChannelParam)).Where("channel_id=? and name=? and if(?>0,id<>?,1)", channelId, name, channelParamId, channelParamId).Count(&cc).Error; err != nil {
+		return
+	}
+	if cc > 0 {
+		return errors.New(fmt.Sprintf("支付通道[%d]参数[%d]名称[%s]已存在", channelId, channelParamId, name))
+	}
+	return
+}
+
 func CheckOrderExist(transactionId string) (err error) {
 	var cc int64
 	if err = db.GetDb().Model(new(models.ChannelParam)).Where("id=?", transactionId).Count(&cc).Error; err != nil {

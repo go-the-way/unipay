@@ -17,13 +17,21 @@ import (
 	"github.com/rwscode/unipay/deps/models"
 )
 
-func (r *AddReq) Check() (err error) { return base.CheckChannelExist(r.ChannelId) }
+func (r *AddReq) Check() (err error) {
+	if err = base.CheckChannelExist(r.ChannelId); err != nil {
+		return
+	}
+	return base.CheckChannelParamNameExist(r.ChannelId, 0, r.Name)
+}
 
 func (r *UpdateReq) Check() (err error) {
 	if err = base.CheckChannelParamExist(r.Id); err != nil {
 		return
 	}
-	return base.CheckChannelExist(r.ChannelId)
+	if err = base.CheckChannelExist(r.ChannelId); err != nil {
+		return
+	}
+	return base.CheckChannelParamNameExist(r.ChannelId, r.Id, r.Name)
 }
 
 func (r *DelReq) Check() (err error) { return base.CheckChannelParamExist(r.Id) }
