@@ -14,7 +14,8 @@ package pay
 import (
 	"errors"
 	"fmt"
-	"github.com/rwscode/unipay"
+	"net/http"
+
 	"github.com/rwscode/unipay/deps/db"
 	"github.com/rwscode/unipay/deps/models"
 	"github.com/rwscode/unipay/deps/pkg"
@@ -22,7 +23,6 @@ import (
 	"github.com/rwscode/unipay/services/channel"
 	"github.com/rwscode/unipay/services/channelparam"
 	"github.com/rwscode/unipay/services/order"
-	"net/http"
 )
 
 func Impl() SVC { return &impl{} }
@@ -30,7 +30,7 @@ func Impl() SVC { return &impl{} }
 type impl struct{}
 
 func (s *impl) ReqPay(req Req) (resp Resp, err error) {
-	pm, err := unipay.ChannelService.Get(channel.GetReq{Id: req.ChannelId})
+	pm, err := channel.Service.Get(channel.GetReq{Id: req.ChannelId})
 	if err != nil {
 		return
 	}
@@ -39,7 +39,7 @@ func (s *impl) ReqPay(req Req) (resp Resp, err error) {
 		return
 	}
 
-	pmm, err := unipay.ChannelParamService.GetChannelId(channelparam.GetChannelIdReq{ChannelId: req.ChannelId})
+	pmm, err := channelparam.Service.GetChannelId(channelparam.GetChannelIdReq{ChannelId: req.ChannelId})
 	if err != nil {
 		return
 	}
@@ -64,11 +64,11 @@ func (s *impl) NotifyPay(req *http.Request, resp http.ResponseWriter, r NotifyRe
 		_, _ = resp.Write([]byte(c.NotifyPayReturnContent))
 	}
 
-	c, cErr := unipay.ChannelService.Get(channel.GetReq{Id: r.ChannelId})
+	c, cErr := channel.Service.Get(channel.GetReq{Id: r.ChannelId})
 	if cErr != nil {
 		return cErr
 	}
-	odr, oErr := unipay.OrderService.GetBusinessId(order.GetBusinessIdReq{Id: r.OrderId, BusinessId: r.BusinessId})
+	odr, oErr := order.Service.GetBusinessId(order.GetBusinessIdReq{Id: r.OrderId, BusinessId: r.BusinessId})
 	if oErr != nil {
 		return oErr
 	}
