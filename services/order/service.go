@@ -24,7 +24,7 @@ func Impl() SVC { return &impl{} }
 
 type impl struct{}
 
-func (s *impl) GetPage(req GetPageReq, order ...string) (resp GetPageResp, err error) {
+func (s *impl) GetPage(req GetPageReq) (resp GetPageResp, err error) {
 	q := db.GetDb().Model(new(models.Order))
 	pkg.IfNotEmptyFunc(req.Id, func() { q.Where("id=?", req.Id) })
 	pkg.IfNotEmptyFunc(req.BusinessId, func() { q.Where("business_id=?", req.BusinessId) })
@@ -42,8 +42,8 @@ func (s *impl) GetPage(req GetPageReq, order ...string) (resp GetPageResp, err e
 	pkg.IfNotEmptyFunc(req.PayTime2, func() { q.Where("pay_time<=concat(?,' 23:59:59')", req.PayTime2) })
 	pkg.IfNotEmptyFunc(req.UpdateTime1, func() { q.Where("update_time>=concat(?,' 00:00:00')", req.UpdateTime1) })
 	pkg.IfNotEmptyFunc(req.UpdateTime2, func() { q.Where("update_time<=concat(?,' 23:59:59')", req.UpdateTime2) })
-	if order != nil && len(order) > 0 {
-		q.Order(order[0])
+	if req.OrderBy != "" {
+		q.Order(req.OrderBy)
 	}
 	err = db.GetPagination()(q, req.Page, req.Limit, &resp.Total, &resp.List)
 	return

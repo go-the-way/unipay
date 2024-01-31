@@ -14,7 +14,7 @@ package channel
 var Service = Impl()
 
 type SVC interface {
-	GetPage(req GetPageReq, order ...string) (resp GetPageResp, err error)
+	GetPage(req GetPageReq) (resp GetPageResp, err error)
 	Get(req GetReq) (resp GetResp, err error)
 	Add(req AddReq) (err error)
 	Update(req UpdateReq) (err error)

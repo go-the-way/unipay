@@ -19,6 +19,8 @@ type (
 	GetPageReq struct {
 		base.PageReq
 
+		OrderBy string `form:"order_by"` // 排序
+
 		Id                         uint   `form:"id"`                             // 支付通道id
 		Name                       string `form:"name"`                           // 支付通道名称
 		AdminUrl                   string `form:"admin_url"`                      // 后台登录Url

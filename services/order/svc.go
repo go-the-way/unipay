@@ -14,7 +14,7 @@ package order
 var Service = Impl()
 
 type SVC interface {
-	GetPage(req GetPageReq, order ...string) (resp GetPageResp, err error)
+	GetPage(req GetPageReq) (resp GetPageResp, err error)
 	Get(req GetReq) (resp GetResp, err error)
 	GetBusinessId(req GetBusinessIdReq) (resp GetBusinessIdResp, err error)
 	Add(req AddReq) (err error)

@@ -17,6 +17,8 @@ type (
 	GetPageReq struct {
 		base.PageReq
 
+		OrderBy string `form:"order_by"` // 排序
+
 		Id           string `form:"id"`             // id
 		BusinessId   string `form:"business_id"`    // 业务id
 		TradeId      string `form:"trade_id"`       // 第三方支付平台交易id
