@@ -44,8 +44,15 @@ type (
 		Id string `validate:"minlength(1,订单id不能为空)" form:"id"`
 	}
 	GetBusinessIdReq struct {
-		Id         string `validate:"minlength(1,订单id不能为空)" form:"id"`
-		BusinessId string `validate:"minlength(1,业务id不能为空)" form:"business_id"`
+		BusinessId1 string `validate:"minlength(1,业务id1不能为空)" form:"business_id1"`
+		BusinessId2 string `form:"business_id2"`
+		BusinessId3 string `form:"business_id3"`
+	}
+	GetIdAndBusinessIdReq struct {
+		Id          string `validate:"minlength(1,订单id不能为空)" form:"id"`
+		BusinessId1 string `validate:"minlength(1,业务id1不能为空)" form:"business_id1"`
+		BusinessId2 string `form:"business_id2"`
+		BusinessId3 string `form:"business_id3"`
 	}
 	AddReq struct {
 		PayChannelId   uint   `validate:"min(1,支付通道id不能为空)" json:"pay_channel_id"` // 支付通道Id

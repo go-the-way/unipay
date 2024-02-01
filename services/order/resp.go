@@ -18,10 +18,11 @@ type (
 		Total int64          `json:"total"`
 		List  []models.Order `json:"list"`
 	}
-	GetResp           struct{ models.Order }
-	GetBusinessIdResp struct{ models.Order }
-	GetPayStateResp   struct {
-		State   byte   `json:"state"`   // 是否支付
+	GetResp                struct{ models.Order }
+	GetBusinessIdResp      struct{ models.Order }
+	GetIdAndBusinessIdResp struct{ models.Order }
+	GetPayStateResp        struct {
+		State   byte   `json:"state"`   // 支付状态：1待支付2支付成功3支付失败
 		Message string `json:"message"` // 支付信息
 	}
 )

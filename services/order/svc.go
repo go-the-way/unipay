@@ -14,21 +14,23 @@ package order
 var (
 	Service SVC = &service{}
 
-	GetPage       = Service.GetPage
-	Get           = Service.Get
-	GetBusinessId = Service.GetBusinessId
-	Add           = Service.Add
-	Update        = Service.Update
-	Del           = Service.Del
-	PaySuccess    = Service.PaySuccess
-	PayFailure    = Service.PayFailure
-	GetPayState   = Service.GetPayState
+	GetPage            = Service.GetPage
+	Get                = Service.Get
+	GetBusinessId      = Service.GetBusinessId
+	GetIdAndBusinessId = Service.GetIdAndBusinessId
+	Add                = Service.Add
+	Update             = Service.Update
+	Del                = Service.Del
+	PaySuccess         = Service.PaySuccess
+	PayFailure         = Service.PayFailure
+	GetPayState        = Service.GetPayState
 )
 
 type SVC interface {
 	GetPage(req GetPageReq) (resp GetPageResp, err error)
 	Get(req GetReq) (resp GetResp, err error)
 	GetBusinessId(req GetBusinessIdReq) (resp GetBusinessIdResp, err error)
+	GetIdAndBusinessId(req GetIdAndBusinessIdReq) (resp GetIdAndBusinessIdResp, err error)
 	Add(req AddReq) (err error)
 	Update(req UpdateReq) (err error)
 	Del(req DelReq) (err error)

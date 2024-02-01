@@ -55,18 +55,22 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 	return reqCallback(req, pm, respMap, orderId)
 }
 
-func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r NotifyReq) (err error) {
+func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r NotifyReq, paidCallback func()) (err error) {
 	notifyPayReturn := func(resp http.ResponseWriter, c channel.GetResp) {
 		ct := ctMap[c.NotifyPayReturnContentType]
 		resp.Header().Set("Content-Type", ct)
 		_, _ = resp.Write([]byte(c.NotifyPayReturnContent))
+		go func() {
+			if fn := paidCallback; fn != nil {
+				fn()
+			}
+		}()
 	}
-
 	c, cErr := channel.Service.Get(channel.GetReq{Id: r.ChannelId})
 	if cErr != nil {
 		return cErr
 	}
-	odr, oErr := order.Service.GetBusinessId(order.GetBusinessIdReq{Id: r.OrderId, BusinessId: r.BusinessId})
+	odr, oErr := order.Service.GetIdAndBusinessId(order.GetIdAndBusinessIdReq{Id: r.OrderId, BusinessId1: r.BusinessId1, BusinessId2: r.BusinessId2, BusinessId3: r.BusinessId3})
 	if oErr != nil {
 		return oErr
 	}

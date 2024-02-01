@@ -26,8 +26,10 @@ type (
 		Remark3     string `validate:"maxlength(500,备注3长度不能超过500)" form:"remark3" json:"remark3"`                                  // 备注3
 	}
 	NotifyReq struct {
-		ChannelId  uint   `validate:"min(1,支付通道id不能为空)" form:"channel_id" json:"channel_id"`                                  // 支付通道id
-		OrderId    string `validate:"minlength(1,订单Id不能为空) maxlength(50,订单Id长度不能超过50)" form:"order_id" json:"order_id"`       // 订单Id
-		BusinessId string `validate:"minlength(1,业务Id不能为空) maxlength(50,业务Id长度不能超过50)" form:"business_id" json:"business_id"` // 业务Id
+		ChannelId   uint   `validate:"min(1,支付通道id不能为空)" form:"channel_id" json:"channel_id"`                                      // 支付通道id
+		OrderId     string `validate:"minlength(1,订单id不能为空) maxlength(50,订单id长度不能超过50)" form:"order_id" json:"order_id"`           // 订单id
+		BusinessId1 string `validate:"minlength(1,业务id1不能为空) maxlength(50,业务id1长度不能超过50)" form:"business_id1" json:"business_id1"` // 业务id1
+		BusinessId2 string `validate:"maxlength(50,业务id2长度不能超过50)" form:"business_id2" json:"business_id2"`                        // 业务id2
+		BusinessId3 string `validate:"maxlength(50,业务id3长度不能超过50)" form:"business_id3" json:"business_id3"`                        // 业务id3
 	}
 )

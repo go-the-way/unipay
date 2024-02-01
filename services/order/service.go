@@ -66,11 +66,30 @@ func (s *service) Get(req GetReq) (resp GetResp, err error) {
 
 func (s *service) GetBusinessId(req GetBusinessIdReq) (resp GetBusinessIdResp, err error) {
 	var list []models.Order
-	if err = db.GetDb().Model(new(models.Order)).Where("id=? and business_id=?", req.Id, req.BusinessId).Find(&list).Error; err != nil {
+	q := db.GetDb().Model(new(models.Order)).Where("business_id1=?", req.BusinessId1)
+	pkg.IfNotEmptyFunc(req.BusinessId2, func() { q.Where("business_id2=?", req.BusinessId2) })
+	pkg.IfNotEmptyFunc(req.BusinessId3, func() { q.Where("business_id3=?", req.BusinessId3) })
+	if err = q.Find(&list).Error; err != nil {
 		return
 	}
 	if len(list) == 0 {
-		err = errors.New(fmt.Sprintf("支付订单[%s]不存在", req.Id))
+		err = errors.New(fmt.Sprintf("支付订单业务id1[%s]业务id2[%s]业务id3[%s]不存在", req.BusinessId1, req.BusinessId2, req.BusinessId3))
+		return
+	}
+	resp.Order = list[0]
+	return
+}
+
+func (s *service) GetIdAndBusinessId(req GetIdAndBusinessIdReq) (resp GetIdAndBusinessIdResp, err error) {
+	var list []models.Order
+	q := db.GetDb().Model(new(models.Order)).Where("id=? and business_id1=?", req.Id, req.BusinessId1)
+	pkg.IfNotEmptyFunc(req.BusinessId2, func() { q.Where("business_id2=?", req.BusinessId2) })
+	pkg.IfNotEmptyFunc(req.BusinessId3, func() { q.Where("business_id3=?", req.BusinessId3) })
+	if err = q.Find(&list).Error; err != nil {
+		return
+	}
+	if len(list) == 0 {
+		err = errors.New(fmt.Sprintf("支付订单id[%s]业务id1[%s]业务id2[%s]业务id3[%s]不存在", req.Id, req.BusinessId1, req.BusinessId2, req.BusinessId3))
 		return
 	}
 	resp.Order = list[0]

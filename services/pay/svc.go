@@ -24,5 +24,5 @@ type SVC interface {
 	// ReqPay 请求支付接口
 	ReqPay(req Req) (resp Resp, err error)
 	// NotifyPay 回调支付接口
-	NotifyPay(req *http.Request, resp http.ResponseWriter, r NotifyReq) (err error)
+	NotifyPay(req *http.Request, resp http.ResponseWriter, r NotifyReq, paidCallback func()) (err error)
 }
