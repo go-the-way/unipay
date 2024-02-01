@@ -40,9 +40,10 @@ type (
 		UpdateTime1  string `form:"update_time1"`   // 修改时间
 		UpdateTime2  string `form:"update_time2"`   // 修改时间
 	}
-	GetReq struct {
-		Id string `validate:"minlength(1,订单id不能为空)" form:"id"`
+	IdReq struct {
+		Id string `validate:"minlength(1,订单id不能为空) maxlength(50,订单id长度不能超过50)" form:"id" json:"id"` // 订单id
 	}
+	GetReq           IdReq
 	GetBusinessIdReq struct {
 		BusinessId1 string `validate:"minlength(1,业务id1不能为空)" form:"business_id1"`
 		BusinessId2 string `form:"business_id2"`
@@ -69,9 +70,6 @@ type (
 		OrderId    string `json:"-"`
 		PayPageUrl string `json:"-"`
 		PayQrUrl   string `json:"-"`
-	}
-	IdReq struct {
-		Id string `validate:"minlength(1,订单id不能为空) maxlength(50,订单id长度不能超过50)" json:"id"` // 订单id
 	}
 	UpdateReq struct {
 		IdReq  `validate:"valid(T)"`
