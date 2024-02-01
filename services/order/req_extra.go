@@ -38,7 +38,9 @@ func (r *AddReq) Transform() *models.Order {
 	}
 	return &models.Order{
 		Id:             r.OrderId,
-		BusinessId:     r.BusinessId,
+		BusinessId1:    r.BusinessId1,
+		BusinessId2:    r.BusinessId2,
+		BusinessId3:    r.BusinessId3,
 		PayChannelId:   r.PayChannelId,
 		PayChannelName: r.PayChannelName,
 		Amount:         r.Amount,
@@ -48,7 +50,9 @@ func (r *AddReq) Transform() *models.Order {
 		PayPageUrl:     r.PayPageUrl,
 		PayQrUrl:       r.PayQrUrl,
 		State:          models.OrderStateWaitPay,
-		Remark:         r.Remark,
+		Remark1:        r.Remark1,
+		Remark2:        r.Remark2,
+		Remark3:        r.Remark3,
 		CreateTime:     pkg.TimeNowStr(),
 		UpdateTime:     pkg.TimeNowStr(),
 	}
