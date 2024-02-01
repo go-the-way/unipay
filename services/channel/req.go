@@ -44,9 +44,10 @@ type (
 		UpdateTime1                string `form:"update_time1"`                   // 修改时间
 		UpdateTime2                string `form:"update_time2"`                   // 修改时间
 	}
-	GetReq struct {
-		Id uint `validate:"min(1,支付通道id不能为空)" form:"id"`
+	IdReq struct {
+		Id uint `validate:"min(1,支付通道id不能为空)" json:"id"`
 	}
+	GetReq IdReq
 	AddReq struct {
 		Name                       string `validate:"minlength(1,支付通道名称不能为空) maxlength(200,支付通道名称长度不能超过200)" json:"name"`                               // 支付通道名称
 		AdminUrl                   string `validate:"maxlength(500,后台登录Url长度不能超过500)" json:"admin_url"`                                                 // 后台登录Url
@@ -70,9 +71,6 @@ type (
 		Remark                     string `validate:"maxlength(500,备注长度不能超过500)" json:"remark"`                                                         // 备注
 		State                      byte   `validate:"enum(1|2,状态不合法)" json:"state"`                                                                     // 状态：1启用2禁用
 		Sort                       byte   `json:"sort"`                                                                                                 // 升序排序值
-	}
-	IdReq struct {
-		Id uint `validate:"min(1,支付通道id不能为空)" json:"id"`
 	}
 	UpdateReq struct {
 		IdReq  `validate:"valid(T)"`

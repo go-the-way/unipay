@@ -12,9 +12,10 @@
 package channelparam
 
 type (
-	GetReq struct {
-		Id uint `validate:"min(1,支付通道参数id不能为空)" form:"id"`
+	IdReq struct {
+		Id uint `validate:"min(1,支付通道参数id不能为空)" form:"id" json:"id"`
 	}
+	GetReq          IdReq
 	GetChannelIdReq struct {
 		ChannelId uint `validate:"min(1,支付通道id不能为空)" form:"channel_id"`
 	}
@@ -28,9 +29,6 @@ type (
 		Value     string `validate:"minlength(1,参数值不能为空) maxlength(1000,参数值长度不能超过1000)" json:"value"` // 参数值
 		Remark    string `validate:"maxlength(500,备注长度不能超过500)" json:"remark"`                        // 备注
 		Pass      byte   `validate:"enum(1|2,是否传递不合法)" json:"pass"`                                   // 1传递2不传递
-	}
-	IdReq struct {
-		Id uint `validate:"min(1,支付通道参数id不能为空)" json:"id"`
 	}
 	UpdateReq struct {
 		IdReq  `validate:"valid(T)"`
