@@ -19,17 +19,21 @@ import (
 func (r *Req) ToMap(orderId string) map[string]any {
 	nu, _ := url.Parse(r.NotifyUrl)
 	nu.Query().Set("unipay_channel_id", fmt.Sprintf("%d", r.ChannelId))
-	nu.Query().Set("unipay_business_id", r.BusinessId)
+	nu.Query().Set("unipay_business_id1", r.BusinessId1)
+	nu.Query().Set("unipay_business_id2", r.BusinessId2)
+	nu.Query().Set("unipay_business_id3", r.BusinessId3)
 	nu.Query().Set("unipay_order_id", orderId)
 	notifyUrl := nu.String()
 	return map[string]any{
-		"ChannelId":  fmt.Sprintf("%d", r.ChannelId),
-		"Amount":     fmt.Sprintf("%d", r.Amount),
-		"AmountYuan": fmt.Sprintf("%d", r.Amount*100),
-		"AmountFen":  fmt.Sprintf("%d", r.Amount),
-		"Subject":    r.Subject,
-		"ClientIp":   r.ClientIp,
-		"NotifyUrl":  notifyUrl,
-		"BusinessId": r.BusinessId,
+		"ChannelId":   fmt.Sprintf("%d", r.ChannelId),
+		"Amount":      fmt.Sprintf("%d", r.Amount),
+		"AmountYuan":  fmt.Sprintf("%d", r.Amount*100),
+		"AmountFen":   fmt.Sprintf("%d", r.Amount),
+		"Subject":     r.Subject,
+		"ClientIp":    r.ClientIp,
+		"NotifyUrl":   notifyUrl,
+		"BusinessId1": r.BusinessId1,
+		"BusinessId2": r.BusinessId2,
+		"BusinessId3": r.BusinessId3,
 	}
 }
