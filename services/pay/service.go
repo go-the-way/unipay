@@ -55,14 +55,14 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 	return reqCallback(req, pm, respMap, orderId)
 }
 
-func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r NotifyReq, paidCallback func()) (err error) {
+func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r NotifyReq, paidCallback func(req NotifyReq)) (err error) {
 	notifyPayReturn := func(resp http.ResponseWriter, c channel.GetResp) {
 		ct := ctMap[c.NotifyPayReturnContentType]
 		resp.Header().Set("Content-Type", ct)
 		_, _ = resp.Write([]byte(c.NotifyPayReturnContent))
 		go func() {
 			if fn := paidCallback; fn != nil {
-				fn()
+				fn(r)
 			}
 		}()
 	}
