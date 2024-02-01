@@ -13,8 +13,8 @@ package channel
 
 import (
 	"errors"
-	"github.com/rwscode/unipay/deps/models"
 	"github.com/rwscode/unipay/deps/pkg"
+	"github.com/rwscode/unipay/models"
 	"github.com/rwscode/unipay/services/base"
 	"net/http"
 )

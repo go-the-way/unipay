@@ -17,20 +17,18 @@ import (
 	"net/http"
 
 	"github.com/rwscode/unipay/deps/db"
-	"github.com/rwscode/unipay/deps/models"
 	"github.com/rwscode/unipay/deps/pkg"
 	"github.com/rwscode/unipay/deps/script"
+	"github.com/rwscode/unipay/models"
 	"github.com/rwscode/unipay/services/channel"
 	"github.com/rwscode/unipay/services/channelparam"
 	"github.com/rwscode/unipay/services/order"
 )
 
-func Impl() SVC { return &impl{} }
+type service struct{}
 
-type impl struct{}
-
-func (s *impl) ReqPay(req Req) (resp Resp, err error) {
-	pm, err := channel.Service.Get(channel.GetReq{Id: req.ChannelId})
+func (s *service) ReqPay(req Req) (resp Resp, err error) {
+	pm, err := channel.Get(channel.GetReq{Id: req.ChannelId})
 	if err != nil {
 		return
 	}
@@ -39,7 +37,7 @@ func (s *impl) ReqPay(req Req) (resp Resp, err error) {
 		return
 	}
 
-	pmm, err := channelparam.Service.GetChannelId(channelparam.GetChannelIdReq{ChannelId: req.ChannelId})
+	pmm, err := channelparam.GetChannelId(channelparam.GetChannelIdReq{ChannelId: req.ChannelId})
 	if err != nil {
 		return
 	}
@@ -57,7 +55,7 @@ func (s *impl) ReqPay(req Req) (resp Resp, err error) {
 	return reqCallback(req, pm, respMap, orderId)
 }
 
-func (s *impl) NotifyPay(req *http.Request, resp http.ResponseWriter, r NotifyReq) (err error) {
+func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r NotifyReq) (err error) {
 	notifyPayReturn := func(resp http.ResponseWriter, c channel.GetResp) {
 		ct := ctMap[c.NotifyPayReturnContentType]
 		resp.Header().Set("Content-Type", ct)

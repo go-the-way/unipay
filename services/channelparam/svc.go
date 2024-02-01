@@ -11,7 +11,16 @@
 
 package channelparam
 
-var Service = Impl()
+var (
+	Service SVC = &service{}
+
+	Get          = Service.Get
+	GetChannelId = Service.GetChannelId
+	GetName      = Service.GetName
+	Add          = Service.Add
+	Update       = Service.Update
+	Del          = Service.Del
+)
 
 type SVC interface {
 	Get(req GetReq) (resp GetResp, err error)

@@ -14,7 +14,7 @@ package channelparam
 import (
 	"github.com/rwscode/unipay/services/base"
 
-	"github.com/rwscode/unipay/deps/models"
+	"github.com/rwscode/unipay/models"
 )
 
 func (r *AddReq) Check() (err error) {

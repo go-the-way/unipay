@@ -14,8 +14,9 @@ package base
 import (
 	"errors"
 	"fmt"
+
 	"github.com/rwscode/unipay/deps/db"
-	"github.com/rwscode/unipay/deps/models"
+	"github.com/rwscode/unipay/models"
 )
 
 func CheckChannelExist(channelId uint) (err error) {

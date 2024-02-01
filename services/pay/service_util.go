@@ -22,9 +22,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rwscode/unipay/deps/models"
 	"github.com/rwscode/unipay/deps/pkg"
 	"github.com/rwscode/unipay/deps/script"
+	"github.com/rwscode/unipay/models"
 	"github.com/rwscode/unipay/services/channel"
 	"github.com/rwscode/unipay/services/channelparam"
 	"github.com/rwscode/unipay/services/order"
@@ -142,9 +142,9 @@ func reqCallback(req Req, c channel.GetResp, respMap map[string]any, orderId str
 	resp.PayQrUrl = qrUrl
 	resp.Message = message
 
-	// if err = unipay.OrderService.Add(buildOrderAddReq(c, req, resp)); err != nil {
-	// 	return
-	// }
+	if err = order.Service.Add(buildOrderAddReq(c, req, resp)); err != nil {
+		return
+	}
 
 	return
 }

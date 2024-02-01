@@ -12,11 +12,10 @@
 package order
 
 import (
-	"github.com/rwscode/unipay/services/base"
-
 	"github.com/rwscode/unipay/deps/db"
-	"github.com/rwscode/unipay/deps/models"
 	"github.com/rwscode/unipay/deps/pkg"
+	"github.com/rwscode/unipay/models"
+	"github.com/rwscode/unipay/services/base"
 )
 
 func (r *AddReq) Check() (err error) { return base.CheckChannelExist(r.PayChannelId) }

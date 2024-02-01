@@ -11,7 +11,18 @@
 
 package channel
 
-var Service = Impl()
+var (
+	Service SVC = &service{}
+
+	GetPage    = Service.GetPage
+	Get        = Service.Get
+	Add        = Service.Add
+	Update     = Service.Update
+	Del        = Service.Del
+	Enable     = Service.Enable
+	Disable    = Service.Disable
+	GetMatches = Service.GetMatches
+)
 
 type SVC interface {
 	GetPage(req GetPageReq) (resp GetPageResp, err error)

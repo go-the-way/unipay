@@ -14,7 +14,7 @@ package db
 import (
 	"gorm.io/gorm"
 
-	"github.com/rwscode/unipay/deps/models"
+	"github.com/rwscode/unipay/models"
 )
 
 type PaginationFunc func(db *gorm.DB, page, limit int, count *int64, list any) (err error)

@@ -16,15 +16,13 @@ import (
 	"fmt"
 
 	"github.com/rwscode/unipay/deps/db"
-	"github.com/rwscode/unipay/deps/models"
 	"github.com/rwscode/unipay/deps/pkg"
+	"github.com/rwscode/unipay/models"
 )
 
-func Impl() SVC { return &impl{} }
+type service struct{}
 
-type impl struct{}
-
-func (s *impl) GetPage(req GetPageReq) (resp GetPageResp, err error) {
+func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
 	q := db.GetDb().Model(new(models.Order))
 	pkg.IfNotEmptyFunc(req.Id, func() { q.Where("id=?", req.Id) })
 	pkg.IfNotEmptyFunc(req.BusinessId, func() { q.Where("business_id=?", req.BusinessId) })
@@ -49,7 +47,7 @@ func (s *impl) GetPage(req GetPageReq) (resp GetPageResp, err error) {
 	return
 }
 
-func (s *impl) Get(req GetReq) (resp GetResp, err error) {
+func (s *service) Get(req GetReq) (resp GetResp, err error) {
 	var list []models.Order
 	if err = db.GetDb().Model(new(models.Order)).Where("id=?", req.Id).Find(&list).Error; err != nil {
 		return
@@ -62,7 +60,7 @@ func (s *impl) Get(req GetReq) (resp GetResp, err error) {
 	return
 }
 
-func (s *impl) GetBusinessId(req GetBusinessIdReq) (resp GetBusinessIdResp, err error) {
+func (s *service) GetBusinessId(req GetBusinessIdReq) (resp GetBusinessIdResp, err error) {
 	var list []models.Order
 	if err = db.GetDb().Model(new(models.Order)).Where("id=? and business_id=?", req.Id, req.BusinessId).Find(&list).Error; err != nil {
 		return
@@ -75,27 +73,27 @@ func (s *impl) GetBusinessId(req GetBusinessIdReq) (resp GetBusinessIdResp, err 
 	return
 }
 
-func (s *impl) Add(req AddReq) (err error) {
+func (s *service) Add(req AddReq) (err error) {
 	return db.GetDb().Create(req.Transform()).Error
 }
 
-func (s *impl) Update(req UpdateReq) (err error) {
+func (s *service) Update(req UpdateReq) (err error) {
 	return db.GetDb().Model(&models.Order{Id: req.Id}).Omit("create_time", "pay_time").Updates(req.Transform()).Error
 }
 
-func (s *impl) Del(req DelReq) (err error) {
+func (s *service) Del(req DelReq) (err error) {
 	return db.GetDb().Delete(&models.Order{Id: req.Id}).Error
 }
 
-func (s *impl) PaySuccess(req PaySuccessReq) (err error) {
+func (s *service) PaySuccess(req PaySuccessReq) (err error) {
 	return db.GetDb().Model(&models.Order{Id: req.Id}).Updates(models.Order{Message: req.Message, State: models.OrderStatePaySuccess, PayTime: pkg.TimeNowStr()}).Error
 }
 
-func (s *impl) PayFailure(req PayFailureReq) (err error) {
+func (s *service) PayFailure(req PayFailureReq) (err error) {
 	return db.GetDb().Model(&models.Order{Id: req.Id}).Updates(models.Order{Message: req.Message, State: models.OrderStatePayFailure, UpdateTime: pkg.TimeNowStr()}).Error
 }
 
-func (s *impl) GetPayState(req GetPayStateReq) (resp GetPayStateResp, err error) {
+func (s *service) GetPayState(req GetPayStateReq) (resp GetPayStateResp, err error) {
 	err = db.GetDb().Model(&models.Order{Id: req.Id}).Select("state", "message").Scan(&resp).Error
 	return
 }

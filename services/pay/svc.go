@@ -13,7 +13,12 @@ package pay
 
 import "net/http"
 
-var Service = Impl()
+var (
+	Service SVC = &service{}
+
+	ReqPay    = Service.ReqPay
+	NotifyPay = Service.NotifyPay
+)
 
 type SVC interface {
 	// ReqPay 请求支付接口

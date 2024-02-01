@@ -16,15 +16,13 @@ import (
 	"fmt"
 
 	"github.com/rwscode/unipay/deps/db"
-	"github.com/rwscode/unipay/deps/models"
 	"github.com/rwscode/unipay/deps/pkg"
+	"github.com/rwscode/unipay/models"
 )
 
-type impl struct{}
+type service struct{}
 
-func Impl() SVC { return &impl{} }
-
-func (s *impl) GetPage(req GetPageReq) (resp GetPageResp, err error) {
+func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
 	q := db.GetDb().Model(new(models.Channel))
 	pkg.IfGt0Func(req.Id, func() { q.Where("id=?", req.Id) })
 	pkg.IfNotEmptyFunc(req.Name, func() { q.Where("name like concat('%',?,'%')", req.Name) })
@@ -55,7 +53,7 @@ func (s *impl) GetPage(req GetPageReq) (resp GetPageResp, err error) {
 	return
 }
 
-func (s *impl) Get(req GetReq) (resp GetResp, err error) {
+func (s *service) Get(req GetReq) (resp GetResp, err error) {
 	var list []models.Channel
 	if err = db.GetDb().Model(new(models.Channel)).Where("id=?", req.Id).Find(&list).Error; err != nil {
 		return
@@ -68,15 +66,15 @@ func (s *impl) Get(req GetReq) (resp GetResp, err error) {
 	return
 }
 
-func (s *impl) Add(req AddReq) (err error) {
+func (s *service) Add(req AddReq) (err error) {
 	return db.GetDb().Create(req.Transform()).Error
 }
 
-func (s *impl) Update(req UpdateReq) (err error) {
+func (s *service) Update(req UpdateReq) (err error) {
 	return db.GetDb().Model(&models.Channel{Id: req.Id}).Omit("create_time").Updates(req.Transform()).Error
 }
 
-func (s *impl) Del(req DelReq) (err error) {
+func (s *service) Del(req DelReq) (err error) {
 	tx := db.GetDb().Begin()
 	if err = tx.Delete(&models.Channel{Id: req.Id}).Error; err != nil {
 		_ = tx.Rollback().Error
@@ -90,19 +88,19 @@ func (s *impl) Del(req DelReq) (err error) {
 	return
 }
 
-func (s *impl) Enable(req EnableReq) (err error) {
+func (s *service) Enable(req EnableReq) (err error) {
 	return s.updateState(req.Id, models.ChannelStateEnable)
 }
 
-func (s *impl) Disable(req DisableReq) (err error) {
+func (s *service) Disable(req DisableReq) (err error) {
 	return s.updateState(req.Id, models.ChannelStateDisable)
 }
 
-func (s *impl) updateState(id uint, state byte) (err error) {
+func (s *service) updateState(id uint, state byte) (err error) {
 	return db.GetDb().Model(&models.Channel{Id: id}).Updates(models.Channel{State: state, UpdateTime: pkg.TimeNowStr()}).Error
 }
 
-func (s *impl) GetMatches(req GetMatchesReq) (resp GetMatchesResp, err error) {
+func (s *service) GetMatches(req GetMatchesReq) (resp GetMatchesResp, err error) {
 	q := db.GetDb().Model(new(models.Channel))
 	if req.Order != "" {
 		q.Order(req.Order)

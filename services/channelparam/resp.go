@@ -11,7 +11,7 @@
 
 package channelparam
 
-import "github.com/rwscode/unipay/deps/models"
+import "github.com/rwscode/unipay/models"
 
 type (
 	GetResp          struct{ models.ChannelParam }

@@ -11,7 +11,19 @@
 
 package order
 
-var Service = Impl()
+var (
+	Service SVC = &service{}
+
+	GetPage       = Service.GetPage
+	Get           = Service.Get
+	GetBusinessId = Service.GetBusinessId
+	Add           = Service.Add
+	Update        = Service.Update
+	Del           = Service.Del
+	PaySuccess    = Service.PaySuccess
+	PayFailure    = Service.PayFailure
+	GetPayState   = Service.GetPayState
+)
 
 type SVC interface {
 	GetPage(req GetPageReq) (resp GetPageResp, err error)
