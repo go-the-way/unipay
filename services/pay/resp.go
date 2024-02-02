@@ -12,7 +12,7 @@
 package pay
 
 type Resp struct {
-	OrderId    string `json:"order_id"`     // 订单Id
+	OrderId    string `json:"order_id"`     // 订单id
 	PayPageUrl string `json:"pay_page_url"` // 页面url
 	PayQrUrl   string `json:"pay_qr_url"`   // 二维码url
 	Message    string `json:"message"`      // 支付信息

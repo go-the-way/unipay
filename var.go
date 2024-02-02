@@ -26,38 +26,39 @@ var (
 )
 
 var (
-	ReqPay    = PayService.ReqPay
-	NotifyPay = PayService.NotifyPay
+	ReqPay    = pay.ReqPay
+	NotifyPay = pay.NotifyPay
 )
 
 var (
-	ChannelGetPage    = ChannelService.GetPage
-	ChannelGet        = ChannelService.Get
-	ChannelAdd        = ChannelService.Add
-	ChannelUpdate     = ChannelService.Update
-	ChannelDel        = ChannelService.Del
-	ChannelEnable     = ChannelService.Enable
-	ChannelDisable    = ChannelService.Disable
-	ChannelGetMatches = ChannelService.GetMatches
+	ChannelGetPage    = channel.GetPage
+	ChannelGet        = channel.Get
+	ChannelAdd        = channel.Add
+	ChannelUpdate     = channel.Update
+	ChannelDel        = channel.Del
+	ChannelEnable     = channel.Enable
+	ChannelDisable    = channel.Disable
+	ChannelGetMatches = channel.GetMatches
 )
 
 var (
-	ChannelParamGet          = ChannelParamService.Get
-	ChannelParamGetChannelId = ChannelParamService.GetChannelId
-	ChannelParamGetName      = ChannelParamService.GetName
-	ChannelParamAdd          = ChannelParamService.Add
-	ChannelParamUpdate       = ChannelParamService.Update
-	ChannelParamDel          = ChannelParamService.Del
+	ChannelParamGet          = channelparam.Get
+	ChannelParamGetChannelId = channelparam.GetChannelId
+	ChannelParamGetName      = channelparam.GetName
+	ChannelParamAdd          = channelparam.Add
+	ChannelParamUpdate       = channelparam.Update
+	ChannelParamDel          = channelparam.Del
 )
 
 var (
-	OrderGetPage       = OrderService.GetPage
-	OrderGet           = OrderService.Get
-	OrderGetBusinessId = OrderService.GetBusinessId
-	OrderAdd           = OrderService.Add
-	OrderUpdate        = OrderService.Update
-	OrderDel           = OrderService.Del
-	OrderPaySuccess    = OrderService.PaySuccess
-	OrderPayFailure    = OrderService.PayFailure
-	OrderGetPayState   = OrderService.GetPayState
+	OrderGetPage            = order.GetPage
+	OrderGet                = order.Get
+	OrderGetBusinessId      = order.GetBusinessId
+	OrderGetIdAndBusinessId = order.GetIdAndBusinessId
+	OrderAdd                = order.Add
+	OrderUpdate             = order.Update
+	OrderDel                = order.Del
+	OrderPaySuccess         = order.PaySuccess
+	OrderPayFailure         = order.PayFailure
+	OrderGetPayState        = order.GetPayState
 )

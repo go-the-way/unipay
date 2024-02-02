@@ -10,42 +10,4 @@
 // limitations under the License.
 
 // Package unipay
-//
-// # ReqPay 请求支付接口 unipay.ReqPay
-//
-// # 时间变量 => $Time.
-//
-// 当前时间`2006-01-02 15:04:05` => NowTime
-//
-// 当前时间`20060102150405` => NowTimeNum
-//
-// 当前时间戳`1705976043` => NowTimestamp
-//
-// 当前时间戳`1705976043000` => NowTimestampLong
-//
-// # 支付变量 => $Pay.
-//
-// 支付金额 => Amount
-//
-// 支付金额（单位：元）=> AmountYuan
-//
-// 支付金额（单位：分）=> AmountFen
-//
-// 支付主题 => Subject
-//
-// 客户端Ip => ClientIp
-//
-// 回调Url => NotifyUrl
-//
-// 业务Id => BusinessId
-//
-// # 支付通道变量 => $Channel.
-//
-// ref => models.Channel
-//
-// # 支付参数变量：=> $Param.
-//
-// ref => models.ChannelParam
-//
-// # NotifyPay 回调支付接口 unipay.NotifyPay
 package unipay
