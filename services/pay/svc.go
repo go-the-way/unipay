@@ -55,6 +55,12 @@ type SVC interface {
 	//
 	// 业务id3 => BusinessId3
 	//
+	// 备注1 => Remark1
+	//
+	// 备注2 => Remark2
+	//
+	// 备注3 => Remark3
+	//
 	// # 支付通道变量 => $Channel.
 	//
 	// ref => models.Channel

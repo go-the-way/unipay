@@ -18,11 +18,11 @@ import (
 
 func (r *Req) ToMap(orderId string) map[string]any {
 	nu, _ := url.Parse(r.NotifyUrl)
-	nu.Query().Set("unipay_channel_id", fmt.Sprintf("%d", r.ChannelId))
-	nu.Query().Set("unipay_business_id1", r.BusinessId1)
-	nu.Query().Set("unipay_business_id2", r.BusinessId2)
-	nu.Query().Set("unipay_business_id3", r.BusinessId3)
-	nu.Query().Set("unipay_order_id", orderId)
+	nu.Query().Set("channel_id", fmt.Sprintf("%d", r.ChannelId))
+	nu.Query().Set("order_id", orderId)
+	nu.Query().Set("business_id1", r.BusinessId1)
+	nu.Query().Set("business_id2", r.BusinessId2)
+	nu.Query().Set("business_id3", r.BusinessId3)
 	notifyUrl := nu.String()
 	return map[string]any{
 		"ChannelId":   fmt.Sprintf("%d", r.ChannelId),
@@ -35,5 +35,8 @@ func (r *Req) ToMap(orderId string) map[string]any {
 		"BusinessId1": r.BusinessId1,
 		"BusinessId2": r.BusinessId2,
 		"BusinessId3": r.BusinessId3,
+		"Remark1":     r.Remark1,
+		"Remark2":     r.Remark2,
+		"Remark3":     r.Remark3,
 	}
 }
