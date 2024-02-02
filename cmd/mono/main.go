@@ -45,14 +45,14 @@ req method: POST
 req content type: application/json
 req body: {"app_key":"app key","rand":"rand str 30 len","subject":"pay subject","price":"100","notify_url":"notify url","sign": "signature md5 str"}
 resp content type: application/json
-resp body: {"code":"200",data":{"order_id":"order id",pay_url":"http://example.com/pay/1"},"message":"ok"}
+resp body: {"code":"200","data":{"order_id":"order id","pay_url":"http://example.com/pay/1"},"message":"ok"}
 
 notify order info
 ---
 req url: $notify_url
 req method: POST
 req content type: application/json
-req body: {"data":{"order_id":"order id",paid":true,"message":"paid"}}
+req body: {"data":{"order_id":"order id","paid":true,"message":"paid"}}
 resp content type: text/plain
 resp body: success
 `)
