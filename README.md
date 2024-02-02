@@ -55,7 +55,7 @@ mono
 ```
 
 ## envs
-- SERVER_ADDR 服务运行绑定地址 (default: :9988)
+- SERVER_ADDR mono server addr (default: :9988)
 - APP_KEY mono app key (default: BmnXsm843uA9WjWh22CWIXbrASo)
 - APP_SECRET mono app secret (default: Ne4WZgphE1GicyYgQAYn0ZqhwvA)
-- DOMAIN_URL mono service domain url (default: http://publicIp:9988)
+- DOMAIN_URL mono server domain url (default: http://publicIp:9988)
