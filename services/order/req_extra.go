@@ -12,6 +12,8 @@
 package order
 
 import (
+	"errors"
+	"fmt"
 	"github.com/rwscode/unipay/deps/db"
 	"github.com/rwscode/unipay/deps/pkg"
 	"github.com/rwscode/unipay/models"
@@ -65,3 +67,23 @@ func (r *UpdateReq) Transform() *models.Order {
 		UpdateTime:  pkg.TimeNowStr(),
 	}
 }
+
+func (r *PaidReq) Check() (err error) {
+	type paid struct {
+		Id    string
+		State byte
+	}
+	var pd paid
+	if err = db.GetDb().Model(new(models.Order)).Select("id", "state").Where("id=?", r.Id).Scan(&pd).Error; err != nil {
+		return
+	}
+	if pd.Id == "" {
+		return errors.New(fmt.Sprintf("支付订单[%s]不存在", r.Id))
+	}
+	if pd.State != models.OrderStateWaitPay {
+		return errors.New(fmt.Sprintf("支付订单[%s]当前不支持此操作", r.Id))
+	}
+	return
+}
+
+func (r *CancelReq) Check() (err error) { return (&PaidReq{IdReq: IdReq{Id: r.Id}}).Check() }
