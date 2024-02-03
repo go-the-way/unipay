@@ -28,7 +28,7 @@ func routers() {
 }
 
 func showMessage() {
-	reqUrl := fmt.Sprintf("req url: %s/api/createOrder", domainUrl)
+	reqUrl := fmt.Sprintf("%s/api/createOrder", domainUrl)
 	fmt.Println(`
 The unipay channel mono served on ` + serverAddr + `
 
