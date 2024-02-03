@@ -16,7 +16,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/rwscode/unipay/deps/db"
 	"github.com/rwscode/unipay/deps/pkg"
 	"github.com/rwscode/unipay/models"
 	"github.com/rwscode/unipay/services/channel"
@@ -24,7 +23,10 @@ import (
 	"github.com/rwscode/unipay/services/order"
 )
 
-type service struct{}
+type (
+	service            struct{}
+	NotifyCallbackFunc func(req NotifyReq, order models.Order)
+)
 
 func (s *service) ReqPay(req Req) (resp Resp, err error) {
 	pm, err := channel.Get(channel.GetReq{Id: req.ChannelId})
@@ -54,16 +56,11 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 	return reqCallback(req, pm, respMap, orderId)
 }
 
-func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r NotifyReq, paidCallback func(req NotifyReq)) (err error) {
+func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r NotifyReq, callback ...NotifyCallbackFunc) (err error) {
 	notifyPayReturn := func(resp http.ResponseWriter, c channel.GetResp) {
 		ct := ctMap[c.NotifyPayReturnContentType]
 		resp.Header().Set("Content-Type", ct)
 		_, _ = resp.Write([]byte(c.NotifyPayReturnContent))
-		go func() {
-			if fn := paidCallback; fn != nil {
-				fn(r)
-			}
-		}()
 	}
 	c, cErr := channel.Service.Get(channel.GetReq{Id: r.ChannelId})
 	if cErr != nil {
@@ -73,7 +70,7 @@ func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r Notif
 	if oErr != nil {
 		return oErr
 	}
-	if odr.State == models.OrderStatePaySuccess {
+	if odr.State == models.OrderStatePaid {
 		notifyPayReturn(resp, c)
 		return
 	}
@@ -83,20 +80,26 @@ func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r Notif
 		err = errors.New(fmt.Sprintf("回调处理成功，但是解析回调支付成功计算表达式：%s，错误：%s", c.NotifyPaySuccessExpr, pErr.Error()))
 		return
 	}
-	var tradeId string
-	if expr := c.NotifyPayIdExpr; expr != "" {
-		if tradeId, err = pkg.EvalString(expr, respMap); err != nil {
+	if paySuccess {
+		var tradeId string
+		if expr := c.NotifyPayIdExpr; expr != "" {
+			if tradeId, err = pkg.EvalString(expr, respMap); err != nil {
+				return
+			}
+		}
+		if err = order.Paid(order.PaidReq{IdReq: order.IdReq{Id: r.OrderId}, TradeId: tradeId}); err != nil {
 			return
 		}
+		notifyPayReturn(resp, c)
+		s.callback(r, callback...)
 	}
-	stMap := map[bool]byte{true: models.OrderStatePaySuccess, false: models.OrderStatePayFailure}
-	payTime := ""
-	if paySuccess {
-		payTime = pkg.TimeNowStr()
-	}
-	if err = db.GetDb().Model(&models.Order{Id: r.OrderId}).Updates(&models.Order{TradeId: tradeId, State: stMap[paySuccess], PayTime: payTime, UpdateTime: pkg.TimeNowStr()}).Error; err != nil {
-		return
-	}
-	notifyPayReturn(resp, c)
 	return
+}
+
+func (s *service) callback(req NotifyReq, callback ...NotifyCallbackFunc) {
+	if callback != nil && len(callback) > 0 {
+		if fn := callback[0]; fn != nil {
+			go func() { resp, _ := order.Get(order.GetReq{Id: req.OrderId}); fn(req, resp.Order) }()
+		}
+	}
 }
