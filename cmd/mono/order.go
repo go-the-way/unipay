@@ -75,9 +75,9 @@ func writeJson200(w http.ResponseWriter, dataMap map[string]any) {
 
 func writeJsonNon200(w http.ResponseWriter, message string) {
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusBadRequest)
 	buf, _ := json.Marshal(map[string]any{"code": "400", "message": message})
 	_, _ = w.Write(buf)
-	w.WriteHeader(http.StatusBadRequest)
 }
 
 func parseParam(r *http.Request) (cor createOrderReq, err error) {

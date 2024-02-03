@@ -36,7 +36,7 @@ channel info
 ---
 appKey: ` + appKey + `
 appSecret: ` + appSecret + `
-signature: md5(concat(join(sort["app_key="+$appKey,"rand="+$rand,"subject="+$subject,"price="+$price,"notify_url="+$notify_url],"&"),"&appSecret=",$appSecret)
+signature: md5(join(sort(["app_key="+$Param.app_key,"rand="+$Param.rand,"subject="+$Param.subject,"price="+$Param.price,"notify_url="+$Param.notify_url]),"&")+"&app_secret="+$Param.app_secret)
 
 create order info
 ---
