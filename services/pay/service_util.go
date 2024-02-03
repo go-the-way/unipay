@@ -23,7 +23,6 @@ import (
 	"time"
 
 	"github.com/rwscode/unipay/deps/pkg"
-	"github.com/rwscode/unipay/deps/script"
 	"github.com/rwscode/unipay/models"
 	"github.com/rwscode/unipay/services/channel"
 	"github.com/rwscode/unipay/services/channelparam"
@@ -99,7 +98,7 @@ func reqDo(c channel.GetResp, cp channelparam.GetChannelIdResp, params map[strin
 }
 
 func reqCallback(req Req, c channel.GetResp, respMap map[string]any, orderId string) (resp Resp, err error) {
-	reqSuccess, pErr := script.EvalBool(c.ReqSuccessExpr, respMap)
+	reqSuccess, pErr := pkg.EvalBool(c.ReqSuccessExpr, respMap)
 	if pErr != nil {
 		err = errors.New(fmt.Sprintf("支付请求成功，但是解析请求成功计算表达式：%s，错误：%s", c.ReqSuccessExpr, pErr.Error()))
 		return
@@ -114,7 +113,7 @@ func reqCallback(req Req, c channel.GetResp, respMap map[string]any, orderId str
 	)
 
 	if expr := c.ReqPayPageUrlExpr; expr != "" {
-		pageUrl, err = script.EvalString(expr, respMap)
+		pageUrl, err = pkg.EvalString(expr, respMap)
 		if err != nil {
 			err = errors.New(fmt.Sprintf("支付请求成功，但是解析请求支付页面Url获取表达式：%s，错误：%s", expr, pErr.Error()))
 			return
@@ -122,7 +121,7 @@ func reqCallback(req Req, c channel.GetResp, respMap map[string]any, orderId str
 	}
 
 	if expr := c.ReqPayQrUrlExpr; expr != "" {
-		qrUrl, err = script.EvalString(expr, respMap)
+		qrUrl, err = pkg.EvalString(expr, respMap)
 		if err != nil {
 			err = errors.New(fmt.Sprintf("支付请求成功，但是解析请求支付页面Url获取表达式：%s，错误：%s", expr, pErr.Error()))
 			return
@@ -130,7 +129,7 @@ func reqCallback(req Req, c channel.GetResp, respMap map[string]any, orderId str
 	}
 
 	if expr := c.ReqPayMessageExpr; expr != "" {
-		message, err = script.EvalString(expr, respMap)
+		message, err = pkg.EvalString(expr, respMap)
 		if err != nil {
 			err = errors.New(fmt.Sprintf("支付请求成功，但是解析请求支付获取消息表达式：%s，错误：%s", expr, pErr.Error()))
 			return

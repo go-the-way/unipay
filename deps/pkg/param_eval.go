@@ -18,7 +18,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/rwscode/unipay/deps/script"
 	"github.com/rwscode/unipay/models"
 )
 
@@ -45,7 +44,7 @@ func EvalParams(payMap, channelMap map[string]any, ps []models.ChannelParam, ord
 			data["__self__"] = p.Value
 			p.Value = "$__self__"
 		}
-		output, err := script.Eval(p.Value, data)
+		output, err := Eval(p.Value, data)
 		if err != nil {
 			return nil, errors.New(fmt.Sprintf("解析参数[%s]表达式[%s]错误：%s", p.Name, p.Value, err.Error()))
 		}

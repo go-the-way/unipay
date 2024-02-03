@@ -18,7 +18,6 @@ import (
 
 	"github.com/rwscode/unipay/deps/db"
 	"github.com/rwscode/unipay/deps/pkg"
-	"github.com/rwscode/unipay/deps/script"
 	"github.com/rwscode/unipay/models"
 	"github.com/rwscode/unipay/services/channel"
 	"github.com/rwscode/unipay/services/channelparam"
@@ -79,14 +78,14 @@ func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r Notif
 		return
 	}
 	respMap := ctRespFuncMap[c.NotifyPayContentType](req)
-	paySuccess, pErr := script.EvalBool(c.NotifyPaySuccessExpr, respMap)
+	paySuccess, pErr := pkg.EvalBool(c.NotifyPaySuccessExpr, respMap)
 	if pErr != nil {
 		err = errors.New(fmt.Sprintf("回调处理成功，但是解析回调支付成功计算表达式：%s，错误：%s", c.NotifyPaySuccessExpr, pErr.Error()))
 		return
 	}
 	var tradeId string
 	if expr := c.NotifyPayIdExpr; expr != "" {
-		if tradeId, err = script.EvalString(expr, respMap); err != nil {
+		if tradeId, err = pkg.EvalString(expr, respMap); err != nil {
 			return
 		}
 	}

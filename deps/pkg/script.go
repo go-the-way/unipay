@@ -9,7 +9,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package script
+package pkg
 
 import (
 	"context"
@@ -19,7 +19,7 @@ import (
 	"github.com/d5/tengo/v2"
 	"github.com/d5/tengo/v2/stdlib"
 
-	_ "github.com/rwscode/unipay/deps/script/extra"
+	_ "github.com/rwscode/unipay/deps/pkg/extra"
 )
 
 var (
