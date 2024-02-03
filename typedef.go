@@ -60,11 +60,11 @@ type (
 	OrderIdReq             = order.IdReq
 	OrderUpdateReq         = order.UpdateReq
 	OrderDelReq            = order.DelReq
-	OrderPaySuccessReq     = order.PaySuccessReq
-	OrderPayFailureReq     = order.PayFailureReq
-	OrderGetPayStateReq    = order.GetPayStateReq
+	OrderPaidReq           = order.PaidReq
+	OrderCancelReq         = order.CancelReq
+	OrderGetStateReq       = order.GetStateReq
 	OrderGetPageResp       = order.GetPageResp
 	OrderGetResp           = order.GetResp
 	OrderGetBusinessIdResp = order.GetBusinessIdResp
-	OrderGetPayStateResp   = order.GetPayStateResp
+	OrderGetStateResp      = order.GetStateResp
 )

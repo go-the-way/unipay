@@ -58,7 +58,7 @@ var (
 	OrderAdd                = order.Add
 	OrderUpdate             = order.Update
 	OrderDel                = order.Del
-	OrderPaySuccess         = order.PaySuccess
-	OrderPayFailure         = order.PayFailure
-	OrderGetPayState        = order.GetPayState
+	OrderPaid               = order.Paid
+	OrderCancel             = order.Cancel
+	OrderGetState           = order.GetState
 )
