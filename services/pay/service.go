@@ -46,7 +46,7 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 	// 订单id
 	orderId := pkg.RandStr(30)
 
-	evalEdParams, err := pkg.EvalParams(req.ToMap(orderId), pm.ToMap(), pmm.List, orderId)
+	evalEdParams, err := pkg.EvalParams(req.ToMap(orderId), pm.ToMap(), pmm.List)
 	if err != nil {
 		return
 	}

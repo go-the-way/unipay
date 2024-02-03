@@ -113,7 +113,7 @@ func (s *service) checkChannelParams(channelId uint) (err error) {
 	if len(ps) <= 0 {
 		return errors.New("请先配置参数列表再开启")
 	}
-	_, err = pkg.EvalParams(s.buildPayMap(), (&models.Channel{}).ToMap(), ps, "123456")
+	_, err = pkg.EvalParams(s.buildPayMap(), (&models.Channel{}).ToMap(), ps)
 	return
 }
 

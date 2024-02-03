@@ -34,7 +34,7 @@ type (
 	}
 )
 
-func EvalParams(payMap, channelMap map[string]any, ps []models.ChannelParam, orderId string) (map[string]any, error) {
+func EvalParams(payMap, channelMap map[string]any, ps []models.ChannelParam) (map[string]any, error) {
 	params := getParams(ps)
 	sortParams(params)
 	paramMap := map[string]any{}

@@ -14,6 +14,7 @@ package pay
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rwscode/unipay/models"
 	"io"
 	"net/http"
 	"net/url"
@@ -62,8 +63,10 @@ type (
 func getPassMap(cp channelparam.GetChannelIdResp) (passMap map[string]struct{}) {
 	passMap = map[string]struct{}{}
 	for _, p := range cp.List {
-		if p.Pass == 1 {
+		switch p.Pass {
+		case models.ChannelParamPassYes:
 			passMap[p.Name] = struct{}{}
+		case models.ChannelParamPassNo:
 		}
 	}
 	return
