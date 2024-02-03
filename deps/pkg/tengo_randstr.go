@@ -9,12 +9,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package extra
+package pkg
 
 import (
 	"github.com/d5/tengo/v2"
 	"github.com/d5/tengo/v2/stdlib"
-	"github.com/rwscode/unipay/deps/pkg"
 )
 
 var randModule = make(map[string]tengo.Object, 2)
@@ -38,6 +37,6 @@ func getRandFunc(numOnly bool) func(args ...tengo.Object) (ret tengo.Object, err
 				Found:    args[0].TypeName(),
 			}
 		}
-		return &tengo.String{Value: pkg.RandStr(i, numOnly)}, nil
+		return &tengo.String{Value: RandStr(i, numOnly)}, nil
 	}
 }

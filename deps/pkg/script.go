@@ -18,8 +18,6 @@ import (
 
 	"github.com/d5/tengo/v2"
 	"github.com/d5/tengo/v2/stdlib"
-
-	_ "github.com/rwscode/unipay/deps/pkg/extra"
 )
 
 var (

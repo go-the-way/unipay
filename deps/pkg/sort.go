@@ -9,13 +9,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package extra
+package pkg
 
 import (
 	"fmt"
+	"sort"
+
 	"github.com/d5/tengo/v2"
 	"github.com/d5/tengo/v2/stdlib"
-	"sort"
 )
 
 var sortModule = make(map[string]tengo.Object, 1)
