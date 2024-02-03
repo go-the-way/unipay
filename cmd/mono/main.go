@@ -34,8 +34,8 @@ The unipay channel mono served on ` + serverAddr + `
 
 channel info
 ---
-app key: ` + appKey + `
-app secret: ` + appSecret + `
+app_key: ` + appKey + `
+app_secret: ` + appSecret + `
 signature: md5(join(sort(["app_key="+$Param.app_key,"rand="+$Param.rand,"subject="+$Param.subject,"price="+$Param.price,"notify_url="+$Param.notify_url]),"&")+"&app_secret="+$Param.app_secret)
 
 insert sql info
