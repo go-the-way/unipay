@@ -21,9 +21,9 @@ var (
 	Add                = Service.Add
 	Update             = Service.Update
 	Del                = Service.Del
-	PaySuccess         = Service.PaySuccess
-	PayFailure         = Service.PayFailure
-	GetPayState        = Service.GetPayState
+	Paid               = Service.Paid
+	Cancel             = Service.Cancel
+	GetState           = Service.GetState
 )
 
 type SVC interface {
@@ -34,7 +34,7 @@ type SVC interface {
 	Add(req AddReq) (err error)
 	Update(req UpdateReq) (err error)
 	Del(req DelReq) (err error)
-	PaySuccess(req PaySuccessReq) (err error)
-	PayFailure(req PayFailureReq) (err error)
-	GetPayState(req GetPayStateReq) (resp GetPayStateResp, err error)
+	Paid(req PaidReq, callback ...CallbackFunc) (err error)
+	Cancel(req CancelReq, callback ...CallbackFunc) (err error)
+	GetState(req GetStateReq) (resp GetStateResp, err error)
 }

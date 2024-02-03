@@ -20,12 +20,7 @@ import (
 
 func (r *AddReq) Check() (err error) { return base.CheckChannelExist(r.PayChannelId) }
 
-func (r *UpdateReq) Check() (err error) {
-	if err = base.CheckOrderExist(r.Id); err != nil {
-		return
-	}
-	return base.CheckChannelExist(r.PayChannelId)
-}
+func (r *UpdateReq) Check() (err error) { return base.CheckOrderExist(r.Id) }
 
 func (r *DelReq) Check() (err error) { return base.CheckOrderExist(r.Id) }
 
@@ -59,7 +54,14 @@ func (r *AddReq) Transform() *models.Order {
 }
 
 func (r *UpdateReq) Transform() *models.Order {
-	m := r.AddReq.Transform()
-	m.Id = r.Id
-	return m
+	return &models.Order{
+		BusinessId1: r.BusinessId1,
+		BusinessId2: r.BusinessId2,
+		BusinessId3: r.BusinessId3,
+		Message:     r.Message,
+		Remark1:     r.Remark1,
+		Remark2:     r.Remark2,
+		Remark3:     r.Remark3,
+		UpdateTime:  pkg.TimeNowStr(),
+	}
 }

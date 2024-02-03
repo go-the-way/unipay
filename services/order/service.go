@@ -20,7 +20,10 @@ import (
 	"github.com/rwscode/unipay/models"
 )
 
-type service struct{}
+type (
+	service      struct{}
+	CallbackFunc func(order models.Order)
+)
 
 func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
 	q := db.GetDb().Model(new(models.Order))
@@ -101,22 +104,38 @@ func (s *service) Add(req AddReq) (err error) {
 }
 
 func (s *service) Update(req UpdateReq) (err error) {
-	return db.GetDb().Model(&models.Order{Id: req.Id}).Omit("create_time", "pay_time").Updates(req.Transform()).Error
+	return db.GetDb().Model(&models.Order{Id: req.Id}).Updates(req.Transform()).Error
 }
 
 func (s *service) Del(req DelReq) (err error) {
 	return db.GetDb().Delete(&models.Order{Id: req.Id}).Error
 }
 
-func (s *service) PaySuccess(req PaySuccessReq) (err error) {
-	return db.GetDb().Model(&models.Order{Id: req.Id}).Updates(models.Order{Message: req.Message, State: models.OrderStatePaySuccess, PayTime: pkg.TimeNowStr()}).Error
+func (s *service) Paid(req PaidReq, callback ...CallbackFunc) (err error) {
+	if err = db.GetDb().Model(&models.Order{Id: req.Id}).Updates(models.Order{TradeId: req.TradeId, Message: req.Message, State: models.OrderStatePaid, PayTime: pkg.TimeNowStr()}).Error; err != nil {
+		return
+	}
+	s.callback(req.Id, callback...)
+	return
 }
 
-func (s *service) PayFailure(req PayFailureReq) (err error) {
-	return db.GetDb().Model(&models.Order{Id: req.Id}).Updates(models.Order{Message: req.Message, State: models.OrderStatePayFailure, UpdateTime: pkg.TimeNowStr()}).Error
+func (s *service) Cancel(req CancelReq, callback ...CallbackFunc) (err error) {
+	if err = db.GetDb().Model(&models.Order{Id: req.Id}).Updates(models.Order{Message: req.Message, State: models.OrderStateCancelled, UpdateTime: pkg.TimeNowStr()}).Error; err != nil {
+		return
+	}
+	s.callback(req.Id, callback...)
+	return
 }
 
-func (s *service) GetPayState(req GetPayStateReq) (resp GetPayStateResp, err error) {
+func (s *service) GetState(req GetStateReq) (resp GetStateResp, err error) {
 	err = db.GetDb().Model(&models.Order{Id: req.Id}).Select("state", "message").Scan(&resp).Error
 	return
+}
+
+func (s *service) callback(id string, callback ...CallbackFunc) {
+	if callback != nil && len(callback) > 0 {
+		if fn := callback[0]; fn != nil {
+			go func() { resp, _ := s.Get(GetReq{Id: id}); fn(resp.Order) }()
+		}
+	}
 }

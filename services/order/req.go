@@ -72,18 +72,24 @@ type (
 		PayQrUrl   string `json:"-"`
 	}
 	UpdateReq struct {
-		IdReq  `validate:"valid(T)"`
-		AddReq `validate:"valid(T)"`
+		Id          string `validate:"minlength(1,订单id不能为空) maxlength(50,订单id长度不能超过50)" form:"id" json:"id"`   // 订单id
+		BusinessId1 string `validate:"minlength(1,业务id1不能为空) maxlength(50,业务id1长度不能超过50)" json:"business_id1"` // 业务id1
+		BusinessId2 string `validate:"maxlength(50,业务id2长度不能超过50)" json:"business_id2"`                        // 业务id2
+		BusinessId3 string `validate:"maxlength(50,业务id3长度不能超过50)" json:"business_id3"`                        // 业务id3
+		Message     string `validate:"maxlength(500,支付结果信息长度不能超过500)" json:"message"`                          // 支付结果信息
+		Remark1     string `validate:"maxlength(500,备注1长度不能超过500)" json:"remark1"`                             // 备注1
+		Remark2     string `validate:"maxlength(500,备注2长度不能超过500)" json:"remark2"`                             // 备注2
+		Remark3     string `validate:"maxlength(500,备注3长度不能超过500)" json:"remark3"`                             // 备注3
 	}
-	DelReq        IdReq
-	PaySuccessReq struct {
+	DelReq  IdReq
+	PaidReq struct {
 		IdReq   `validate:"valid(T)"`
 		TradeId string `validate:"minlength(1,第三方支付平台id不能为空) maxlength(50,第三方支付平台id长度不能超过50)" json:"trade_id"` // 第三方支付平台id
-		Message string `json:"message"`                                                                        // 支付信息
+		Message string `json:"message"`
 	}
-	PayFailureReq struct {
+	CancelReq struct {
 		IdReq   `validate:"valid(T)"`
-		Message string `json:"message"` // 支付信息
+		Message string `json:"message"`
 	}
-	GetPayStateReq IdReq
+	GetStateReq IdReq
 )

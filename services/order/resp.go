@@ -21,8 +21,8 @@ type (
 	GetResp                struct{ models.Order }
 	GetBusinessIdResp      struct{ models.Order }
 	GetIdAndBusinessIdResp struct{ models.Order }
-	GetPayStateResp        struct {
-		State   byte   `json:"state"`   // 支付状态：1待支付2支付成功3支付失败
+	GetStateResp           struct {
+		State   byte   `json:"state"`   // 支付状态：1待支付2支付成功3已取消
 		Message string `json:"message"` // 支付信息
 	}
 )

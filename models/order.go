@@ -27,7 +27,7 @@ type (
 		Message        string `gorm:"column:message;type:varchar(500);not null;default:'';comment:支付结果信息" json:"message"`                   // 支付结果信息
 		PayPageUrl     string `gorm:"column:pay_page_url;type:varchar(500);not null;default:'';comment:支付页面Url" json:"pay_page_url"`        // 支付页面Url
 		PayQrUrl       string `gorm:"column:pay_qr_url;type:varchar(500);not null;default:'';comment:支付二维码Url" json:"pay_qr_url"`           // 支付二维码Url
-		State          byte   `gorm:"column:state;type:tinyint;not null;default:1;comment:支付状态：1待支付2支付成功3支付失败;index" json:"state"`          // 支付状态：1待支付2支付成功3支付失败
+		State          byte   `gorm:"column:state;type:tinyint;not null;default:1;comment:支付状态：1待支付2已支付3已取消;index" json:"state"`            // 支付状态：1待支付2已支付3已取消
 		Remark1        string `gorm:"column:remark1;type:varchar(500);not null;default:'';comment:备注1" json:"remark1"`                      // 备注1
 		Remark2        string `gorm:"column:remark2;type:varchar(500);not null;default:'';comment:备注2" json:"remark2"`                      // 备注2
 		Remark3        string `gorm:"column:remark3;type:varchar(500);not null;default:'';comment:备注3" json:"remark3"`                      // 备注3
@@ -41,8 +41,8 @@ const (
 	_ byte = iota
 	// OrderStateWaitPay 待支付
 	OrderStateWaitPay
-	// OrderStatePaySuccess 支付成功
-	OrderStatePaySuccess
-	// OrderStatePayFailure 支付失败
-	OrderStatePayFailure
+	// OrderStatePaid 已支付
+	OrderStatePaid
+	// OrderStateCancelled 已取消
+	OrderStateCancelled
 )
