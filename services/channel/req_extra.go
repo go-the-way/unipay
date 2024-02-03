@@ -59,7 +59,7 @@ func (r *AddReq) Transform() *models.Channel {
 		NotifyPayIdExpr:            r.NotifyPayIdExpr,
 		NotifyPayReturnContent:     r.NotifyPayReturnContent,
 		NotifyPayReturnContentType: r.NotifyPayReturnContentType,
-		State:                      r.State,
+		State:                      models.ChannelStateDisable,
 		Sort:                       r.Sort,
 		Remark:                     r.Remark,
 		CreateTime:                 pkg.TimeNowStr(),

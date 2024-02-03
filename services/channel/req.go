@@ -69,7 +69,6 @@ type (
 		NotifyPayReturnContent     string `validate:"minlength(1,回调支付成功返回内容不能为空) maxlength(500,回调支付成功返回内容长度不能超过500)" json:"notify_pay_return_content"`  // 回调支付成功返回内容
 		NotifyPayReturnContentType string `validate:"enum(text|json,回调支付成功返回数据类型不合法)" json:"notify_pay_return_content_type"`                            // 回调支付成功返回数据类型
 		Remark                     string `validate:"maxlength(500,备注长度不能超过500)" json:"remark"`                                                         // 备注
-		State                      byte   `validate:"enum(1|2,状态不合法)" json:"state"`                                                                     // 状态：1启用2禁用
 		Sort                       byte   `json:"sort"`                                                                                                 // 升序排序值
 	}
 	UpdateReq struct {

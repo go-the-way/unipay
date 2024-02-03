@@ -14,7 +14,6 @@ package channel
 import (
 	"errors"
 	"fmt"
-
 	"github.com/rwscode/unipay/deps/db"
 	"github.com/rwscode/unipay/deps/pkg"
 	"github.com/rwscode/unipay/models"
@@ -88,7 +87,40 @@ func (s *service) Del(req DelReq) (err error) {
 	return
 }
 
+func (s *service) buildPayMap() map[string]any {
+	return map[string]any{
+		"ChannelId":   "100",
+		"Amount":      "100",
+		"AmountYuan":  "1",
+		"AmountFen":   "100",
+		"Subject":     "subject",
+		"ClientIp":    "127.0.0.1",
+		"NotifyUrl":   "http://example.com",
+		"BusinessId1": "",
+		"BusinessId2": "",
+		"BusinessId3": "",
+		"Remark1":     "",
+		"Remark2":     "",
+		"Remark3":     "",
+	}
+}
+
+func (s *service) checkChannelParams(channelId uint) (err error) {
+	var ps []models.ChannelParam
+	if err = db.GetDb().Model(new(models.ChannelParam)).Where("channel_id=?", channelId).Find(&ps).Error; err != nil {
+		return
+	}
+	if len(ps) <= 0 {
+		return errors.New("请先配置参数列表再开启")
+	}
+	_, err = pkg.EvalParams(s.buildPayMap(), (&models.Channel{}).ToMap(), ps, "123456")
+	return
+}
+
 func (s *service) Enable(req EnableReq) (err error) {
+	if err = s.checkChannelParams(req.Id); err != nil {
+		return
+	}
 	return s.updateState(req.Id, models.ChannelStateEnable)
 }
 

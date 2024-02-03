@@ -9,7 +9,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package pay
+package pkg
 
 import (
 	"errors"
@@ -18,10 +18,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/rwscode/unipay/deps/pkg"
 	"github.com/rwscode/unipay/deps/script"
-	"github.com/rwscode/unipay/services/channel"
-	"github.com/rwscode/unipay/services/channelparam"
+	"github.com/rwscode/unipay/models"
 )
 
 type (
@@ -37,11 +35,11 @@ type (
 	}
 )
 
-func evalParams(req Req, pm channel.GetResp, pmm channelparam.GetChannelIdResp, orderId string) (map[string]any, error) {
-	params := getParams(pmm)
+func EvalParams(payMap, channelMap map[string]any, ps []models.ChannelParam, orderId string) (map[string]any, error) {
+	params := getParams(ps)
 	sortParams(params)
 	paramMap := map[string]any{}
-	data := map[string]any{"Time": pkg.GetTimeMap(), "Channel": pm.ToMap(), "Pay": req.ToMap(orderId), "Param": paramMap}
+	data := map[string]any{"Time": GetTimeMap(), "Channel": channelMap, "Pay": payMap, "Param": paramMap}
 	for i, p := range params {
 		if !strings.Contains(p.Value, "$") {
 			data["__self__"] = p.Value
@@ -61,9 +59,9 @@ func evalParams(req Req, pm channel.GetResp, pmm channelparam.GetChannelIdResp, 
 	return resultMap, nil
 }
 
-func getParams(pms channelparam.GetChannelIdResp) []paramValue {
+func getParams(ps []models.ChannelParam) []paramValue {
 	var params []paramValue
-	for _, a := range pms.List {
+	for _, a := range ps {
 		params = append(params, paramValue{Name: a.Name, Value: a.Value})
 	}
 	return params
