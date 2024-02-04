@@ -14,6 +14,8 @@ package channelparam
 import (
 	"errors"
 	"fmt"
+	"github.com/rwscode/unipay/deps/pkg"
+	"gorm.io/gorm"
 
 	"github.com/rwscode/unipay/deps/db"
 	"github.com/rwscode/unipay/models"
@@ -53,13 +55,55 @@ func (s *service) GetName(req GetNameReq) (resp GetNameResp, err error) {
 }
 
 func (s *service) Add(req AddReq) (err error) {
-	return db.GetDb().Create(req.Transform()).Error
+	tx := db.GetDb().Begin()
+	if err = tx.Create(req.Transform()).Error; err != nil {
+		_ = tx.Rollback().Error
+		return
+	}
+	if err = s.disableChannel(tx, req.ChannelId, 0); err != nil {
+		_ = tx.Rollback().Error
+		return
+	}
+	_ = tx.Commit().Error
+	return
 }
 
 func (s *service) Update(req UpdateReq) (err error) {
-	return db.GetDb().Model(&models.ChannelParam{Id: req.Id}).Updates(req.Transform()).Error
+	tx := db.GetDb().Begin()
+	if err = tx.Model(&models.ChannelParam{Id: req.Id}).Updates(req.Transform()).Error; err != nil {
+		_ = tx.Rollback().Error
+		return
+	}
+	if err = s.disableChannel(tx, 0, req.Id); err != nil {
+		_ = tx.Rollback().Error
+		return
+	}
+	_ = tx.Commit().Error
+	return
 }
 
 func (s *service) Del(req DelReq) (err error) {
-	return db.GetDb().Delete(&models.ChannelParam{Id: req.Id}).Error
+	tx := db.GetDb().Begin()
+	if err = tx.Delete(&models.ChannelParam{Id: req.Id}).Error; err != nil {
+		_ = tx.Rollback().Error
+		return
+	}
+	if err = s.disableChannel(tx, 0, req.Id); err != nil {
+		_ = tx.Rollback().Error
+		return
+	}
+	_ = tx.Commit().Error
+	return
+}
+
+func (s *service) disableChannel(tx *gorm.DB, channelId, channelParamId uint) (err error) {
+	if channelId == 0 {
+		if err = db.GetDb().Model(new(models.ChannelParam)).Select("channel_id").Where("id=?", channelParamId).Scan(&channelId).Error; err != nil {
+			return
+		}
+	}
+	if channelId <= 0 {
+		return
+	}
+	return tx.Model(&models.Channel{Id: channelId}).Updates(&models.Channel{State: models.ChannelStateDisable, UpdateTime: pkg.TimeNowStr()}).Error
 }
