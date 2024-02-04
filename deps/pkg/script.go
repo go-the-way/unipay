@@ -82,7 +82,7 @@ func EvalBool(content string, in map[string]any) (out bool, err error) {
 }
 
 func Eval(content string, in map[string]any) (out any, err error) {
-	content = strings.TrimSpace(content)
+	content = strings.ReplaceAll(strings.TrimSpace(content), "\n", "")
 	if strings.Contains(content, "\n") {
 		err = errors.New("failed, only supports one line script")
 		return
