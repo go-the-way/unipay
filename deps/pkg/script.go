@@ -22,7 +22,7 @@ import (
 
 var (
 	importModules = []string{
-		"text", "fmt", "base64", "crypto", "rand", "sort",
+		"text", "crypto", "rand", "sort",
 	}
 	replaceMap = map[string]string{
 		"upper": "text.to_upper",
