@@ -49,7 +49,7 @@ type (
 	}
 	GetReq IdReq
 	AddReq struct {
-		Name                       string `validate:"minlength(1,支付通道名称不能为空) maxlength(200,支付通道名称长度不能超过200)" json:"name"`                               // 支付通道名称
+		Name                       string `validate:"minlength(1,支付通道名称不能为空) maxlength(50,支付通道名称长度不能超过50)" json:"name"`                                 // 支付通道名称
 		AdminUrl                   string `validate:"maxlength(500,后台登录Url长度不能超过500)" json:"admin_url"`                                                 // 后台登录Url
 		AdminUser                  string `validate:"maxlength(200,后台登录用户名长度不能超过200)" json:"admin_user"`                                                // 后台登录用户名
 		AdminPasswd                string `validate:"maxlength(200,后台登录密码长度不能超过200)" json:"admin_passwd"`                                               // 后台登录密码
