@@ -14,11 +14,11 @@ package channelparam
 import (
 	"errors"
 	"fmt"
-	"github.com/rwscode/unipay/deps/pkg"
-	"gorm.io/gorm"
 
 	"github.com/rwscode/unipay/deps/db"
+	"github.com/rwscode/unipay/deps/pkg"
 	"github.com/rwscode/unipay/models"
+	"gorm.io/gorm"
 )
 
 type service struct{}

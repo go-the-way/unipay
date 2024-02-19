@@ -14,11 +14,11 @@ package pay
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rwscode/unipay/models"
 	"io"
 	"net/http"
 	"net/url"
 
+	"github.com/rwscode/unipay/models"
 	"github.com/rwscode/unipay/services/channel"
 	"github.com/rwscode/unipay/services/channelparam"
 )

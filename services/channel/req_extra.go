@@ -13,10 +13,11 @@ package channel
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/rwscode/unipay/deps/pkg"
 	"github.com/rwscode/unipay/models"
 	"github.com/rwscode/unipay/services/base"
-	"net/http"
 )
 
 func (r *AddReq) Check() (err error) {
