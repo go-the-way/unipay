@@ -25,46 +25,50 @@ type (
 )
 
 type (
-	ChannelGetReq         = channel.GetReq
-	ChannelDelReq         = channel.DelReq
-	ChannelUpdateReq      = channel.UpdateReq
-	ChannelAddReq         = channel.AddReq
-	ChannelDisableReq     = channel.DisableReq
-	ChannelEnableReq      = channel.EnableReq
-	ChannelIdReq          = channel.IdReq
-	ChannelGetPageReq     = channel.GetPageReq
-	ChannelGetMatchesReq  = channel.GetMatchesReq
+	ChannelGetPageReq    = channel.GetPageReq
+	ChannelIdReq         = channel.IdReq
+	ChannelGetReq        = channel.GetReq
+	ChannelAddReq        = channel.AddReq
+	ChannelUpdateReq     = channel.UpdateReq
+	ChannelDelReq        = channel.DelReq
+	ChannelEnableReq     = channel.EnableReq
+	ChannelDisableReq    = channel.DisableReq
+	ChannelGetMatchesReq = channel.GetMatchesReq
+
 	ChannelGetPageResp    = channel.GetPageResp
 	ChannelGetResp        = channel.GetResp
 	ChannelGetMatchesResp = channel.GetMatchesResp
 )
 
 type (
-	ChannelParamGetNameResp      = channelparam.GetNameResp
+	ChannelParamGetReq          = channelparam.GetReq
+	ChannelParamGetChannelIdReq = channelparam.GetChannelIdReq
+	ChannelParamGetNameReq      = channelparam.GetNameReq
+	ChannelParamAddReq          = channelparam.AddReq
+	ChannelParamUpdateReq       = channelparam.UpdateReq
+	ChannelParamDelReq          = channelparam.DelReq
+
 	ChannelParamGetResp          = channelparam.GetResp
 	ChannelParamGetChannelIdResp = channelparam.GetChannelIdResp
-	ChannelParamDelReq           = channelparam.DelReq
-	ChannelParamUpdateReq        = channelparam.UpdateReq
-	ChannelParamIdReq            = channelparam.IdReq
-	ChannelParamAddReq           = channelparam.AddReq
-	ChannelParamGetNameReq       = channelparam.GetNameReq
-	ChannelParamGetChannelIdReq  = channelparam.GetChannelIdReq
-	ChannelParamGetReq           = channelparam.GetReq
+	ChannelParamGetNameResp      = channelparam.GetNameResp
 )
 
 type (
-	OrderGetPageReq        = order.GetPageReq
-	OrderGetReq            = order.GetReq
-	OrderGetBusinessIdReq  = order.GetBusinessIdReq
-	OrderAddReq            = order.AddReq
-	OrderIdReq             = order.IdReq
-	OrderUpdateReq         = order.UpdateReq
-	OrderDelReq            = order.DelReq
-	OrderPaidReq           = order.PaidReq
-	OrderCancelReq         = order.CancelReq
-	OrderGetStateReq       = order.GetStateReq
-	OrderGetPageResp       = order.GetPageResp
-	OrderGetResp           = order.GetResp
-	OrderGetBusinessIdResp = order.GetBusinessIdResp
-	OrderGetStateResp      = order.GetStateResp
+	OrderGetPageReq            = order.GetPageReq
+	OrderIdReq                 = order.IdReq
+	OrderGetReq                = order.GetReq
+	OrderGetBusinessIdReq      = order.GetBusinessIdReq
+	OrderGetIdAndBusinessIdReq = order.GetIdAndBusinessIdReq
+	OrderAddReq                = order.AddReq
+	OrderUpdateReq             = order.UpdateReq
+	OrderDelReq                = order.DelReq
+	OrderPaidReq               = order.PaidReq
+	OrderCancelReq             = order.CancelReq
+	OrderGetStateReq           = order.GetStateReq
+
+	OrderGetPageResp            = order.GetPageResp
+	OrderGetResp                = order.GetResp
+	OrderGetBusinessIdResp      = order.GetBusinessIdResp
+	OrderGetIdAndBusinessIdResp = order.GetIdAndBusinessIdResp
+	OrderGetStateResp           = order.GetStateResp
 )

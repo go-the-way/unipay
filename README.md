@@ -33,9 +33,9 @@ The unified payment package
 - order.Add 新增
 - order.Update 修改
 - order.Del 删除
-- order.PaySuccess 支付成功
-- order.PayFailure 支付失败
-- order.GetPayState 查询支付状态
+- order.Paid 支付成功
+- order.Cancel 取消
+- order.GetState 查询状态
 
 # Models
 - models.Channel/models.UnipayChannel 支付通道
