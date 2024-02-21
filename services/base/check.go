@@ -19,6 +19,17 @@ import (
 	"github.com/rwscode/unipay/models"
 )
 
+func CheckAll(fns ...func() (err error)) (err error) {
+	for _, fn := range fns {
+		if fn != nil {
+			if err = fn(); err != nil {
+				break
+			}
+		}
+	}
+	return
+}
+
 func CheckChannelExist(channelId uint) (err error) {
 	var cc int64
 	if err = db.GetDb().Model(new(models.Channel)).Where("id=?", channelId).Count(&cc).Error; err != nil {
@@ -36,7 +47,7 @@ func CheckChannelParamExist(channelParamId uint) (err error) {
 		return
 	}
 	if cc <= 0 {
-		return errors.New(fmt.Sprintf("支付通道参数[%s]不存在", channelParamId))
+		return errors.New(fmt.Sprintf("支付通道参数[%d]不存在", channelParamId))
 	}
 	return
 }
