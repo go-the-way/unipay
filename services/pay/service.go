@@ -23,10 +23,7 @@ import (
 	"github.com/rwscode/unipay/services/order"
 )
 
-type (
-	service            struct{}
-	NotifyCallbackFunc func(req NotifyReq, order models.Order)
-)
+type service struct{}
 
 func (s *service) ReqPay(req Req) (resp Resp, err error) {
 	pm, err := channel.Get(channel.GetReq{Id: req.ChannelId})
@@ -56,7 +53,7 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 	return reqCallback(req, pm, respMap, orderId)
 }
 
-func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r NotifyReq, callback ...NotifyCallbackFunc) (err error) {
+func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r NotifyReq) (err error) {
 	notifyPayReturn := func(resp http.ResponseWriter, c channel.GetResp) {
 		ct := ctMap[c.NotifyPayReturnContentType]
 		resp.Header().Set("Content-Type", ct)
@@ -91,15 +88,13 @@ func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r Notif
 			return
 		}
 		notifyPayReturn(resp, c)
-		s.callback(r, callback...)
+		s.callback(r)
 	}
 	return
 }
 
-func (s *service) callback(req NotifyReq, callback ...NotifyCallbackFunc) {
-	if callback != nil && len(callback) > 0 {
-		if fn := callback[0]; fn != nil {
-			go func() { resp, _ := order.Get(order.GetReq{Id: req.OrderId}); fn(req, resp.Order) }()
-		}
+func (s *service) callback(req NotifyReq) {
+	if fn := req.Callback; fn != nil {
+		go func() { resp, _ := order.Get(order.GetReq{Id: req.OrderId}); fn(req, resp.Order) }()
 	}
 }

@@ -46,6 +46,11 @@ type (
 	}
 )
 
+func (r *orderInfo) paidJson() string {
+	buf, _ := json.Marshal(map[string]any{"data": map[string]any{"paid": true, "order_id": r.OrderId, "message": "success"}})
+	return string(buf)
+}
+
 func createOrder(w http.ResponseWriter, r *http.Request) {
 	req, err := parseParam(r)
 	if err != nil {

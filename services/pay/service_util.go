@@ -145,6 +145,10 @@ func reqCallback(req Req, c channel.GetResp, respMap map[string]any, orderId str
 		return
 	}
 
+	if fn := req.Callback; fn != nil {
+		go fn(req)
+	}
+
 	return
 }
 

@@ -11,6 +11,8 @@
 
 package pay
 
+import "github.com/rwscode/unipay/models"
+
 type (
 	Req struct {
 		ChannelId   uint   `validate:"min(1,支付通道id不能为空)" form:"channel_id" json:"channel_id"`                                      // 支付通道id
@@ -24,6 +26,8 @@ type (
 		Remark1     string `validate:"maxlength(500,备注1长度不能超过500)" form:"remark1" json:"remark1"`                                  // 备注1
 		Remark2     string `validate:"maxlength(500,备注2长度不能超过500)" form:"remark2" json:"remark2"`                                  // 备注2
 		Remark3     string `validate:"maxlength(500,备注3长度不能超过500)" form:"remark3" json:"remark3"`                                  // 备注3
+
+		Callback func(req Req)
 	}
 	NotifyReq struct {
 		ChannelId   uint   `validate:"min(1,支付通道id不能为空)" form:"channel_id" json:"channel_id"`                                      // 支付通道id
@@ -31,5 +35,7 @@ type (
 		BusinessId1 string `validate:"minlength(1,业务id1不能为空) maxlength(50,业务id1长度不能超过50)" form:"business_id1" json:"business_id1"` // 业务id1
 		BusinessId2 string `validate:"maxlength(50,业务id2长度不能超过50)" form:"business_id2" json:"business_id2"`                        // 业务id2
 		BusinessId3 string `validate:"maxlength(50,业务id3长度不能超过50)" form:"business_id3" json:"business_id3"`                        // 业务id3
+
+		Callback func(req NotifyReq, order models.Order)
 	}
 )
