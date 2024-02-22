@@ -55,7 +55,11 @@ func notify(order *orderInfo) {
 	fmt.Println("after 3 seconds, start notify pay...")
 	time.Sleep(time.Second * 3)
 	for {
-		if done := notifyReq(order); done {
+		done, err := notifyReq(order)
+		if err != nil {
+			fmt.Println(fmt.Sprintf("notify[%s] error:", err))
+		}
+		if done {
 			break
 		}
 		time.Sleep(time.Second)
@@ -63,7 +67,7 @@ func notify(order *orderInfo) {
 	fmt.Println(fmt.Sprintf("notify[%s] finished", order.OrderId))
 }
 
-func notifyReq(order *orderInfo) (done bool) {
+func notifyReq(order *orderInfo) (done bool, err error) {
 	resp, err := http.Post(order.NotifyUrl, "application/json", strings.NewReader(buildNotifyBody(order)))
 	if err != nil {
 		fmt.Println(fmt.Sprintf("notify[%s] request err:%s", order.OrderId, err.Error()))
@@ -74,7 +78,7 @@ func notifyReq(order *orderInfo) (done bool) {
 		fmt.Println(fmt.Sprintf("notify[%s] read all err:%s", order.OrderId, err.Error()))
 		return
 	}
-	return strings.TrimSpace(string(buf)) == "success"
+	return strings.TrimSpace(string(buf)) == "success", err
 }
 
 func buildNotifyBody(order *orderInfo) string {

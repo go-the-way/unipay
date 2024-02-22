@@ -13,17 +13,21 @@ package pay
 
 import (
 	"fmt"
-	"net/url"
+	"strings"
 )
 
 func (r *Req) ToMap(orderId string) map[string]any {
-	nu, _ := url.Parse(r.NotifyUrl)
-	nu.Query().Set("channel_id", fmt.Sprintf("%d", r.ChannelId))
-	nu.Query().Set("order_id", orderId)
-	nu.Query().Set("business_id1", r.BusinessId1)
-	nu.Query().Set("business_id2", r.BusinessId2)
-	nu.Query().Set("business_id3", r.BusinessId3)
-	notifyUrl := nu.String()
+	notifyUrl := r.NotifyUrl
+	if strings.Index(r.NotifyUrl, "?") == -1 {
+		notifyUrl += "?"
+	} else {
+		notifyUrl += "&"
+	}
+	notifyUrl += fmt.Sprintf("channel_id=%d", r.ChannelId)
+	notifyUrl += fmt.Sprintf("order_id=%s", orderId)
+	notifyUrl += fmt.Sprintf("business_id1=%s", r.BusinessId1)
+	notifyUrl += fmt.Sprintf("business_id2=%s", r.BusinessId2)
+	notifyUrl += fmt.Sprintf("business_id3=%s", r.BusinessId3)
 	return map[string]any{
 		"ChannelId":   fmt.Sprintf("%d", r.ChannelId),
 		"Amount":      fmt.Sprintf("%d", r.Amount),
