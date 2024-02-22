@@ -24,10 +24,10 @@ func (r *Req) ToMap(orderId string) map[string]any {
 		notifyUrl += "&"
 	}
 	notifyUrl += fmt.Sprintf("channel_id=%d", r.ChannelId)
-	notifyUrl += fmt.Sprintf("order_id=%s", orderId)
-	notifyUrl += fmt.Sprintf("business_id1=%s", r.BusinessId1)
-	notifyUrl += fmt.Sprintf("business_id2=%s", r.BusinessId2)
-	notifyUrl += fmt.Sprintf("business_id3=%s", r.BusinessId3)
+	notifyUrl += fmt.Sprintf("&order_id=%s", orderId)
+	notifyUrl += fmt.Sprintf("&business_id1=%s", r.BusinessId1)
+	notifyUrl += fmt.Sprintf("&business_id2=%s", r.BusinessId2)
+	notifyUrl += fmt.Sprintf("&business_id3=%s", r.BusinessId3)
 	return map[string]any{
 		"ChannelId":   fmt.Sprintf("%d", r.ChannelId),
 		"Amount":      fmt.Sprintf("%d", r.Amount),
