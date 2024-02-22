@@ -58,6 +58,7 @@ func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r Notif
 		ct := ctMap[c.NotifyPayReturnContentType]
 		resp.Header().Set("Content-Type", ct)
 		_, _ = resp.Write([]byte(c.NotifyPayReturnContent))
+		resp.WriteHeader(http.StatusOK)
 	}
 	c, cErr := channel.Service.Get(channel.GetReq{Id: r.ChannelId})
 	if cErr != nil {

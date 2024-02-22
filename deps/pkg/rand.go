@@ -23,7 +23,7 @@ func RandStr(length int, numOnly ...bool) string {
 		no = numOnly[0]
 	}
 	results := make([]string, 0)
-	symbol := "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+-*/=_"
+	symbol := "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+-*/_"
 	for i := 0; i < length; i++ {
 		randLen := len(symbol)
 		if no {
