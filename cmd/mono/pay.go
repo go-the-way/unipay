@@ -26,20 +26,21 @@ func getPayOrderUrl(orderId string) string {
 func payOrder(w http.ResponseWriter, r *http.Request) {
 	orderId := r.URL.Query().Get("order_id")
 	if orderId == "" {
-		writeJsonNon200(w, "订单id为空")
+		writeNon200(w, htmlH1("订单id为空"))
 		return
 	}
 	mu.Lock()
 	order, ok := orderMap[orderId]
 	mu.Unlock()
 	if !ok {
-		writeJsonNon200(w, "订单id不存在")
+		writeNon200(w, htmlH1("订单id不存在"))
 		return
 	}
 	if order.Paid {
-		writeJsonNon200(w, "订单已经支付，不能重复支付")
+		writeNon200(w, htmlH1("订单已经支付"))
 		return
 	}
+	write200(w, htmlH1("订单支付成功"))
 	order.Paid = true
 	// wait 3 seconds, notify pay
 	go notify(order)
