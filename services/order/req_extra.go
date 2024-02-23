@@ -62,7 +62,7 @@ func (r *AddReq) Transform() *models.Order {
 		PayChannelId:   r.PayChannelId,
 		PayChannelName: r.PayChannelName,
 		Amount:         r.Amount,
-		AmountYuan:     r.Amount * 100,
+		AmountYuan:     r.AmountYuan,
 		AmountFen:      r.Amount,
 		Message:        r.Message,
 		PayPageUrl:     r.PayPageUrl,

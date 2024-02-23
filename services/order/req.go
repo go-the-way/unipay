@@ -62,6 +62,7 @@ type (
 		BusinessId2    string `validate:"maxlength(50,业务id2长度不能超过50)" json:"business_id2"`                        // 业务id2
 		BusinessId3    string `validate:"maxlength(50,业务id3长度不能超过50)" json:"business_id3"`                        // 业务id3
 		Amount         uint   `validate:"min(1,交易金额不能少于1)" json:"amount"`                                         // 交易金额（单位：分）
+		AmountYuan     uint   `validate:"min(1,交易金额元不能少于1)" json:"amount_yuan"`                                   // 交易金额（单位：元）
 		Message        string `validate:"maxlength(500,支付结果信息长度不能超过500)" json:"message"`                          // 支付结果信息
 		Remark1        string `validate:"maxlength(500,备注1长度不能超过500)" json:"remark1"`                             // 备注1
 		Remark2        string `validate:"maxlength(500,备注2长度不能超过500)" json:"remark2"`                             // 备注2
