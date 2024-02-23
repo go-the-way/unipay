@@ -17,6 +17,7 @@ type (
 	Req struct {
 		ChannelId   uint   `validate:"min(1,支付通道id不能为空)" form:"channel_id" json:"channel_id"`                                      // 支付通道id
 		Amount      uint   `validate:"min(1,支付金额不能少于1)" form:"amount" json:"amount"`                                               // 支付金额（单位：分）
+		AmountYuan  uint   `validate:"min(1,支付金额元不能少于1)" form:"amount_yuan" json:"amount_yuan"`                                    // 支付金额（单位：元）
 		Subject     string `validate:"minlength(1,支付主题不能为空) maxlength(200,支付主题长度不能超过200)" form:"subject" json:"subject"`           // 支付主题
 		ClientIp    string `validate:"minlength(1,客户端Ip不能为空) maxlength(20,客户端Ip长度不能超过50)" form:"client_ip" json:"client_ip"`       // 客户端Ip
 		NotifyUrl   string `validate:"minlength(1,回调Url不能为空) maxlength(500,回调Url长度不能超过500)" form:"notify_url" json:"notify_url"`   // 回调Url

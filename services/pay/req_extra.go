@@ -31,7 +31,7 @@ func (r *Req) ToMap(orderId string) map[string]any {
 	return map[string]any{
 		"ChannelId":   fmt.Sprintf("%d", r.ChannelId),
 		"Amount":      fmt.Sprintf("%d", r.Amount),
-		"AmountYuan":  fmt.Sprintf("%d", r.Amount*100),
+		"AmountYuan":  fmt.Sprintf("%d", r.AmountYuan),
 		"AmountFen":   fmt.Sprintf("%d", r.Amount),
 		"Subject":     r.Subject,
 		"ClientIp":    r.ClientIp,

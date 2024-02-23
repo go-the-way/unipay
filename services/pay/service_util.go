@@ -160,6 +160,7 @@ func buildOrderAddReq(c channel.GetResp, req Req, resp Resp) order.AddReq {
 		BusinessId2:    req.BusinessId2,
 		BusinessId3:    req.BusinessId3,
 		Amount:         req.Amount,
+		AmountYuan:     req.AmountYuan,
 		Message:        resp.Message,
 		Remark1:        req.Remark1,
 		Remark2:        req.Remark2,
