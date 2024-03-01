@@ -16,8 +16,6 @@ import (
 	"github.com/rwscode/unipay/services/channelparam"
 	"github.com/rwscode/unipay/services/order"
 	"github.com/rwscode/unipay/services/pay"
-
-	_ "github.com/rwscode/unipay/tasks"
 )
 
 var (
