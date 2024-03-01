@@ -9,30 +9,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package db
+package apiconfig
 
 import (
+	"github.com/rwscode/unipay/deps/db"
 	"github.com/rwscode/unipay/models"
-	"gorm.io/gorm"
 )
 
-type PaginationFunc func(db *gorm.DB, page, limit int, count *int64, list any) (err error)
+type service struct{}
 
-var (
-	gdb      *gorm.DB
-	pageFunc PaginationFunc
-)
+func (s *service) Get() (resp GetResp, err error) {
+	err = db.GetDb().Model(new(models.ApiConfig)).Where("id=1").Scan(&resp).Error
+	return
+}
 
-func SetDb(db *gorm.DB)                           { gdb = db }
-func GetDb() *gorm.DB                             { return gdb }
-func SetPagination(paginationFunc PaginationFunc) { pageFunc = paginationFunc }
-func GetPagination() PaginationFunc               { return pageFunc }
-
-func AutoMigrate() (err error) {
-	return gdb.AutoMigrate(
-		new(models.Channel),
-		new(models.ChannelParam),
-		new(models.Order),
-		new(models.ExchangeRate),
-	)
+func (s *service) Update(req UpdateReq) (err error) {
+	var cc int64
+	if err = db.GetDb().Model(new(models.ApiConfig)).Count(&cc).Error; err != nil {
+		return
+	}
+	if cc > 0 {
+		if err = db.GetDb().Updates(req.Transform()).Error; err != nil {
+			return
+		}
+	} else {
+		if err = db.GetDb().Create(req.Transform()).Error; err != nil {
+			return
+		}
+	}
+	if fn := req.Callback; fn != nil {
+		return
+	}
+	return
 }

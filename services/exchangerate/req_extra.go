@@ -9,30 +9,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package db
+package exchangerate
 
 import (
 	"github.com/rwscode/unipay/models"
-	"gorm.io/gorm"
+	"github.com/rwscode/unipay/services/base"
 )
 
-type PaginationFunc func(db *gorm.DB, page, limit int, count *int64, list any) (err error)
+func (r *UpdateReq) Check() (err error) { return base.CheckRateValid(r.Rate) }
 
-var (
-	gdb      *gorm.DB
-	pageFunc PaginationFunc
-)
-
-func SetDb(db *gorm.DB)                           { gdb = db }
-func GetDb() *gorm.DB                             { return gdb }
-func SetPagination(paginationFunc PaginationFunc) { pageFunc = paginationFunc }
-func GetPagination() PaginationFunc               { return pageFunc }
-
-func AutoMigrate() (err error) {
-	return gdb.AutoMigrate(
-		new(models.Channel),
-		new(models.ChannelParam),
-		new(models.Order),
-		new(models.ExchangeRate),
-	)
+func (r *UpdateReq) Transform() models.ExchangeRate {
+	return models.ExchangeRate{Id: 1, Rate: r.Rate}
 }

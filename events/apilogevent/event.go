@@ -9,30 +9,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package db
+package apilogevent
 
 import (
+	"github.com/go-the-way/events"
+	"github.com/rwscode/unipay/deps/db"
 	"github.com/rwscode/unipay/models"
-	"gorm.io/gorm"
 )
 
-type PaginationFunc func(db *gorm.DB, page, limit int, count *int64, list any) (err error)
+func Send(log models.ApiLog) { event.Fire(log) }
 
-var (
-	gdb      *gorm.DB
-	pageFunc PaginationFunc
-)
+type evt struct{}
 
-func SetDb(db *gorm.DB)                           { gdb = db }
-func GetDb() *gorm.DB                             { return gdb }
-func SetPagination(paginationFunc PaginationFunc) { pageFunc = paginationFunc }
-func GetPagination() PaginationFunc               { return pageFunc }
+var event = events.NewHandler[evt, models.ApiLog]()
 
-func AutoMigrate() (err error) {
-	return gdb.AutoMigrate(
-		new(models.Channel),
-		new(models.ChannelParam),
-		new(models.Order),
-		new(models.ExchangeRate),
-	)
-}
+func init() { event.Bind(bind) }
+
+func bind(log models.ApiLog) { _ = db.GetDb().Model(new(models.ApiLog)).Create(log).Error }

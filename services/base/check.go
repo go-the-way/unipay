@@ -14,6 +14,7 @@ package base
 import (
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/rwscode/unipay/deps/db"
 	"github.com/rwscode/unipay/models"
@@ -70,6 +71,13 @@ func CheckOrderExist(transactionId string) (err error) {
 	}
 	if cc <= 0 {
 		return errors.New(fmt.Sprintf("支付订单[%s]不存在", transactionId))
+	}
+	return
+}
+
+func CheckRateValid(rate string) (err error) {
+	if _, err = strconv.ParseFloat(rate, 32); err != nil {
+		return errors.New("汇率不合法")
 	}
 	return
 }

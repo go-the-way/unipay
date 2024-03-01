@@ -9,30 +9,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package db
+package apiconfig
 
 import (
 	"github.com/rwscode/unipay/models"
-	"gorm.io/gorm"
 )
 
-type PaginationFunc func(db *gorm.DB, page, limit int, count *int64, list any) (err error)
-
-var (
-	gdb      *gorm.DB
-	pageFunc PaginationFunc
-)
-
-func SetDb(db *gorm.DB)                           { gdb = db }
-func GetDb() *gorm.DB                             { return gdb }
-func SetPagination(paginationFunc PaginationFunc) { pageFunc = paginationFunc }
-func GetPagination() PaginationFunc               { return pageFunc }
-
-func AutoMigrate() (err error) {
-	return gdb.AutoMigrate(
-		new(models.Channel),
-		new(models.ChannelParam),
-		new(models.Order),
-		new(models.ExchangeRate),
-	)
+func (r *UpdateReq) Transform() models.ApiConfig {
+	return models.ApiConfig{
+		Id:                1,
+		Trc20Apikey:       r.Trc20Apikey,
+		Erc20Apikey:       r.Erc20Apikey,
+		OkLinkTrc20Apikey: r.OkLinkTrc20Apikey,
+		OkLinkErc20Apikey: r.OkLinkErc20Apikey,
+	}
 }

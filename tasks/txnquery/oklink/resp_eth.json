@@ -1,0 +1,34 @@
+{
+  "code": "0",
+  "msg": "",
+  "data": [
+    {
+      "page": "1",
+      "limit": "1",
+      "totalPage": "12",
+      "chainFullName": "Ethereum",
+      "chainShortName": "ETH",
+      "transactionLists": [
+        {
+          "txId": "0xb21b0b84b26ba3b318c778ee4fc7eaea678a70fdd5e27d82fa7defdd3b798235",
+          "methodId": "",
+          "blockHash": "0xab1a0676c29e481942671f623101f3d889d06e6d6cd0344c173901fde4a8ec69",
+          "height": "19338802",
+          "transactionTime": "1709277731000",
+          "from": "0x8e57b92db25547521692f9f467214ed5e3b4faad",
+          "to": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+          "isFromContract": false,
+          "isToContract": true,
+          "amount": "700",
+          "transactionSymbol": "USDT",
+          "txFee": "",
+          "state": "success",
+          "tokenId": "",
+          "tokenContractAddress": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+          "challengeStatus": "",
+          "l1OriginHash": ""
+        }
+      ]
+    }
+  ]
+}

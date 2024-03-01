@@ -16,14 +16,16 @@ import "fmt"
 type (
 	Channel       = UnipayChannel
 	UnipayChannel struct {
-		Id                         uint   `gorm:"column:id;type:uint;primaryKey;autoIncrement:true;comment:支付通道id" json:"id"`                                                                 // 支付通道id
-		Name                       string `gorm:"column:name;type:varchar(50);not null;default:'';comment:支付通道名称" json:"name"`                                                                // 支付通道名称
+		Id                 uint   `gorm:"column:id;type:uint;primaryKey;autoIncrement:true;comment:支付通道id" json:"id"`                                     // 支付通道id
+		Name               string `gorm:"column:name;type:varchar(50);not null;default:'';comment:支付通道名称" json:"name"`                                    // 支付通道名称
+		LogoUrl            string `gorm:"column:logo_url;type:varchar(500);not null;default:'';comment:支付通道LogoUrl" json:"logo_url"`                      // 支付通道LogoUrl
+		AmountType         byte   `gorm:"column:amount_type;type:tinyint;not null;default:1;comment:金额类型：1元2分" json:"amount_type"`                        // 金额类型：1元2分
+		AmountValidateCond string `gorm:"column:amount_validate_cond;type:varchar(500);not null;default:'';comment:支付金额验证条件" json:"amount_validate_cond"` // 支付金额验证条件
+		Type               string `gorm:"column:type;type:varchar(20);not null;default:'normal';comment:类型 normal/trc20/erc20;index" json:"type"`         // 类型 normal/trc20/erc20
+
 		AdminUrl                   string `gorm:"column:admin_url;type:varchar(500);not null;default:'';comment:后台登录Url" json:"admin_url"`                                                    // 后台登录Url
 		AdminUser                  string `gorm:"column:admin_user;type:varchar(200);not null;default:'';comment:后台登录用户名" json:"admin_user"`                                                  // 后台登录用户名
 		AdminPasswd                string `gorm:"column:admin_passwd;type:varchar(200);not null;default:'';comment:后台登录密码" json:"admin_passwd"`                                               // 后台登录密码
-		LogoUrl                    string `gorm:"column:logo_url;type:varchar(500);not null;default:'';comment:支付通道LogoUrl" json:"logo_url"`                                                  // 支付通道LogoUrl
-		AmountType                 byte   `gorm:"column:amount_type;type:tinyint;not null;default:1;comment:金额类型：1元2分" json:"amount_type"`                                                    // 金额类型：1元2分
-		AmountValidateCond         string `gorm:"column:amount_validate_cond;type:varchar(500);not null;default:'';comment:支付金额验证条件" json:"amount_validate_cond"`                             // 支付金额验证条件
 		ReqUrl                     string `gorm:"column:req_url;type:varchar(500);not null;default:'';comment:请求url" json:"req_url"`                                                          // 请求url
 		ReqMethod                  string `gorm:"column:req_method;type:varchar(20);not null;default:'POST';comment:请求方式" json:"req_method"`                                                  // 请求方式
 		ReqContentType             string `gorm:"column:req_content_type;type:varchar(50);not null;default:'json';comment:请求数据类型" json:"req_content_type"`                                    // 请求数据类型
@@ -36,11 +38,14 @@ type (
 		NotifyPayIdExpr            string `gorm:"column:notify_pay_id_expr;type:varchar(500);not null;default:'';comment:回调支付成功获取Id表达式" json:"notify_pay_id_expr"`                            // 回调支付成功获取Id表达式
 		NotifyPayReturnContent     string `gorm:"column:notify_pay_return_content;type:varchar(500);not null;default:'success';comment:回调支付成功返回内容" json:"notify_pay_return_content"`          // 回调支付成功返回内容
 		NotifyPayReturnContentType string `gorm:"column:notify_pay_return_content_type;type:varchar(500);not null;default:'text';comment:回调支付成功返回数据类型" json:"notify_pay_return_content_type"` // 回调支付成功返回数据类型
-		State                      byte   `gorm:"column:state;type:tinyint;not null;default:1;comment:状态：1启用2禁用;index" json:"state"`                                                          // 状态：1启用2禁用
-		Sort                       byte   `gorm:"column:sort;type:tinyint;not null;default:0;comment:升序排序值" json:"sort"`                                                                      // 升序排序值
-		Remark                     string `gorm:"column:remark;type:varchar(500);not null;default:'';comment:备注" json:"remark"`                                                               // 备注
-		CreateTime                 string `gorm:"column:create_time;type:varchar(20);not null;default:'';comment:创建时间" json:"create_time"`                                                    // 创建时间
-		UpdateTime                 string `gorm:"column:update_time;type:varchar(20);not null;default:'';comment:修改时间" json:"update_time"`                                                    // 修改时间
+
+		Apikey string `gorm:"column:apikey;type:varchar(200);not null;default:;comment:Apikey" json:"apikey"` // Apikey
+
+		State      byte   `gorm:"column:state;type:tinyint;not null;default:1;comment:状态：1启用2禁用;index" json:"state"`       // 状态：1启用2禁用
+		Sort       byte   `gorm:"column:sort;type:tinyint;not null;default:0;comment:升序排序值" json:"sort"`                   // 升序排序值
+		Remark     string `gorm:"column:remark;type:varchar(500);not null;default:'';comment:备注" json:"remark"`            // 备注
+		CreateTime string `gorm:"column:create_time;type:varchar(20);not null;default:'';comment:创建时间" json:"create_time"` // 创建时间
+		UpdateTime string `gorm:"column:update_time;type:varchar(20);not null;default:'';comment:修改时间" json:"update_time"` // 修改时间
 	}
 )
 

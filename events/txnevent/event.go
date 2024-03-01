@@ -9,30 +9,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package db
+package txnevent
 
 import (
+	"github.com/go-the-way/events"
 	"github.com/rwscode/unipay/models"
-	"gorm.io/gorm"
 )
 
-type PaginationFunc func(db *gorm.DB, page, limit int, count *int64, list any) (err error)
+type event struct{}
 
-var (
-	gdb      *gorm.DB
-	pageFunc PaginationFunc
-)
+// 虚拟支付订单创建时
+var created = events.NewHandler[event, models.Order]()
 
-func SetDb(db *gorm.DB)                           { gdb = db }
-func GetDb() *gorm.DB                             { return gdb }
-func SetPagination(paginationFunc PaginationFunc) { pageFunc = paginationFunc }
-func GetPagination() PaginationFunc               { return pageFunc }
-
-func AutoMigrate() (err error) {
-	return gdb.AutoMigrate(
-		new(models.Channel),
-		new(models.ChannelParam),
-		new(models.Order),
-		new(models.ExchangeRate),
-	)
-}
+func BindCreated(fn func(order models.Order)) { created.Bind(fn) }
+func FireCreated(order models.Order)          { created.Fire(order) }
