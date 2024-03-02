@@ -33,11 +33,14 @@ func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
 	pkg.IfNotEmptyFunc(req.BusinessId3, func() { q.Where("business_id3=?", req.BusinessId3) })
 	pkg.IfNotEmptyFunc(req.TradeId, func() { q.Where("trade_id=?", req.TradeId) })
 	pkg.IfGt0Func(req.PayChannelId, func() { q.Where("pay_channel_id=?", req.PayChannelId) })
-	pkg.IfGt0Func(req.Amount, func() { q.Where("amount=?", req.Amount) })
-	pkg.IfGt0Func(req.Amount1, func() { q.Where("amount>=?", req.Amount1) })
-	pkg.IfGt0Func(req.Amount2, func() { q.Where("amount>=?", req.Amount2) })
+	pkg.IfNotEmptyFunc(req.PayChannelType, func() { q.Where("pay_channel_type=?", req.PayChannelType) })
+	pkg.IfNotEmptyFunc(req.AmountYuan, func() { q.Where("amount_yuan=?", req.AmountYuan) })
+	pkg.IfNotEmptyFunc(req.AmountFen, func() { q.Where("amount_fen=?", req.AmountFen) })
 	pkg.IfNotEmptyFunc(req.Message, func() { q.Where("message=?", req.Message) })
 	pkg.IfGt0Func(req.State, func() { q.Where("state=?", req.State) })
+	pkg.IfNotEmptyFunc(req.Other1, func() { q.Where("other1 like concat('%',?,'%')", req.Other1) })
+	pkg.IfNotEmptyFunc(req.Other2, func() { q.Where("other2 like concat('%',?,'%')", req.Other2) })
+	pkg.IfNotEmptyFunc(req.Other3, func() { q.Where("other3 like concat('%',?,'%')", req.Other3) })
 	pkg.IfNotEmptyFunc(req.Remark1, func() { q.Where("remark1 like concat('%',?,'%')", req.Remark1) })
 	pkg.IfNotEmptyFunc(req.Remark2, func() { q.Where("remark2 like concat('%',?,'%')", req.Remark2) })
 	pkg.IfNotEmptyFunc(req.Remark3, func() { q.Where("remark3 like concat('%',?,'%')", req.Remark3) })
@@ -47,6 +50,8 @@ func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
 	pkg.IfNotEmptyFunc(req.PayTime2, func() { q.Where("pay_time<=concat(?,' 23:59:59')", req.PayTime2) })
 	pkg.IfNotEmptyFunc(req.UpdateTime1, func() { q.Where("update_time>=concat(?,' 00:00:00')", req.UpdateTime1) })
 	pkg.IfNotEmptyFunc(req.UpdateTime2, func() { q.Where("update_time<=concat(?,' 23:59:59')", req.UpdateTime2) })
+	pkg.IfNotEmptyFunc(req.CancelTime1, func() { q.Where("cancel_time>=concat(?,' 00:00:00')", req.CancelTime1) })
+	pkg.IfNotEmptyFunc(req.CancelTime1, func() { q.Where("cancel_time<=concat(?,' 23:59:59')", req.CancelTime2) })
 	if req.OrderBy != "" {
 		q.Order(req.OrderBy)
 	}
@@ -120,7 +125,15 @@ func (s *service) Paid(req PaidReq, callback ...CallbackFunc) (err error) {
 }
 
 func (s *service) Cancel(req CancelReq, callback ...CallbackFunc) (err error) {
-	if err = db.GetDb().Model(&models.Order{Id: req.Id}).Updates(models.Order{Message: req.Message, State: models.OrderStateCancelled, UpdateTime: pkg.TimeNowStr()}).Error; err != nil {
+	if req.CancelTime == "" {
+		req.CancelTime = pkg.TimeNowStr()
+	}
+	if err = db.GetDb().Model(&models.Order{Id: req.Id}).Updates(models.Order{
+		Message:    req.Message,
+		State:      models.OrderStateCancelled,
+		UpdateTime: pkg.TimeNowStr(),
+		CancelTime: req.CancelTime,
+	}).Error; err != nil {
 		return
 	}
 	s.callback(req.Id, callback...)

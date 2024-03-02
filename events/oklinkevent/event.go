@@ -9,10 +9,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package etherscanevent
+package oklinkevent
 
 import (
+	"fmt"
 	"github.com/go-the-way/events"
+	"github.com/rwscode/unipay/deps/db"
+	"github.com/rwscode/unipay/events/logevent"
 	"github.com/rwscode/unipay/models"
 )
 
@@ -36,7 +39,27 @@ func task() {
 	for {
 		select {
 		case order := <-ch:
-			startReq(order)
+			conf := getApiConfig()
+			if conf.Trc20Apikey == "" {
+				logevent.Save(models.NewLog(fmt.Sprintf("订单号[%s]类型[%s]查询交易记录退出，ok_link_trc20_apikey为空", order.Id, order.PayChannelType)))
+				continue
+			}
+			if conf.Erc20Apikey == "" {
+				logevent.Save(models.NewLog(fmt.Sprintf("订单号[%s]类型[%s]查询交易记录退出，ok_link_erc20_apikey为空", order.Id, order.PayChannelType)))
+				continue
+			}
+			km := map[string]string{"erc20": conf.Erc20Apikey, "trc20": conf.Trc20Apikey}
+			startReq(order, km[order.PayChannelType], tm[order.PayChannelType])
 		}
 	}
+}
+
+type apiConfig struct {
+	Trc20Apikey string `gorm:"column:ok_link_trc20_apikey"`
+	Erc20Apikey string `gorm:"column:ok_link_erc20_apikey"`
+}
+
+func getApiConfig() (conf apiConfig) {
+	_ = db.GetDb().Model(new(models.ApiConfig)).Where("id=1").Select("ok_link_trc20_apikey", "ok_link_erc20_apikey").Scan(&conf).Error
+	return
 }

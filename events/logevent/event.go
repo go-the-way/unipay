@@ -9,17 +9,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package oklinkerc20event
+package logevent
 
 import (
+	"fmt"
 	"github.com/go-the-way/events"
+	"github.com/rwscode/unipay/deps/db"
 	"github.com/rwscode/unipay/models"
 )
 
-func Run() {
-
-}
+func Save(log *models.Log) { event.Fire(log) }
 
 type evt struct{}
 
-var event = events.NewHandler[evt, models.Order]()
+var event = events.NewHandler[evt, *models.Log]()
+
+func init() { event.Bind(bind) }
+
+func bind(log *models.Log) {
+	if err := db.GetDb().Create(log).Error; err != nil {
+		fmt.Println("log保存错误：", err)
+	}
+}

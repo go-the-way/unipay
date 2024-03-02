@@ -14,15 +14,20 @@ package apilogevent
 import (
 	"github.com/go-the-way/events"
 	"github.com/rwscode/unipay/deps/db"
+	"github.com/rwscode/unipay/events/logevent"
 	"github.com/rwscode/unipay/models"
 )
 
-func Send(log models.ApiLog) { event.Fire(log) }
+func Save(log *models.ApiLog) { event.Fire(log) }
 
 type evt struct{}
 
-var event = events.NewHandler[evt, models.ApiLog]()
+var event = events.NewHandler[evt, *models.ApiLog]()
 
 func init() { event.Bind(bind) }
 
-func bind(log models.ApiLog) { _ = db.GetDb().Model(new(models.ApiLog)).Create(log).Error }
+func bind(log *models.ApiLog) {
+	if err := db.GetDb().Model(new(models.ApiLog)).Create(log).Error; err != nil {
+		logevent.Save(models.NewLog("保存api log错误：" + err.Error()))
+	}
+}

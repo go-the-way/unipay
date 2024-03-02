@@ -13,6 +13,7 @@ package pkg
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -31,7 +32,20 @@ func TimeNowStr() string                   { return TimeNow().Format("2006-01-02
 func TimeNowNumStr() string                { return TimeNow().Format("20060102150405") }
 func TimeNowStamp() string                 { return fmt.Sprintf("%d", TimeNow().Unix()) }
 func TimeNowStampLong() string             { return fmt.Sprintf("%d", TimeNow().UnixMilli()) }
-
+func ParseTime(str string) (t time.Time) {
+	t, _ = time.Parse("2006-01-02 15:04:05", str)
+	return
+}
+func FormatTime(t time.Time) (str string) {
+	return t.Format("2006-01-02 15:04:05")
+}
+func FromUnix(unixStr string) time.Time {
+	unix, _ := strconv.ParseInt(unixStr, 10, 64)
+	if len(unixStr) == 10 {
+		return time.UnixMilli(unix)
+	}
+	return time.UnixMicro(unix)
+}
 func GetTimeMap() map[string]any {
 	// 时间变量 => Time.
 	// 当前时间`2006-01-02 15:04:05` => NowTime

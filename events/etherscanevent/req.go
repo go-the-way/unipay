@@ -15,27 +15,28 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/rwscode/unipay/events/oklinkerc20event"
+	"github.com/rwscode/unipay/deps/pkg"
+	"github.com/rwscode/unipay/events/apilogevent"
+	"github.com/rwscode/unipay/events/oklinkevent"
+	"github.com/rwscode/unipay/events/orderevent"
 	"github.com/rwscode/unipay/models"
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 )
 
-// curl -i "https://api.etherscan.io/api?module=account&action=tokentx&contractaddress=0xdac17f958d2ee523a2206206994597c13d831ec7
-// &address=0xdac17f958d2ee523a2206206994597c13d831ec7&startblock=0&endblock=99999999&page=1&offset=1&sort=desc
-// &apikey=VD5PCBEH24K5MYIMATY91XBINHGI2YDSDD"
+// curl -i "https://api.etherscan.io/api?module=account&action=tokentx&contractaddress=0xdac17f958d2ee523a2206206994597c13d831ec7&address=0xdac17f958d2ee523a2206206994597c13d831ec7&startblock=0&endblock=99999999&page=1&offset=2&sort=desc&apikey=VD5PCBEH24K5MYIMATY91XBINHGI2YDSDD"
 
 var (
-	apiUrl = "https://xwwww.io/api?module=account&action=tokentx&contractaddress=0xdac17f958d2ee523a2206206994597c13d831ec7&address=%s&startblock=0&endblock=99999999&apikey=%s&page=%s&offset=%s&sort=desc"
-	// apiUrl       = "https://api.etherscan.io/api?module=account&action=tokentx&contractaddress=0xdac17f958d2ee523a2206206994597c13d831ec7&address=%s&startblock=0&endblock=99999999&apikey=%s&page=%s&offset=%s&sort=desc"
+	apiUrl    = "https://api.etherscan.io/api?module=account&action=tokentx&contractaddress=0xdac17f958d2ee523a2206206994597c13d831ec7&address=%s&startblock=0&endblock=99999999&apikey=%s&page=%s&offset=%s&sort=desc"
 	getReqUrl = func(address, apikey, page, offset string) string {
 		return fmt.Sprintf(apiUrl, address, apikey, page, offset)
 	}
 )
 
-func startReq(order models.Order, address, apikey string) {
+func startReq(order *models.Order, conf apiConfig) {
 	var (
 		page        = 1
 		offset      = "500"
@@ -43,11 +44,14 @@ func startReq(order models.Order, address, apikey string) {
 		maxErrCount = 3
 		sleepDur    = time.Millisecond * 200
 		reqTimeout  = time.Second * 30
+		client      = &http.Client{Timeout: reqTimeout}
 	)
+	errLog := func(reqUrl string, err error, statusCode int) *models.ApiLog {
+		return models.NewApiLogGetNoParam(reqUrl, err.Error(), fmt.Sprintf("%d", statusCode))
+	}
 	for {
-		reqUrl := getReqUrl(address, apikey, fmt.Sprintf("%d", page), offset)
+		reqUrl := getReqUrl(order.Other1, conf.Apikey, fmt.Sprintf("%d", page), offset)
 		req, _ := http.NewRequest(http.MethodGet, reqUrl, nil)
-		client := &http.Client{Timeout: reqTimeout}
 		resp, err := client.Do(req)
 		if err != nil {
 			var urlError *url.Error
@@ -56,37 +60,64 @@ func startReq(order models.Order, address, apikey string) {
 				// 服务器挂了
 				errCount++
 			}
-			// TODO: save apilog
-			// apilogevent.Send(models.ApiLog{})
+			apilogevent.Save(errLog(reqUrl, err, resp.StatusCode))
 		} else {
 			buf, readErr := io.ReadAll(resp.Body)
 			if readErr != nil {
-				// TODO: save apilog
-				// apilogevent.Send(models.ApiLog{})
+				apilogevent.Save(errLog(reqUrl, errors.New("读取响应错误："+err.Error()), resp.StatusCode))
 			} else {
 				var rm respModel
 				if err = json.Unmarshal(buf, &rm); err != nil {
-					// TODO: save apilog
-					// apilogevent.Send(models.ApiLog{})
+					apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), resp.StatusCode))
 				} else {
-					if matched := txnQuery(order, rm); matched {
+					if len(rm.Result) > 0 {
+						page++
+					}
+
+					if len(rm.Result) <= 0 {
+						page = 1
+					}
+
+					if matched := txnFind(order, rm); matched {
 						// 找到该订单
+						orderevent.Paid(order)
 						break
 					}
 				}
 			}
 		}
-		if errCount >= maxErrCount {
-			oklinkerc20event.Run()
+
+		if order.CancelTimeBeforeNow() {
+			// 订单失效
+			orderevent.Expired(order)
 			break
 		}
+
+		if errCount >= maxErrCount {
+			// 切换到oklink
+			oklinkevent.Run(order)
+			break
+		}
+
 		time.Sleep(sleepDur)
 	}
 }
 
-func txnQuery(order models.Order, rm respModel) (matched bool) {
-	fmt.Println(order)
-	fmt.Println(rm)
+func txnFind(order *models.Order, rm respModel) (matched bool) {
+	for _, tx := range rm.Result {
+		// "tokenDecimal": "6",
+		tokenDecimal, _ := strconv.Atoi(tx.TokenDecimal)
+		orderAmount, _ := strconv.Atoi(order.AmountYuan)
+		// USD
+		amount := orderAmount * tokenDecimal
+		// "timeStamp": "1535035994",
+		txTime := pkg.FromUnix(tx.TimeStamp)
+		if tx.To == order.Other1 && fmt.Sprintf("%d", amount) == tx.Value && order.CreateTimeBeforeTime(txTime) {
+			matched = true
+			order.PayTime = pkg.FormatTime(txTime)
+			break
+		}
+	}
 	return
 }
 

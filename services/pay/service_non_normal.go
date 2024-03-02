@@ -9,17 +9,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package txnevent
-
-import (
-	"github.com/go-the-way/events"
-	"github.com/rwscode/unipay/models"
-)
-
-type event struct{}
-
-// 虚拟支付订单创建时
-var created = events.NewHandler[event, models.Order]()
-
-func BindCreated(fn func(order models.Order)) { created.Bind(fn) }
-func FireCreated(order models.Order)          { created.Fire(order) }
+package pay

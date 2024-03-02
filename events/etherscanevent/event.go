@@ -12,50 +12,54 @@
 package etherscanevent
 
 import (
+	"fmt"
 	"github.com/go-the-way/events"
 	"github.com/rwscode/unipay/deps/db"
+	"github.com/rwscode/unipay/events/logevent"
 	"github.com/rwscode/unipay/models"
+	"time"
 )
 
-func Run(order models.Order, address Address) { event.Fire(order, address) }
+func Run(order *models.Order) { event.Fire(order) }
 
-type (
-	evt     struct{}
-	Address = string
-	arg     struct {
-		models.Order
-		Address
-	}
-)
+type evt struct{}
 
 var (
-	event = events.NewBIHandler[evt, models.Order, Address]()
-	ch    = make(chan arg)
+	event = events.NewHandler[evt, *models.Order]()
+	ch    = make(chan *models.Order, 1)
 )
 
 func init() {
-	event.Bind(bind)
 	go task()
+	event.Bind(bind)
 }
 
-func bind(order models.Order, address Address) { go func() { ch <- arg{order, address} }() }
+func bind(order *models.Order) { go func() { ch <- order }() }
 
 func task() {
 	for {
 		select {
-		case a := <-ch:
-			apikey := getApikey()
-			if apikey == "" {
-				// TODO: save api log
-				// apilogevent.Send(models.ApiLog{})
-			} else {
-				startReq(a.Order, a.Address, apikey)
+		case order := <-ch:
+			conf := getApiConfig()
+			if conf.Apikey == "" {
+				logevent.Save(models.NewLog(fmt.Sprintf("订单号[%s]类型[%s]查询交易记录退出，erc20_apikey为空", order.Id, order.PayChannelType)))
+				continue
 			}
+			dur, _ := time.ParseDuration(fmt.Sprintf("%dm", conf.ValidPeriodMinute))
+			startReq(order.SetCancelTime(dur), conf)
 		}
 	}
 }
 
-func getApikey() (apikey string) {
-	_ = db.GetDb().Model(new(models.ApiConfig)).Where("id=1").Scan(&apikey).Error
+type apiConfig struct {
+	Apikey            string `gorm:"column:erc20_apikey"`
+	ValidPeriodMinute int    `gorm:"column:valid_period_minute"`
+}
+
+func getApiConfig() (conf apiConfig) {
+	_ = db.GetDb().Model(new(models.ApiConfig)).Where("id=1").Select("erc20_apikey").Scan(&conf).Error
+	if conf.ValidPeriodMinute == 0 {
+		conf.ValidPeriodMinute = 15
+	}
 	return
 }

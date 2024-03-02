@@ -16,7 +16,7 @@ type (
 	UnipayWalletAddress struct {
 		Id         uint   `gorm:"column:id;type:uint;primaryKey;autoIncrement:true;comment:id" json:"id"`                           // id
 		Address    string `gorm:"column:address;type:varchar(200);not null;default:'';comment:钱包地址" json:"address"`                 // 钱包地址
-		protocol   string `gorm:"column:protocol;type:varchar(50);not null;default:'trc20';comment:协议 trc20/erc20" json:"protocol"` // 协议 trc20/erc20
+		Protocol   string `gorm:"column:protocol;type:varchar(50);not null;default:'trc20';comment:协议 trc20/erc20" json:"protocol"` // 协议 trc20/erc20
 		State      byte   `gorm:"column:state;type:tinyint;not null;default:1;comment:状态：1启用2禁用;index" json:"state"`                // 状态：1启用2禁用
 		Remark     string `gorm:"column:remark;type:varchar(500);not null;default:'';comment:备注" json:"remark"`                     // 备注
 		CreateTime string `gorm:"column:create_time;type:varchar(20);not null;default:'';comment:创建时间" json:"create_time"`          // 创建时间

@@ -15,10 +15,10 @@ import "github.com/rwscode/unipay/models"
 
 type (
 	UpdateReq struct {
-		Trc20Apikey       string `validate:"minlength(1,trc20_apikey不能为空)" json:"trc_20_apikey"`                // trc20_apikey
 		Erc20Apikey       string `validate:"minlength(1,erc20_apikey不能为空)" json:"erc_20_apikey"`                // erc20_apikey
 		OkLinkTrc20Apikey string `validate:"minlength(1,ok_link_trc20_apikey不能为空)" json:"ok_link_trc20_apikey"` // ok_link_trc20_apikey
 		OkLinkErc20Apikey string `validate:"minlength(1,ok_link_erc20_apikey不能为空)" json:"ok_link_erc20_apikey"` // ok_link_erc20_apikey
+		ValidPeriodMinute uint   `validate:"min(1,valid_period_minute不能为空)" json:"valid_period_minute"`         // valid_period_minute
 
 		Callback func(config models.ApiConfig) `json:"callback"`
 	}

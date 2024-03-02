@@ -19,6 +19,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -49,8 +50,20 @@ func channelAmountValid(c channel.GetResp, req Req) (err error) {
 	if avCond == "" {
 		return
 	}
-	if valid := pkg.ValidAmount(req.Amount, c.AmountType == models.ChannelAmountTypeYuan, avCond); !valid {
-		err = errors.New(fmt.Sprintf("支付金额不符合该通道验证条件"))
+	ay, ayErr := strconv.ParseUint(req.AmountYuan, 10, 64)
+	if ayErr != nil {
+		return errors.New("支付金额元不合法")
+	}
+	af, afErr := strconv.ParseUint(req.AmountFen, 10, 64)
+	if afErr != nil {
+		return errors.New("支付金额分不合法")
+	}
+	if valid := pkg.ValidAmount(uint(ay), true, avCond); !valid {
+		err = errors.New(fmt.Sprintf("支付金额元不符合该通道验证条件"))
+		return
+	}
+	if valid := pkg.ValidAmount(uint(af), false, avCond); !valid {
+		err = errors.New(fmt.Sprintf("支付金额分不符合该通道验证条件"))
 		return
 	}
 	return
@@ -156,12 +169,16 @@ func buildOrderAddReq(c channel.GetResp, req Req, resp Resp) order.AddReq {
 	return order.AddReq{
 		PayChannelId:   c.Id,
 		PayChannelName: c.Name,
+		PayChannelType: models.OrderTypeNormal,
 		BusinessId1:    req.BusinessId1,
 		BusinessId2:    req.BusinessId2,
 		BusinessId3:    req.BusinessId3,
-		Amount:         req.Amount,
+		AmountFen:      req.AmountFen,
 		AmountYuan:     req.AmountYuan,
 		Message:        resp.Message,
+		Other1:         req.Other1,
+		Other2:         req.Other2,
+		Other3:         req.Other3,
 		Remark1:        req.Remark1,
 		Remark2:        req.Remark2,
 		Remark3:        req.Remark3,
