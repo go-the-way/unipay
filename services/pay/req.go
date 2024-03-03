@@ -15,30 +15,32 @@ import "github.com/rwscode/unipay/models"
 
 type (
 	Req struct {
-		ChannelId   uint   `validate:"min(1,支付通道id不能为空)" form:"channel_id" json:"channel_id"`                                            // 支付通道id
-		AmountFen   string `validate:"minlength(1,支付金额分不能为空)" form:"amount_fen" json:"amount_fen"`                                      // 支付金额（单位：分）
-		AmountYuan  string `validate:"minlength(1,支付金额元不能为空)" form:"amount_yuan" json:"amount_yuan"`                                    // 支付金额（单位：元）
-		Subject     string `validate:"minlength(1,支付主题不能为空) maxlength(200,支付主题长度不能超过200)" form:"subject" json:"subject"`       // 支付主题
-		ClientIp    string `validate:"minlength(1,客户端Ip不能为空) maxlength(20,客户端Ip长度不能超过50)" form:"client_ip" json:"client_ip"`     // 客户端Ip
+		ChannelId   uint   `validate:"min(1,支付通道id不能为空)" form:"channel_id" json:"channel_id"`                                      // 支付通道id
+		AmountFen   string `validate:"minlength(1,支付金额分不能为空)" form:"amount_fen" json:"amount_fen"`                                 // 支付金额（单位：分）
+		AmountYuan  string `validate:"minlength(1,支付金额元不能为空)" form:"amount_yuan" json:"amount_yuan"`                               // 支付金额（单位：元）
+		Subject     string `validate:"minlength(1,支付主题不能为空) maxlength(200,支付主题长度不能超过200)" form:"subject" json:"subject"`           // 支付主题
+		ClientIp    string `validate:"minlength(1,客户端Ip不能为空) maxlength(20,客户端Ip长度不能超过50)" form:"client_ip" json:"client_ip"`       // 客户端Ip
 		NotifyUrl   string `validate:"minlength(1,回调Url不能为空) maxlength(500,回调Url长度不能超过500)" form:"notify_url" json:"notify_url"`   // 回调Url
 		BusinessId1 string `validate:"minlength(1,业务id1不能为空) maxlength(50,业务id1长度不能超过50)" form:"business_id1" json:"business_id1"` // 业务id1
-		BusinessId2 string `validate:"maxlength(50,业务id2长度不能超过50)" form:"business_id2" json:"business_id2"`                              // 业务id2
-		BusinessId3 string `validate:"maxlength(50,业务id3长度不能超过50)" form:"business_id3" json:"business_id3"`                              // 业务id3
-		Other1      string `validate:"maxlength(500,其他1长度不能超过500)" form:"other1" json:"other1"`                                          // 其他1
-		Other2      string `validate:"maxlength(500,其他2长度不能超过500)" form:"other2" json:"other2"`                                          // 其他2
-		Other3      string `validate:"maxlength(500,其他3长度不能超过500)" form:"other3" json:"other3"`                                          // 其他3
-		Remark1     string `validate:"maxlength(500,备注1长度不能超过500)" form:"remark1" json:"remark1"`                                        // 备注1
-		Remark2     string `validate:"maxlength(500,备注2长度不能超过500)" form:"remark2" json:"remark2"`                                        // 备注2
-		Remark3     string `validate:"maxlength(500,备注3长度不能超过500)" form:"remark3" json:"remark3"`                                        // 备注3
+		BusinessId2 string `validate:"maxlength(50,业务id2长度不能超过50)" form:"business_id2" json:"business_id2"`                        // 业务id2
+		BusinessId3 string `validate:"maxlength(50,业务id3长度不能超过50)" form:"business_id3" json:"business_id3"`                        // 业务id3
+		Other1      string `validate:"maxlength(500,其他1长度不能超过500)" form:"other1" json:"other1"`                                    // 其他1
+		Other2      string `validate:"maxlength(500,其他2长度不能超过500)" form:"other2" json:"other2"`                                    // 其他2
+		Other3      string `validate:"maxlength(500,其他3长度不能超过500)" form:"other3" json:"other3"`                                    // 其他3
+		Remark1     string `validate:"maxlength(500,备注1长度不能超过500)" form:"remark1" json:"remark1"`                                  // 备注1
+		Remark2     string `validate:"maxlength(500,备注2长度不能超过500)" form:"remark2" json:"remark2"`                                  // 备注2
+		Remark3     string `validate:"maxlength(500,备注3长度不能超过500)" form:"remark3" json:"remark3"`                                  // 备注3
+
+		E20PayPageUrl string `form:"-" json:"-"` // erc20/trc20支付页面Url
 
 		Callback func(req Req)
 	}
 	NotifyReq struct {
-		ChannelId   uint   `validate:"min(1,支付通道id不能为空)" form:"channel_id" json:"channel_id"`                                            // 支付通道id
+		ChannelId   uint   `validate:"min(1,支付通道id不能为空)" form:"channel_id" json:"channel_id"`                                      // 支付通道id
 		OrderId     string `validate:"minlength(1,订单id不能为空) maxlength(50,订单id长度不能超过50)" form:"order_id" json:"order_id"`           // 订单id
 		BusinessId1 string `validate:"minlength(1,业务id1不能为空) maxlength(50,业务id1长度不能超过50)" form:"business_id1" json:"business_id1"` // 业务id1
-		BusinessId2 string `validate:"maxlength(50,业务id2长度不能超过50)" form:"business_id2" json:"business_id2"`                              // 业务id2
-		BusinessId3 string `validate:"maxlength(50,业务id3长度不能超过50)" form:"business_id3" json:"business_id3"`                              // 业务id3
+		BusinessId2 string `validate:"maxlength(50,业务id2长度不能超过50)" form:"business_id2" json:"business_id2"`                        // 业务id2
+		BusinessId3 string `validate:"maxlength(50,业务id3长度不能超过50)" form:"business_id3" json:"business_id3"`                        // 业务id3
 
 		Callback func(req NotifyReq, order models.Order)
 	}

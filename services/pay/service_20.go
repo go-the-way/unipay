@@ -45,7 +45,10 @@ func e20Run(req Req, pm channel.GetResp, orderId string) (resp Resp, err error) 
 		return
 	}
 
+	resp.OrderId = curOrder.Id
+
 	// 2. 返回自定义二维码
+	resp.PayPageUrl = fmt.Sprintf("%s?order_id=%s", req.E20PayPageUrl, curOrder.Id)
 
 	// 3.发送订单 开始监听状态状态
 	switch curOrder.PayChannelType {

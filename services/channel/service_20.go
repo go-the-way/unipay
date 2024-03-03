@@ -13,6 +13,10 @@ package channel
 
 import (
 	_ "embed"
+
+	"bytes"
+	"errors"
+	"html/template"
 )
 
 var (
@@ -21,5 +25,13 @@ var (
 )
 
 func (s *service) E20Html(req E20HtmlReq) (resp E20HtmlResp, err error) {
+	buf := &bytes.Buffer{}
+	tpl := template.Must(template.New("").Parse(e20Html))
+	if err = tpl.Execute(buf, req); err != nil {
+		err = errors.New("解析错误：" + err.Error())
+		return
+	}
+	resp.Html = buf.String()
+	buf.Reset()
 	return
 }
