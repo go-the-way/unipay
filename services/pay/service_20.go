@@ -95,7 +95,7 @@ func getUsableWalletAddress(payChannelType string, orderAmount string) (address 
 	}
 
 	if len(addresses) <= 0 {
-		err = errors.New("无可用的钱包地址")
+		err = errors.New("没有可用的钱包地址")
 		return
 	}
 
@@ -114,7 +114,7 @@ func getUsableWalletAddress(payChannelType string, orderAmount string) (address 
 	for i := 1; i <= 99; i++ {
 		curAmount, _ = strconv.ParseFloat(orderAmount, 32)
 		for _, addr := range addresses {
-			curLockKey = fmt.Sprintf("%s-%f%s", addr, curAmount, decimalStr)
+			curLockKey = fmt.Sprintf("%s-%.2f%s", addr, curAmount, decimalStr)
 			if locked := lock.Have(curLockKey); !locked {
 				usable = true
 				usableAddr = addr
