@@ -33,6 +33,10 @@ func AutoMigrate() (err error) {
 		new(models.Channel),
 		new(models.ChannelParam),
 		new(models.Order),
+		new(models.ApiConfig),
 		new(models.UsdRate),
+		new(models.WalletAddress),
+		new(models.Log),
+		new(models.ApiLog),
 	)
 }

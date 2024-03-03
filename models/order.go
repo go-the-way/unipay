@@ -46,7 +46,7 @@ type (
 		CreateTime string `gorm:"column:create_time;type:varchar(20);not null;default:'';comment:创建时间" json:"create_time"` // 创建时间
 		UpdateTime string `gorm:"column:update_time;type:varchar(20);not null;default:'';comment:修改时间" json:"update_time"` // 修改时间
 		PayTime    string `gorm:"column:pay_time;type:varchar(20);not null;default:'';comment:支付时间" json:"pay_time"`       // 支付时间
-		CancelTime string `gorm:"column:update_time;type:varchar(20);not null;default:'';comment:取消时间" json:"cancel_time"` // 取消时间
+		CancelTime string `gorm:"column:cancel_time;type:varchar(20);not null;default:'';comment:取消时间" json:"cancel_time"` // 取消时间
 	}
 )
 
