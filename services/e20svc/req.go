@@ -16,7 +16,6 @@ import "github.com/rwscode/unipay/models"
 type (
 	OrderPayHtmlReq struct {
 		OrderId            string // 订单id
-		ExpirationTime     string // 订单失效时间毫秒时间戳
 		CheckOrderStateUrl string // 检查订单状态Url
 		RedirectUrl        string // 支付成功跳转Url
 
