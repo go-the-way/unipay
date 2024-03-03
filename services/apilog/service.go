@@ -20,7 +20,7 @@ import (
 type service struct{}
 
 func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
-	q := db.GetDb().Model(new(models.WalletAddress))
+	q := db.GetDb().Model(new(models.ApiLog))
 	pkg.IfGt0Func(req.Id, func() { q.Where("id=?", req.Id) })
 	pkg.IfNotEmptyFunc(req.ReqUrl, func() { q.Where("req_url like concat('%',?,'%')", req.ReqUrl) })
 	pkg.IfNotEmptyFunc(req.ReqMethod, func() { q.Where("req_method=?", req.ReqMethod) })

@@ -20,7 +20,7 @@ import (
 type service struct{}
 
 func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
-	q := db.GetDb().Model(new(models.WalletAddress))
+	q := db.GetDb().Model(new(models.Log))
 	pkg.IfGt0Func(req.Id, func() { q.Where("id=?", req.Id) })
 	pkg.IfNotEmptyFunc(req.Text, func() { q.Where("text like concat('%',?,'%')", req.Text) })
 	pkg.IfNotEmptyFunc(req.CreateTime1, func() { q.Where("create_time>=concat(?,' 00:00:00')", req.CreateTime1) })
