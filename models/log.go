@@ -30,7 +30,7 @@ type (
 		ReqUrl      string `gorm:"column:req_url;type:varchar(500);not null;default:'';comment:请求Url" json:"req_url"`           // 请求Url
 		ReqMethod   string `gorm:"column:req_method;type:varchar(10);not null;default:'GET';comment:请求方法" json:"req_method"`    // 请求方法
 		ReqParam    string `gorm:"column:req_param;type:varchar(2000);not null;default:'';comment:请求参数" json:"req_param"`       // 请求参数
-		RespContent string `gorm:"column:resp_content;type:varchar(2000);not null;default:'';comment:影响内容" json:"resp_content"` // 影响内容
+		RespContent string `gorm:"column:resp_content;type:varchar(2000);not null;default:'';comment:影响内容" json:"resp_content"` // 响应内容
 		RespCode    string `gorm:"column:resp_code;type:varchar(20);not null;default:'';comment:响应Code码" json:"resp_code"`      // 响应Code码
 		CreateTime  string `gorm:"column:create_time;type:varchar(20);not null;default:'';comment:创建时间" json:"create_time"`     // 创建时间
 	}

@@ -81,3 +81,14 @@ func CheckRateValid(rate string) (err error) {
 	}
 	return
 }
+
+func CheckAddressProtocolExists(address, protocol string) (err error) {
+	var cc int64
+	if err = db.GetDb().Model(new(models.WalletAddress)).Where("address=? and protocol=?", address, protocol).Count(&cc).Error; err != nil {
+		return
+	}
+	if cc > 0 {
+		return errors.New(fmt.Sprintf("钱包地址[%s]协议[%s]已存在", address, protocol))
+	}
+	return
+}
