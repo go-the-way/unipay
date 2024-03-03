@@ -9,11 +9,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package exchangerate
+package e20svc
 
 type (
-	UpdateReq struct {
-		Rate     string `validate:"maxlength(20,汇率长度不能超过20)" json:"rate"` // 汇率
-		Callback func(rate string)
+	OrderPayHtmlResp = E20HtmlResp
+	E20HtmlResp      struct {
+		Html string
 	}
 )

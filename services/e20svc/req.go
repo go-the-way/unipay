@@ -9,13 +9,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package walletaddress
+package e20svc
 
 import "github.com/rwscode/unipay/models"
 
 type (
-	GetPageResp struct {
-		Total int64                  `json:"total"`
-		List  []models.WalletAddress `json:"list"`
+	OrderPayHtmlReq struct {
+		OrderId            string // 订单id
+		ExpirationTime     string // 订单失效时间毫秒时间戳
+		CheckOrderStateUrl string // 检查订单状态Url
+		RedirectUrl        string // 支付成功跳转Url
+
+		*models.Order
+	}
+	E20HtmlReq struct {
+		OrderId            string // 订单id
+		Protocol           string // 协议 erc20/trc20
+		Amount             string // 支付金额
+		Address            string // 钱包地址
+		ExpirationTime     string // 订单失效时间毫秒时间戳
+		CheckOrderStateUrl string // 检查订单状态Url
+		RedirectUrl        string // 支付成功跳转Url
 	}
 )

@@ -9,16 +9,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package exchangerate
+package log
 
 var (
 	Service SVC = &service{}
 
-	Get    = Service.Get
-	Update = Service.Update
+	GetPage = Service.GetPage
 )
 
 type SVC interface {
-	Get() (resp GetResp, err error)
-	Update(req UpdateReq) (err error)
+	GetPage(req GetPageReq) (resp GetPageResp, err error)
 }

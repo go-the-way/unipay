@@ -72,6 +72,7 @@ func startReq(order *models.Order) {
 				} else {
 					if matched := txnFind(order, rm); matched {
 						// 找到该订单
+						orderevent.Paid(order)
 						break
 					}
 				}

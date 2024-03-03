@@ -22,7 +22,6 @@ var (
 	Enable     = Service.Enable
 	Disable    = Service.Disable
 	GetMatches = Service.GetMatches
-	E20Html    = Service.E20Html
 )
 
 type SVC interface {
@@ -34,5 +33,4 @@ type SVC interface {
 	Enable(req EnableReq) (err error)
 	Disable(req DisableReq) (err error)
 	GetMatches(req GetMatchesReq) (resp GetMatchesResp, err error)
-	E20Html(req E20HtmlReq) (resp E20HtmlResp, err error)
 }

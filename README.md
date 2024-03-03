@@ -37,10 +37,41 @@ The unified payment package
 - order.Cancel 取消
 - order.GetState 查询状态
 
+## Api配置
+- apiconfig.Get 获取
+- apiconfig.Update 修改
+
+## USD汇率
+- usdrate.Get 获取
+- usdrate.Update 修改
+
+## 钱包地址
+- walletaddress.GetPage 分页查询
+- walletaddress.Add 新增
+- walletaddress.Update 修改
+- walletaddress.Del 删除
+- walletaddress.Enable 启用
+- walletaddress.Disable 禁用
+
+## 系统日志
+- log.GetPage 分页查询
+
+## Api志
+- apilog.GetPage 分页查询
+
+## e20服务
+- e20svc.OrderPayHtml 订单支付HTML代码
+- e20svc.E20Html E20页面代码
+
 # Models
 - models.Channel/models.UnipayChannel 支付通道
 - models.ChannelParam/models.UnipayChannelParam 支付通道参数
 - models.Order/models.UnipayOrder 支付订单
+- models.ApiConfig/models.UnipayApiConfig Api配置
+- models.UsdRate/models.UnipayUsdRate USD汇率
+- models.WalletAddress/models.UnipayWalletAddress 钱包地址
+- models.Log/models.UnipayLog 系统日志
+- models.ApiLog/models.UnipayApiLog Api日志
 
 # Mono 模拟支付通道
 

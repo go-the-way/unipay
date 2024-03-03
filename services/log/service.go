@@ -9,36 +9,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package exchangerate
+package log
 
 import (
 	"github.com/rwscode/unipay/deps/db"
+	"github.com/rwscode/unipay/deps/pkg"
 	"github.com/rwscode/unipay/models"
 )
 
 type service struct{}
 
-func (s *service) Get() (resp GetResp, err error) {
-	err = db.GetDb().Model(new(models.ExchangeRate)).Where("id=1").Select("rate").Scan(&resp.Rate).Error
-	return
-}
-
-func (s *service) Update(req UpdateReq) (err error) {
-	var cc int64
-	if err = db.GetDb().Model(new(models.ExchangeRate)).Count(&cc).Error; err != nil {
-		return
+func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
+	q := db.GetDb().Model(new(models.WalletAddress))
+	pkg.IfGt0Func(req.Id, func() { q.Where("id=?", req.Id) })
+	pkg.IfNotEmptyFunc(req.Text, func() { q.Where("text like concat('%',?,'%')", req.Text) })
+	pkg.IfNotEmptyFunc(req.CreateTime1, func() { q.Where("create_time>=concat(?,' 00:00:00')", req.CreateTime1) })
+	pkg.IfNotEmptyFunc(req.CreateTime2, func() { q.Where("create_time<=concat(?,' 23:59:59')", req.CreateTime2) })
+	if req.OrderBy != "" {
+		q.Order(req.OrderBy)
 	}
-	if cc > 0 {
-		if err = db.GetDb().Updates(req.Transform()).Error; err != nil {
-			return
-		}
-	} else {
-		if err = db.GetDb().Create(req.Transform()).Error; err != nil {
-			return
-		}
-	}
-	if fn := req.Callback; fn != nil {
-		return
-	}
+	err = db.GetPagination()(q, req.Page, req.Limit, &resp.Total, &resp.List)
 	return
 }

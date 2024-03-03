@@ -36,7 +36,7 @@ var (
 	}
 )
 
-func startReq(order *models.Order, conf apiConfig) {
+func startReq(order *models.Order, apikey string) {
 	var (
 		page        = 1
 		offset      = "500"
@@ -50,7 +50,7 @@ func startReq(order *models.Order, conf apiConfig) {
 		return models.NewApiLogGetNoParam(reqUrl, err.Error(), fmt.Sprintf("%d", statusCode))
 	}
 	for {
-		reqUrl := getReqUrl(order.Other1, conf.Apikey, fmt.Sprintf("%d", page), offset)
+		reqUrl := getReqUrl(order.Other1, apikey, fmt.Sprintf("%d", page), offset)
 		req, _ := http.NewRequest(http.MethodGet, reqUrl, nil)
 		resp, err := client.Do(req)
 		if err != nil {

@@ -35,8 +35,10 @@ type (
 		PayQrUrl       string `gorm:"column:pay_qr_url;type:varchar(500);not null;default:'';comment:支付二维码Url" json:"pay_qr_url"`                                     // 支付二维码Url
 		State          byte   `gorm:"column:state;type:tinyint;not null;default:1;comment:支付状态：1待支付2已支付3已取消;index" json:"state"`                                      // 支付状态：1待支付2已支付3已取消
 		// 当类型为 trc20/erc20时 这个字段保存的是 钱包地址
-		Other1     string `gorm:"column:other1;type:varchar(100);not null;default:'';comment:其他字段1;index" json:"other1"`   // 其他字段1
-		Other2     string `gorm:"column:other2;type:varchar(100);not null;default:'';comment:其他字段2;index" json:"other2"`   // 其他字段2
+		Other1 string `gorm:"column:other1;type:varchar(100);not null;default:'';comment:其他字段1;index" json:"other1"` // 其他字段1
+		// 当类型为 trc20/erc20时 这个字段保存的是 金额元
+		Other2 string `gorm:"column:other2;type:varchar(100);not null;default:'';comment:其他字段2;index" json:"other2"` // 其他字段2
+		// 当类型为 trc20/erc20时 这个字段保存的是 金额分
 		Other3     string `gorm:"column:other3;type:varchar(100);not null;default:'';comment:其他字段3;index" json:"other3"`   // 其他字段3
 		Remark1    string `gorm:"column:remark1;type:varchar(500);not null;default:'';comment:备注1" json:"remark1"`         // 备注1
 		Remark2    string `gorm:"column:remark2;type:varchar(500);not null;default:'';comment:备注2" json:"remark2"`         // 备注2
@@ -92,10 +94,6 @@ func (o *Order) CreateTimeBeforeTimeStr(str string) (yes bool) {
 
 func (o *Order) CreateTimeBeforeTime(t time.Time) (yes bool) {
 	return pkg.ParseTime(o.CreateTime).Before(t)
-}
-func (o *Order) SetCancelTime(dur time.Duration) *Order {
-	o.CancelTime = pkg.FormatTime(time.Now().Add(dur))
-	return o
 }
 
 func (o *Order) LockKey() string {

@@ -9,13 +9,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package walletaddress
+package log
 
 import "github.com/rwscode/unipay/models"
 
 type (
 	GetPageResp struct {
-		Total int64                  `json:"total"`
-		List  []models.WalletAddress `json:"list"`
+		Total int64        `json:"total"`
+		List  []models.Log `json:"list"`
 	}
 )

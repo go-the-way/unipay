@@ -9,13 +9,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package walletaddress
-
-import "github.com/rwscode/unipay/models"
+package usdrate
 
 type (
-	GetPageResp struct {
-		Total int64                  `json:"total"`
-		List  []models.WalletAddress `json:"list"`
+	UpdateReq struct {
+		Rate     string `validate:"maxlength(20,汇率长度不能超过20)" json:"rate"` // 汇率
+		Callback func(rate string)
 	}
 )

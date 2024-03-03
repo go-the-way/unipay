@@ -17,7 +17,6 @@ import (
 	"github.com/rwscode/unipay/deps/db"
 	"github.com/rwscode/unipay/events/logevent"
 	"github.com/rwscode/unipay/models"
-	"time"
 )
 
 func Run(order *models.Order) { event.Fire(order) }
@@ -40,26 +39,17 @@ func task() {
 	for {
 		select {
 		case order := <-ch:
-			conf := getApiConfig()
-			if conf.Apikey == "" {
+			apikey := getApikey()
+			if apikey == "" {
 				logevent.Save(models.NewLog(fmt.Sprintf("订单号[%s]类型[%s]查询交易记录退出，erc20_apikey为空", order.Id, order.PayChannelType)))
 				continue
 			}
-			dur, _ := time.ParseDuration(fmt.Sprintf("%dm", conf.ValidPeriodMinute))
-			startReq(order.SetCancelTime(dur), conf)
+			startReq(order, apikey)
 		}
 	}
 }
 
-type apiConfig struct {
-	Apikey            string `gorm:"column:erc20_apikey"`
-	ValidPeriodMinute int    `gorm:"column:valid_period_minute"`
-}
-
-func getApiConfig() (conf apiConfig) {
-	_ = db.GetDb().Model(new(models.ApiConfig)).Where("id=1").Select("erc20_apikey").Scan(&conf).Error
-	if conf.ValidPeriodMinute == 0 {
-		conf.ValidPeriodMinute = 15
-	}
+func getApikey() (apikey string) {
+	_ = db.GetDb().Model(new(models.ApiConfig)).Where("id=1").Select("erc20_apikey").Scan(&apikey).Error
 	return
 }

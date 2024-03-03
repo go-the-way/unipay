@@ -9,15 +9,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package exchangerate
+package usdrate
 
 import (
+	"github.com/rwscode/unipay/deps/db"
 	"github.com/rwscode/unipay/models"
-	"github.com/rwscode/unipay/services/base"
 )
 
-func (r *UpdateReq) Check() (err error) { return base.CheckRateValid(r.Rate) }
+type service struct{}
 
-func (r *UpdateReq) Transform() models.ExchangeRate {
-	return models.ExchangeRate{Id: 1, Rate: r.Rate}
+func (s *service) Get() (resp GetResp, err error) {
+	err = db.GetDb().Model(new(models.UsdRate)).Where("id=1").Select("rate").Scan(&resp.Rate).Error
+	return
+}
+
+func (s *service) Update(req UpdateReq) (err error) {
+	var cc int64
+	if err = db.GetDb().Model(new(models.UsdRate)).Count(&cc).Error; err != nil {
+		return
+	}
+	if cc > 0 {
+		if err = db.GetDb().Updates(req.Transform()).Error; err != nil {
+			return
+		}
+	} else {
+		if err = db.GetDb().Create(req.Transform()).Error; err != nil {
+			return
+		}
+	}
+	if fn := req.Callback; fn != nil {
+		return
+	}
+	return
 }

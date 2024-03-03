@@ -64,13 +64,13 @@ func CheckChannelParamNameExist(channelId, channelParamId uint, name string) (er
 	return
 }
 
-func CheckOrderExist(transactionId string) (err error) {
+func CheckOrderExist(orderId string) (err error) {
 	var cc int64
-	if err = db.GetDb().Model(new(models.ChannelParam)).Where("id=?", transactionId).Count(&cc).Error; err != nil {
+	if err = db.GetDb().Model(new(models.Order)).Where("id=?", orderId).Count(&cc).Error; err != nil {
 		return
 	}
 	if cc <= 0 {
-		return errors.New(fmt.Sprintf("支付订单[%s]不存在", transactionId))
+		return errors.New(fmt.Sprintf("支付订单[%s]不存在", orderId))
 	}
 	return
 }

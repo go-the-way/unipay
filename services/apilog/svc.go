@@ -9,13 +9,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package walletaddress
+package apilog
 
-import "github.com/rwscode/unipay/models"
+var (
+	Service SVC = &service{}
 
-type (
-	GetPageResp struct {
-		Total int64                  `json:"total"`
-		List  []models.WalletAddress `json:"list"`
-	}
+	GetPage = Service.GetPage
 )
+
+type SVC interface {
+	GetPage(req GetPageReq) (resp GetPageResp, err error)
+}

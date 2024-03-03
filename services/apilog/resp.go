@@ -9,10 +9,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package exchangerate
+package apilog
+
+import "github.com/rwscode/unipay/models"
 
 type (
-	GetResp struct {
-		Rate string `json:"rate"` // 汇率
+	GetPageResp struct {
+		Total int64           `json:"total"`
+		List  []models.ApiLog `json:"list"`
 	}
 )

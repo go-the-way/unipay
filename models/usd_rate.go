@@ -9,13 +9,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package walletaddress
-
-import "github.com/rwscode/unipay/models"
+package models
 
 type (
-	GetPageResp struct {
-		Total int64                  `json:"total"`
-		List  []models.WalletAddress `json:"list"`
+	UsdRate       = UnipayUsdRate
+	UnipayUsdRate struct {
+		Id   uint   `gorm:"column:id;type:uint;primaryKey;autoIncrement:true;comment:id" json:"id"`                  // id
+		Rate string `gorm:"column:rate;type:varchar(20);not null;default:'';comment:美元对人民币汇率 CNY=汇率*金额" json:"rate"` // 美元对人民币汇率 CNY=汇率*金额
 	}
 )

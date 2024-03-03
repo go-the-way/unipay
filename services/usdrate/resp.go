@@ -9,29 +9,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package channel
+package usdrate
 
-import (
-	_ "embed"
-
-	"bytes"
-	"errors"
-	"html/template"
-)
-
-var (
-	//go:embed e20.html
-	e20Html string
-)
-
-func (s *service) E20Html(req E20HtmlReq) (resp E20HtmlResp, err error) {
-	buf := &bytes.Buffer{}
-	tpl := template.Must(template.New("").Parse(e20Html))
-	if err = tpl.Execute(buf, req); err != nil {
-		err = errors.New("解析错误：" + err.Error())
-		return
+type (
+	GetResp struct {
+		Rate string `json:"rate"` // 汇率
 	}
-	resp.Html = buf.String()
-	buf.Reset()
-	return
-}
+)

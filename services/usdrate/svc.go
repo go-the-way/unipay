@@ -9,12 +9,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package models
+package usdrate
 
-type (
-	ExchangeRate       = UnipayExchangeRate
-	UnipayExchangeRate struct {
-		Id   uint   `gorm:"column:id;type:uint;primaryKey;autoIncrement:true;comment:id" json:"id"`                  // id
-		Rate string `gorm:"column:rate;type:varchar(20);not null;default:'';comment:美元对人民币汇率 CNY=汇率*金额" json:"rate"` // 美元对人民币汇率 CNY=汇率*金额
-	}
+var (
+	Service SVC = &service{}
+
+	Get    = Service.Get
+	Update = Service.Update
 )
+
+type SVC interface {
+	Get() (resp GetResp, err error)
+	Update(req UpdateReq) (err error)
+}

@@ -9,13 +9,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package walletaddress
+package apilog
 
-import "github.com/rwscode/unipay/models"
+import (
+	"github.com/rwscode/unipay/services/base"
+)
 
 type (
-	GetPageResp struct {
-		Total int64                  `json:"total"`
-		List  []models.WalletAddress `json:"list"`
+	GetPageReq struct {
+		base.PageReq
+
+		OrderBy string `form:"order_by"` // 排序
+
+		Id          uint   `form:"id"`           // id
+		ReqUrl      string `form:"req_url"`      // 请求Url
+		ReqMethod   string `form:"req_method"`   // 请求方式
+		RespCode    string `form:"resp_code"`    // 响应码
+		CreateTime1 string `form:"create_time1"` // 创建时间
+		CreateTime2 string `form:"create_time2"` // 创建时间
 	}
 )

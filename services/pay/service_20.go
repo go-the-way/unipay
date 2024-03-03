@@ -16,12 +16,14 @@ import (
 	"fmt"
 	"github.com/rwscode/unipay/deps/db"
 	"github.com/rwscode/unipay/deps/lock"
+	"github.com/rwscode/unipay/deps/pkg"
 	"github.com/rwscode/unipay/events/etherscanevent"
 	"github.com/rwscode/unipay/events/tronscanevent"
 	"github.com/rwscode/unipay/models"
 	"github.com/rwscode/unipay/services/channel"
 	"github.com/rwscode/unipay/services/order"
 	"strconv"
+	"time"
 )
 
 func e20Run(req Req, pm channel.GetResp, orderId string) (resp Resp, err error) {
@@ -50,7 +52,10 @@ func e20Run(req Req, pm channel.GetResp, orderId string) (resp Resp, err error) 
 	// 2. 返回自定义二维码
 	resp.PayPageUrl = fmt.Sprintf("%s?order_id=%s", req.E20PayPageUrl, curOrder.Id)
 
-	// 3.发送订单 开始监听状态状态
+	// 3. 订单有效期
+	orderCancelTime(curOrder)
+
+	// 4.发送订单 开始监听状态状态
 	switch curOrder.PayChannelType {
 	default:
 	case "erc20":
@@ -59,6 +64,20 @@ func e20Run(req Req, pm channel.GetResp, orderId string) (resp Resp, err error) 
 		tronscanevent.Run(curOrder)
 	}
 
+	return
+}
+
+func orderCancelTime(order *models.Order) {
+	orderValidMinute := getOrderValidMinute()
+	dur, _ := time.ParseDuration(fmt.Sprintf("%dm", orderValidMinute))
+	order.CancelTime = pkg.FormatTime(pkg.ParseTime(order.CreateTime).Add(dur))
+}
+
+func getOrderValidMinute() (m uint) {
+	_ = db.GetDb().Model(new(models.ApiConfig)).Where("id=1").Select("valid_period_minute").Scan(&m).Error
+	if m == 0 {
+		m = 15
+	}
 	return
 }
 

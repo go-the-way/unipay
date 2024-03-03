@@ -22,5 +22,4 @@ type (
 	GetMatchesResp struct {
 		List []models.Channel `json:"list"`
 	}
-	E20HtmlResp struct{ Html string }
 )

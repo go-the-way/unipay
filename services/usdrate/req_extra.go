@@ -9,13 +9,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package walletaddress
+package usdrate
 
-import "github.com/rwscode/unipay/models"
-
-type (
-	GetPageResp struct {
-		Total int64                  `json:"total"`
-		List  []models.WalletAddress `json:"list"`
-	}
+import (
+	"github.com/rwscode/unipay/models"
+	"github.com/rwscode/unipay/services/base"
 )
+
+func (r *UpdateReq) Check() (err error) { return base.CheckRateValid(r.Rate) }
+
+func (r *UpdateReq) Transform() models.UsdRate {
+	return models.UsdRate{Id: 1, Rate: r.Rate}
+}

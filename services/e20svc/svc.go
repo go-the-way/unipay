@@ -9,13 +9,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package walletaddress
+package e20svc
 
-import "github.com/rwscode/unipay/models"
+var (
+	Service SVC = &service{}
+
+	OrderPayHtml = Service.OrderPayHtml
+	E20Html      = Service.E20Html
+)
 
 type (
-	GetPageResp struct {
-		Total int64                  `json:"total"`
-		List  []models.WalletAddress `json:"list"`
+	SVC interface {
+		OrderPayHtml(req OrderPayHtmlReq) (resp OrderPayHtmlResp, err error)
+		E20Html(req E20HtmlReq) (resp E20HtmlResp, err error)
 	}
 )

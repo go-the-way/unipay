@@ -12,17 +12,29 @@
 package unipay
 
 import (
+	"github.com/rwscode/unipay/services/apiconfig"
+	"github.com/rwscode/unipay/services/apilog"
 	"github.com/rwscode/unipay/services/channel"
 	"github.com/rwscode/unipay/services/channelparam"
+	"github.com/rwscode/unipay/services/e20svc"
+	"github.com/rwscode/unipay/services/log"
 	"github.com/rwscode/unipay/services/order"
 	"github.com/rwscode/unipay/services/pay"
+	"github.com/rwscode/unipay/services/usdrate"
+	"github.com/rwscode/unipay/services/walletaddress"
 )
 
 var (
-	PayService          = pay.Service
-	ChannelService      = channel.Service
-	ChannelParamService = channelparam.Service
-	OrderService        = order.Service
+	PayService           = pay.Service
+	ChannelService       = channel.Service
+	ChannelParamService  = channelparam.Service
+	OrderService         = order.Service
+	ApiConfigService     = apiconfig.Service
+	UsdRateService       = usdrate.Service
+	WalletAddressService = walletaddress.Service
+	LogService           = log.Service
+	ApiLogService        = apilog.Service
+	E20SvcService        = e20svc.Service
 )
 
 var (
@@ -62,4 +74,36 @@ var (
 	OrderPaid               = order.Paid
 	OrderCancel             = order.Cancel
 	OrderGetState           = order.GetState
+)
+
+var (
+	ApiConfigGet    = apiconfig.Get
+	ApiConfigUpdate = apiconfig.Update
+)
+
+var (
+	UsdRateGet    = usdrate.Get
+	UsdRateUpdate = usdrate.Update
+)
+
+var (
+	WalletAddressGetPage = walletaddress.GetPage
+	WalletAddressAdd     = walletaddress.Add
+	WalletAddressUpdate  = walletaddress.Update
+	WalletAddressDel     = walletaddress.Del
+	WalletAddressEnable  = walletaddress.Enable
+	WalletAddressDisable = walletaddress.Disable
+)
+
+var (
+	LogGetPage = log.GetPage
+)
+
+var (
+	ApiLogGetPage = apilog.GetPage
+)
+
+var (
+	E20SvcOrderPayHtml = e20svc.OrderPayHtml
+	E20SvcE20Html      = e20svc.E20Html
 )
