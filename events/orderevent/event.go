@@ -14,7 +14,6 @@ package orderevent
 import (
 	"fmt"
 	"github.com/go-the-way/events"
-	"github.com/rwscode/unipay"
 	"github.com/rwscode/unipay/deps/lock"
 	"github.com/rwscode/unipay/events/logevent"
 	"github.com/rwscode/unipay/models"
@@ -38,7 +37,7 @@ func init() {
 }
 
 func bindPaid(o *models.Order) {
-	if err := unipay.OrderService.Paid(order.PaidReq{
+	if err := order.Service.Paid(order.PaidReq{
 		IdReq:   order.IdReq{Id: o.Id},
 		TradeId: o.TradeId,
 	}); err != nil {
@@ -47,7 +46,7 @@ func bindPaid(o *models.Order) {
 }
 
 func bindExpired(o *models.Order) {
-	if err := unipay.OrderService.Cancel(order.CancelReq{
+	if err := order.Service.Cancel(order.CancelReq{
 		IdReq:      order.IdReq{Id: o.Id},
 		CancelTime: o.CancelTime,
 	}); err != nil {

@@ -25,6 +25,14 @@ import (
 
 type service struct{}
 
+func (s *service) getParams(ps []models.ChannelParam) [][2]string {
+	var params [][2]string
+	for _, a := range ps {
+		params = append(params, [2]string{a.Name, a.Value})
+	}
+	return params
+}
+
 func (s *service) ReqPay(req Req) (resp Resp, err error) {
 	pm, err := channel.Get(channel.GetReq{Id: req.ChannelId})
 	if err != nil {
@@ -49,7 +57,7 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 		return
 
 	case models.OrderTypeNormal:
-		evalEdParams, evalErr := pkg.EvalParams(req.ToMap(orderId), pm.ToMap(), pmm.List)
+		evalEdParams, evalErr := pkg.EvalParams(req.ToMap(orderId), pm.ToMap(), s.getParams(pmm.List))
 		if evalErr != nil {
 			err = evalErr
 			return
