@@ -106,6 +106,14 @@ func (s *service) buildPayMap() map[string]any {
 	}
 }
 
+func (s *service) getParams(ps []models.ChannelParam) [][2]string {
+	var params [][2]string
+	for _, a := range ps {
+		params = append(params, [2]string{a.Name, a.Value})
+	}
+	return params
+}
+
 func (s *service) checkChannelParams(channelId uint) (err error) {
 	var ps []models.ChannelParam
 	if err = db.GetDb().Model(new(models.ChannelParam)).Where("channel_id=?", channelId).Find(&ps).Error; err != nil {
@@ -114,7 +122,7 @@ func (s *service) checkChannelParams(channelId uint) (err error) {
 	if len(ps) <= 0 {
 		return errors.New("请先配置参数列表再开启")
 	}
-	_, err = pkg.EvalParams(s.buildPayMap(), (&models.Channel{}).ToMap(), ps)
+	_, err = pkg.EvalParams(s.buildPayMap(), (&models.Channel{}).ToMap(), s.getParams(ps))
 	return
 }
 

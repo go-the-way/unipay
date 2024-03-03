@@ -17,8 +17,6 @@ import (
 	"regexp"
 	"sort"
 	"strings"
-
-	"github.com/rwscode/unipay/models"
 )
 
 type (
@@ -34,8 +32,11 @@ type (
 	}
 )
 
-func EvalParams(payMap, channelMap map[string]any, ps []models.ChannelParam) (map[string]any, error) {
-	params := getParams(ps)
+func EvalParams(payMap, channelMap map[string]any, ps [][2]string) (map[string]any, error) {
+	var params []paramValue
+	for _, p := range ps {
+		params = append(params, paramValue{Name: p[0], Value: p[1]})
+	}
 	sortParams(params)
 	paramMap := map[string]any{}
 	data := map[string]any{"Time": GetTimeMap(), "Channel": channelMap, "Pay": payMap, "Param": paramMap}
@@ -56,14 +57,6 @@ func EvalParams(payMap, channelMap map[string]any, ps []models.ChannelParam) (ma
 		resultMap[p.Name] = p.Result
 	}
 	return resultMap, nil
-}
-
-func getParams(ps []models.ChannelParam) []paramValue {
-	var params []paramValue
-	for _, a := range ps {
-		params = append(params, paramValue{Name: a.Name, Value: a.Value})
-	}
-	return params
 }
 
 func sortParams(params []paramValue) {
