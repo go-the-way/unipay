@@ -19,9 +19,9 @@ import (
 
 func (r *AddReq) Check() (err error) { return base.CheckAddressProtocolExists(r.Address, r.Protocol) }
 
-func (r *UpdateReq) Check() (err error) { return base.CheckChannelExist(r.Id) }
+func (r *UpdateReq) Check() (err error) { return base.CheckWalletAddressExist(r.Id) }
 
-func (r *DelReq) Check() (err error) { return base.CheckChannelExist(r.Id) }
+func (r *DelReq) Check() (err error) { return base.CheckWalletAddressExist(r.Id) }
 
 func (r *AddReq) Transform() *models.WalletAddress {
 	return &models.WalletAddress{

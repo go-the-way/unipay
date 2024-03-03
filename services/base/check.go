@@ -82,6 +82,17 @@ func CheckRateValid(rate string) (err error) {
 	return
 }
 
+func CheckWalletAddressExist(walletAddressId uint) (err error) {
+	var cc int64
+	if err = db.GetDb().Model(new(models.WalletAddress)).Where("id=?", walletAddressId).Count(&cc).Error; err != nil {
+		return
+	}
+	if cc <= 0 {
+		return errors.New(fmt.Sprintf("钱包配置[%d]不存在", walletAddressId))
+	}
+	return
+}
+
 func CheckAddressProtocolExists(address, protocol string) (err error) {
 	var cc int64
 	if err = db.GetDb().Model(new(models.WalletAddress)).Where("address=? and protocol=?", address, protocol).Count(&cc).Error; err != nil {
