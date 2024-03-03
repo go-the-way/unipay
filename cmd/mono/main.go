@@ -40,7 +40,7 @@ signature: md5(join(sort(["app_key="+$Param.app_key,"rand="+$Param.rand,"subject
 
 insert sql info
 ---
-INSERT INTO unipay_channels (id, name, admin_url, admin_user, admin_passwd, logo_url, amount_type, amount_validate_cond, req_url, req_method, req_content_type, req_success_expr, req_pay_page_url_expr, req_pay_qr_url_expr, req_pay_message_expr, notify_pay_content_type, notify_pay_success_expr, notify_pay_id_expr, notify_pay_return_content, notify_pay_return_content_type, state, sort, remark, create_time, update_time) VALUES (1, 'Mono Payment', 'N/A', 'N/A', 'N/A', 'https://cdn.dribbble.com/users/12504221/screenshots/19846170/media/cbaf9486d45481a92d88d37960f04014.png', 1, '', '` + reqUrl + `', 'POST', 'json', '$code=="200"', '$data.pay_url', '', '$message', 'json', '$data.paid', '$data.order_id', 'success', 'text', 1, 0, 'Mono Payment', '2024-02-03 10:49:00', '2024-02-03 10:49:00');
+INSERT INTO unipay_channels (id, name,type, admin_url, admin_user, admin_passwd, logo_url, amount_type, amount_validate_cond, req_url, req_method, req_content_type, req_success_expr, req_pay_page_url_expr, req_pay_qr_url_expr, req_pay_message_expr, notify_pay_content_type, notify_pay_success_expr, notify_pay_id_expr, notify_pay_return_content, notify_pay_return_content_type, state, sort, remark, create_time, update_time) VALUES (1, 'Mono Payment','normal', 'N/A', 'N/A', 'N/A', 'https://cdn.dribbble.com/users/12504221/screenshots/19846170/media/cbaf9486d45481a92d88d37960f04014.png', 1, '', '` + reqUrl + `', 'POST', 'json', '$code=="200"', '$data.pay_url', '', '$message', 'json', '$data.paid', '$data.order_id', 'success', 'text', 1, 0, 'Mono Payment', '2024-02-03 10:49:00', '2024-02-03 10:49:00');
 INSERT INTO unipay_channel_params (id, channel_id, name, value, remark, pass) VALUES (1, 1, 'app_key', '` + appKey + `', 'app_key', 1);
 INSERT INTO unipay_channel_params (id, channel_id, name, value, remark, pass) VALUES (2, 1, 'app_secret', '` + appSecret + `', 'app_secret', 2);
 INSERT INTO unipay_channel_params (id, channel_id, name, value, remark, pass) VALUES (3, 1, 'rand', '$rand_str(30)', 'rand str 30', 1);
@@ -66,6 +66,14 @@ req content type: application/json
 req body: {"data":{"order_id":"order id","paid":true,"message":"paid"}}
 resp content type: text/plain
 resp body: success
+
+
+envs
+---
+SERVER_ADDR mono server addr (default: :9988)
+APP_KEY mono app key (default: BmnXsm843uA9WjWh22CWIXbrASo)
+APP_SECRET mono app secret (default: Ne4WZgphE1GicyYgQAYn0ZqhwvA)
+DOMAIN_URL mono server domain url (default: http://publicIp:9988)
 `)
 }
 

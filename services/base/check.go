@@ -14,6 +14,7 @@ package base
 import (
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/rwscode/unipay/deps/db"
 	"github.com/rwscode/unipay/models"
@@ -63,13 +64,31 @@ func CheckChannelParamNameExist(channelId, channelParamId uint, name string) (er
 	return
 }
 
-func CheckOrderExist(transactionId string) (err error) {
+func CheckOrderExist(orderId string) (err error) {
 	var cc int64
-	if err = db.GetDb().Model(new(models.ChannelParam)).Where("id=?", transactionId).Count(&cc).Error; err != nil {
+	if err = db.GetDb().Model(new(models.Order)).Where("id=?", orderId).Count(&cc).Error; err != nil {
 		return
 	}
 	if cc <= 0 {
-		return errors.New(fmt.Sprintf("支付订单[%s]不存在", transactionId))
+		return errors.New(fmt.Sprintf("支付订单[%s]不存在", orderId))
+	}
+	return
+}
+
+func CheckRateValid(rate string) (err error) {
+	if _, err = strconv.ParseFloat(rate, 32); err != nil {
+		return errors.New("汇率不合法")
+	}
+	return
+}
+
+func CheckAddressProtocolExists(address, protocol string) (err error) {
+	var cc int64
+	if err = db.GetDb().Model(new(models.WalletAddress)).Where("address=? and protocol=?", address, protocol).Count(&cc).Error; err != nil {
+		return
+	}
+	if cc > 0 {
+		return errors.New(fmt.Sprintf("钱包地址[%s]协议[%s]已存在", address, protocol))
 	}
 	return
 }

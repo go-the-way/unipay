@@ -1,0 +1,44 @@
+{
+  "contractMap": {
+    "THPvaUhoh2Qn2y9THCZML3H815hhFhn5YC": false,
+    "TSaRZDiBPD8Rd5vrvX8a4zgunHczM9mj8S": false,
+    "TU8fjcJFpgGd2q9roMBmv5c9wo7q2Pwt2d": false
+  },
+  "tokenInfo": {
+    "tokenId": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+    "tokenAbbr": "USDT",
+    "tokenName": "Tether USD",
+    "tokenDecimal": 6,
+    "tokenCanShow": 1,
+    "tokenType": "trc20",
+    "tokenLogo": "https://static.tronscan.org/production/logo/usdtlogo.png",
+    "tokenLevel": "2",
+    "issuerAddr": "THPvaUhoh2Qn2y9THCZML3H815hhFhn5YC",
+    "vip": true
+  },
+  "page_size": 1,
+  "code": 200,
+  "data": [
+    {
+      "amount": "3000000",
+      "status": 0,
+      "approval_amount": "0",
+      "block_timestamp": 1709278716000,
+      "block": 59547767,
+      "from": "TSaRZDiBPD8Rd5vrvX8a4zgunHczM9mj8S",
+      "to": "TU8fjcJFpgGd2q9roMBmv5c9wo7q2Pwt2d",
+      "hash": "e69e6fcc4f66d9c65b27a56485faac37214f6c9bf152af2234533334437fe491",
+      "confirmed": 1,
+      "contract_type": "TriggerSmartContract",
+      "contractType": 31,
+      "revert": 0,
+      "contract_ret": "SUCCESS",
+      "event_type": "Transfer",
+      "issue_address": "THPvaUhoh2Qn2y9THCZML3H815hhFhn5YC",
+      "decimals": 6,
+      "token_name": "TetherToken",
+      "id": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+      "direction": 2
+    }
+  ]
+}

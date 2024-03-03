@@ -11,6 +11,8 @@
 
 package order
 
+import "github.com/rwscode/unipay/models"
+
 var (
 	Service SVC = &service{}
 
@@ -19,6 +21,7 @@ var (
 	GetBusinessId      = Service.GetBusinessId
 	GetIdAndBusinessId = Service.GetIdAndBusinessId
 	Add                = Service.Add
+	AddReturn          = Service.AddReturn
 	Update             = Service.Update
 	Del                = Service.Del
 	Paid               = Service.Paid
@@ -32,6 +35,7 @@ type SVC interface {
 	GetBusinessId(req GetBusinessIdReq) (resp GetBusinessIdResp, err error)
 	GetIdAndBusinessId(req GetIdAndBusinessIdReq) (resp GetIdAndBusinessIdResp, err error)
 	Add(req AddReq) (err error)
+	AddReturn(req AddReq) (order *models.Order, err error)
 	Update(req UpdateReq) (err error)
 	Del(req DelReq) (err error)
 	Paid(req PaidReq, callback ...CallbackFunc) (err error)

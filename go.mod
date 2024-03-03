@@ -3,7 +3,8 @@ module github.com/rwscode/unipay
 go 1.18
 
 require (
-	github.com/d5/tengo/v2 v2.16.1
+	github.com/d5/tengo/v2 v2.17.0
+	github.com/go-the-way/events v1.0.0
 	gorm.io/driver/mysql v1.5.4
 	gorm.io/gorm v1.25.7
 )

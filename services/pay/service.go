@@ -43,14 +43,28 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 	// 订单id
 	orderId := pkg.RandStr(30)
 
-	evalEdParams, err := pkg.EvalParams(req.ToMap(orderId), pm.ToMap(), pmm.List)
-	if err != nil {
+	switch pm.Type {
+	default:
+		err = errors.New("不支持的渠道类型：" + pm.Type)
 		return
+
+	case models.OrderTypeNormal:
+		evalEdParams, evalErr := pkg.EvalParams(req.ToMap(orderId), pm.ToMap(), pmm.List)
+		if evalErr != nil {
+			err = evalErr
+			return
+		}
+		respMap, respErr := reqDo(pm, pmm, evalEdParams)
+		if respErr != nil {
+			err = respErr
+			return
+		}
+		return reqCallback(req, pm, respMap, orderId)
+
+	case models.OrderTypeErc20, models.OrderTypeTrc20:
+		return e20Run(req, pm, orderId)
+
 	}
-
-	respMap, err := reqDo(pm, pmm, evalEdParams)
-
-	return reqCallback(req, pm, respMap, orderId)
 }
 
 func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r NotifyReq) (err error) {

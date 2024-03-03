@@ -12,10 +12,16 @@
 package unipay
 
 import (
+	"github.com/rwscode/unipay/services/apiconfig"
+	"github.com/rwscode/unipay/services/apilog"
 	"github.com/rwscode/unipay/services/channel"
 	"github.com/rwscode/unipay/services/channelparam"
+	"github.com/rwscode/unipay/services/e20svc"
+	"github.com/rwscode/unipay/services/log"
 	"github.com/rwscode/unipay/services/order"
 	"github.com/rwscode/unipay/services/pay"
+	"github.com/rwscode/unipay/services/usdrate"
+	"github.com/rwscode/unipay/services/walletaddress"
 )
 
 type (
@@ -71,4 +77,49 @@ type (
 	OrderGetBusinessIdResp      = order.GetBusinessIdResp
 	OrderGetIdAndBusinessIdResp = order.GetIdAndBusinessIdResp
 	OrderGetStateResp           = order.GetStateResp
+)
+
+type (
+	ApiConfigUpdateReq = apiconfig.UpdateReq
+
+	ApiConfigGetResp = apiconfig.GetResp
+)
+
+type (
+	UsdRateUpdateReq = usdrate.UpdateReq
+
+	UsdRateGetResp = usdrate.GetResp
+)
+
+type (
+	WalletAddressGetPageReq = walletaddress.GetPageReq
+	WalletAddressIdReq      = walletaddress.IdReq
+	WalletAddressGetReq     = walletaddress.GetReq
+	WalletAddressAddReq     = walletaddress.AddReq
+	WalletAddressUpdateReq  = walletaddress.UpdateReq
+	WalletAddressDelReq     = walletaddress.DelReq
+	WalletAddressEnableReq  = walletaddress.EnableReq
+	WalletAddressDisableReq = walletaddress.DisableReq
+
+	WalletAddressGetPageResp = walletaddress.GetPageResp
+)
+
+type (
+	LogGetPageReq = log.GetPageReq
+
+	LogGetPageResp = log.GetPageResp
+)
+
+type (
+	ApiLogGetPageReq = apilog.GetPageReq
+
+	ApiLogGetPageResp = apilog.GetPageResp
+)
+
+type (
+	E20SvcOrderPayHtmlReq = e20svc.OrderPayHtmlReq
+	E20SvcE20HtmlReq      = e20svc.E20HtmlReq
+
+	E20SvcOrderPayHtmlResp = e20svc.OrderPayHtmlResp
+	E20SvcE20HtmlResp      = e20svc.E20HtmlResp
 )

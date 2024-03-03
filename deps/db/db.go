@@ -12,9 +12,8 @@
 package db
 
 import (
-	"gorm.io/gorm"
-
 	"github.com/rwscode/unipay/models"
+	"gorm.io/gorm"
 )
 
 type PaginationFunc func(db *gorm.DB, page, limit int, count *int64, list any) (err error)
@@ -34,5 +33,6 @@ func AutoMigrate() (err error) {
 		new(models.Channel),
 		new(models.ChannelParam),
 		new(models.Order),
+		new(models.UsdRate),
 	)
 }
