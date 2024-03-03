@@ -83,4 +83,13 @@ type (
 		Order  string `form:"order" json:"order"`   // 排序规则
 		Limit  uint   `form:"limit" json:"limit"`   // 返回限制数量，0不限制返回所有
 	}
+	E20HtmlReq struct {
+		OrderId            string // 订单id
+		Protocol           string // 协议 erc20/trc20
+		Amount             string // 支付金额
+		Address            string // 钱包地址
+		ExpirationTime     string // 订单失效时间毫秒时间戳
+		CheckOrderStateUrl string // 检查订单状态Url
+		RedirectUrl        string // 支付成功跳转Url
+	}
 )

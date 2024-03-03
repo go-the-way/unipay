@@ -9,7 +9,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package etherscanevent
+package tronscanevent
 
 import (
 	"encoding/json"
@@ -93,9 +93,9 @@ func txnFind(order *models.Order, rm respModel) (matched bool) {
 	for _, tx := range rm.Data {
 		// "decimals": 6,
 		decimals := tx.Decimals
-		orderAmount, _ := strconv.Atoi(order.AmountYuan)
+		orderAmount, _ := strconv.ParseFloat(order.Other2, 64)
 		// USD
-		amount := orderAmount * decimals
+		amount := int(orderAmount * float64(decimals*10))
 		// "block_timestamp": 1709278716000,
 		txTimeStamp := tx.BlockTimestamp
 		txTime := time.UnixMicro(txTimeStamp)

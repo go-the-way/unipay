@@ -108,6 +108,15 @@ func (s *service) Add(req AddReq) (err error) {
 	return db.GetDb().Create(req.Transform()).Error
 }
 
+func (s *service) AddReturn(req AddReq) (order *models.Order, err error) {
+	odr := req.Transform()
+	if err = db.GetDb().Create(odr).Error; err != nil {
+		return
+	}
+	order = odr
+	return
+}
+
 func (s *service) Update(req UpdateReq) (err error) {
 	return db.GetDb().Model(&models.Order{Id: req.Id}).Updates(req.Transform()).Error
 }

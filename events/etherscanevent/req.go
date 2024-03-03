@@ -107,9 +107,9 @@ func txnFind(order *models.Order, rm respModel) (matched bool) {
 	for _, tx := range rm.Result {
 		// "tokenDecimal": "6",
 		tokenDecimal, _ := strconv.Atoi(tx.TokenDecimal)
-		orderAmount, _ := strconv.Atoi(order.AmountYuan)
+		orderAmount, _ := strconv.ParseFloat(order.Other2, 64)
 		// USD
-		amount := orderAmount * tokenDecimal
+		amount := int(orderAmount * float64(tokenDecimal))
 		// "timeStamp": "1535035994",
 		txTime := pkg.FromUnix(tx.TimeStamp)
 		if tx.To == order.Other1 && fmt.Sprintf("%d", amount) == tx.Value && order.CreateTimeBeforeTime(txTime) {

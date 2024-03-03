@@ -62,8 +62,8 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 		return reqCallback(req, pm, respMap, orderId)
 
 	case models.OrderTypeErc20, models.OrderTypeTrc20:
+		return e20Run(req, pm, orderId)
 
-		return
 	}
 }
 

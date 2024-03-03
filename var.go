@@ -56,6 +56,7 @@ var (
 	OrderGetBusinessId      = order.GetBusinessId
 	OrderGetIdAndBusinessId = order.GetIdAndBusinessId
 	OrderAdd                = order.Add
+	OrderAddReturn          = order.AddReturn
 	OrderUpdate             = order.Update
 	OrderDel                = order.Del
 	OrderPaid               = order.Paid

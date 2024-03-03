@@ -169,7 +169,7 @@ func buildOrderAddReq(c channel.GetResp, req Req, resp Resp) order.AddReq {
 	return order.AddReq{
 		PayChannelId:   c.Id,
 		PayChannelName: c.Name,
-		PayChannelType: models.OrderTypeNormal,
+		PayChannelType: c.Type,
 		BusinessId1:    req.BusinessId1,
 		BusinessId2:    req.BusinessId2,
 		BusinessId3:    req.BusinessId3,
@@ -185,5 +185,25 @@ func buildOrderAddReq(c channel.GetResp, req Req, resp Resp) order.AddReq {
 		OrderId:        resp.OrderId,
 		PayPageUrl:     resp.PayPageUrl,
 		PayQrUrl:       resp.PayQrUrl,
+	}
+}
+
+func buildOrderAddReq20(c channel.GetResp, req Req, orderId string) order.AddReq {
+	return order.AddReq{
+		PayChannelId:   c.Id,
+		PayChannelName: c.Name,
+		PayChannelType: c.Type,
+		BusinessId1:    req.BusinessId1,
+		BusinessId2:    req.BusinessId2,
+		BusinessId3:    req.BusinessId3,
+		AmountFen:      req.AmountFen,
+		AmountYuan:     req.AmountYuan,
+		Other1:         req.Other1,
+		Other2:         req.Other2,
+		Other3:         req.Other3,
+		Remark1:        req.Remark1,
+		Remark2:        req.Remark2,
+		Remark3:        req.Remark3,
+		OrderId:        orderId,
 	}
 }

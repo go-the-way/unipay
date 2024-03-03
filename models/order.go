@@ -12,6 +12,7 @@
 package models
 
 import (
+	"fmt"
 	"github.com/rwscode/unipay/deps/pkg"
 	"time"
 )
@@ -95,4 +96,8 @@ func (o *Order) CreateTimeBeforeTime(t time.Time) (yes bool) {
 func (o *Order) SetCancelTime(dur time.Duration) *Order {
 	o.CancelTime = pkg.FormatTime(time.Now().Add(dur))
 	return o
+}
+
+func (o *Order) LockKey() string {
+	return fmt.Sprintf("%s-%s", o.Other1, o.Other2)
 }

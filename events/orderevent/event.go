@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"github.com/go-the-way/events"
 	"github.com/rwscode/unipay"
+	"github.com/rwscode/unipay/deps/lock"
 	"github.com/rwscode/unipay/events/logevent"
 	"github.com/rwscode/unipay/models"
 	"github.com/rwscode/unipay/services/order"
@@ -33,6 +34,7 @@ var (
 func init() {
 	paid.Bind(bindPaid)
 	expired.Bind(bindExpired)
+	expired.Bind(bindDeleteLock)
 }
 
 func bindPaid(o *models.Order) {
@@ -52,3 +54,5 @@ func bindExpired(o *models.Order) {
 		logevent.Save(models.NewLog(fmt.Sprintf("订单号[%s]类型[%s]保存错误：%s", o.Id, o.PayChannelType, err.Error())))
 	}
 }
+
+func bindDeleteLock(o *models.Order) { lock.DeleteWithLock(o.LockKey()) }

@@ -113,7 +113,7 @@ func txnFind(order *models.Order, rm respModel) (matched bool) {
 		// "transactionTime": "1709277731000",  eth
 		// "transactionTime": "1709277731",     trx
 		txTime := pkg.FromUnix(tx.TransactionTime)
-		if tx.To == order.Other1 && tx.State == "success" && order.AmountYuan == tx.Amount && order.CreateTimeBeforeTime(txTime) {
+		if tx.To == order.Other1 && tx.State == "success" && order.Other2 == tx.Amount && order.CreateTimeBeforeTime(txTime) {
 			matched = true
 			order.PayTime = pkg.FormatTime(txTime)
 			break

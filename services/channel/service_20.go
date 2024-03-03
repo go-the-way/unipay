@@ -9,34 +9,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package tronscanevent
+package channel
 
 import (
-	"github.com/go-the-way/events"
-	"github.com/rwscode/unipay/models"
+	_ "embed"
 )
-
-func Run(order *models.Order) { event.Fire(order) }
-
-type evt struct{}
 
 var (
-	event = events.NewHandler[evt, *models.Order]()
-	ch    = make(chan *models.Order, 1)
+	//go:embed e20.html
+	e20Html string
 )
 
-func init() {
-	go task()
-	event.Bind(bind)
-}
-
-func bind(order *models.Order) { go func() { ch <- order }() }
-
-func task() {
-	for {
-		select {
-		case order := <-ch:
-			startReq(order)
-		}
-	}
+func (s *service) E20Html(req E20HtmlReq) (resp E20HtmlResp, err error) {
+	return
 }
