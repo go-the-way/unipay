@@ -100,7 +100,6 @@ func getUsableWalletAddress(payChannelType string, orderAmount string) (address 
 	}
 
 	lock.RLock()
-	defer lock.RUnlock()
 
 	var (
 		usable       = false
@@ -136,6 +135,8 @@ loop:
 		err = errors.New("目前USDT支付通道已满，请稍后支付")
 		return
 	}
+
+	lock.RUnlock()
 
 	lock.SetWithLock(curLockKey)
 
