@@ -63,47 +63,44 @@ func startReq(order *models.Order, apikey string, chainShortName string) {
 		req.Header = make(http.Header)
 		req.Header.Set("Ok-Access-Key", apikey)
 		resp, err := client.Do(req)
-		if err != nil {
+		var statusCode int
+		if resp != nil {
+			statusCode = resp.StatusCode
+			buf, readErr := io.ReadAll(resp.Body)
+			if readErr != nil {
+				apilogevent.Save(errLog(reqUrl, errors.New("读取响应错误："+err.Error()), statusCode))
+			} else {
+				var rm respModel
+				if err = json.Unmarshal(buf, &rm); err != nil {
+					apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), statusCode))
+				} else if rm.Data != nil && len(rm.Data) > 0 {
+					d := rm.Data[0]
+					if len(d.TransactionLists) > 0 {
+						page++
+					}
+					if len(d.TransactionLists) <= 0 {
+						page = 1
+					}
+					if matched := txnFind(order, rm); matched {
+						// 找到该订单
+						orderevent.Paid(order)
+						break
+					}
+				}
+			}
+		} else if err != nil {
 			var urlError *url.Error
 			switch {
 			case errors.As(err, &urlError):
 				// 服务器挂了
 			}
-			apilogevent.Save(errLog(reqUrl, err, resp.StatusCode))
+			apilogevent.Save(errLog(reqUrl, err, statusCode))
 		} else {
-			if resp == nil {
-				apilogevent.Save(errLog(reqUrl, errors.New("读取相应为空"), resp.StatusCode))
-			} else {
-				buf, readErr := io.ReadAll(resp.Body)
-				if readErr != nil {
-					apilogevent.Save(errLog(reqUrl, errors.New("读取响应错误："+err.Error()), resp.StatusCode))
-				} else {
-					var rm respModel
-					if err = json.Unmarshal(buf, &rm); err != nil {
-						apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), resp.StatusCode))
-					} else if rm.Data != nil && len(rm.Data) > 0 {
-						d := rm.Data[0]
-
-						if len(d.TransactionLists) > 0 {
-							page++
-						}
-
-						if len(d.TransactionLists) <= 0 {
-							page = 1
-						}
-
-						if matched := txnFind(order, rm); matched {
-							// 找到该订单
-							orderevent.Paid(order)
-							break
-						}
-					}
-				}
-			}
+			apilogevent.Save(errLog(reqUrl, errors.New("请求失败"), 0))
 		}
 
-		if time.Now().Before(pkg.ParseTime(order.CancelTime)) {
-			// 订单已失效
+		if order.CancelTimeBeforeNow() {
+			// 订单失效
 			orderevent.Expired(order)
 			break
 		}

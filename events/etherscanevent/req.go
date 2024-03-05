@@ -53,42 +53,40 @@ func startReq(order *models.Order, apikey string) {
 		reqUrl := getReqUrl(order.Other1, apikey, fmt.Sprintf("%d", page), offset)
 		req, _ := http.NewRequest(http.MethodGet, reqUrl, nil)
 		resp, err := client.Do(req)
-		if err != nil {
+		var statusCode int
+		if resp != nil {
+			statusCode = resp.StatusCode
+			buf, readErr := io.ReadAll(resp.Body)
+			if readErr != nil {
+				apilogevent.Save(errLog(reqUrl, errors.New("读取响应错误："+err.Error()), statusCode))
+			} else {
+				var rm respModel
+				if err = json.Unmarshal(buf, &rm); err != nil {
+					apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), statusCode))
+				} else {
+					if len(rm.Result) > 0 {
+						page++
+					}
+					if len(rm.Result) <= 0 {
+						page = 1
+					}
+					if matched := txnFind(order, rm); matched {
+						// 找到该订单
+						orderevent.Paid(order)
+						break
+					}
+				}
+			}
+		} else if err != nil {
 			var urlError *url.Error
 			switch {
 			case errors.As(err, &urlError):
 				// 服务器挂了
 				errCount++
 			}
-			apilogevent.Save(errLog(reqUrl, err, resp.StatusCode))
+			apilogevent.Save(errLog(reqUrl, err, statusCode))
 		} else {
-			if resp == nil {
-				apilogevent.Save(errLog(reqUrl, errors.New("读取相应为空"), resp.StatusCode))
-			} else {
-				buf, readErr := io.ReadAll(resp.Body)
-				if readErr != nil {
-					apilogevent.Save(errLog(reqUrl, errors.New("读取响应错误："+err.Error()), resp.StatusCode))
-				} else {
-					var rm respModel
-					if err = json.Unmarshal(buf, &rm); err != nil {
-						apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), resp.StatusCode))
-					} else {
-						if len(rm.Result) > 0 {
-							page++
-						}
-
-						if len(rm.Result) <= 0 {
-							page = 1
-						}
-
-						if matched := txnFind(order, rm); matched {
-							// 找到该订单
-							orderevent.Paid(order)
-							break
-						}
-					}
-				}
-			}
+			apilogevent.Save(errLog(reqUrl, errors.New("请求失败"), 0))
 		}
 
 		if order.CancelTimeBeforeNow() {
@@ -102,9 +100,9 @@ func startReq(order *models.Order, apikey string) {
 			oklinkevent.Run(order)
 			break
 		}
-
-		time.Sleep(sleepDur)
 	}
+
+	time.Sleep(sleepDur)
 }
 
 func txnFind(order *models.Order, rm respModel) (matched bool) {
