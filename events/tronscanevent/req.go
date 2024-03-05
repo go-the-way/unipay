@@ -62,18 +62,22 @@ func startReq(order *models.Order) {
 			}
 			apilogevent.Save(errLog(reqUrl, err, resp.StatusCode))
 		} else {
-			buf, readErr := io.ReadAll(resp.Body)
-			if readErr != nil {
-				apilogevent.Save(errLog(reqUrl, errors.New("读取相应错误："+err.Error()), resp.StatusCode))
+			if resp == nil {
+				apilogevent.Save(errLog(reqUrl, errors.New("读取相应为空"), resp.StatusCode))
 			} else {
-				var rm respModel
-				if err = json.Unmarshal(buf, &rm); err != nil {
-					apilogevent.Save(errLog(reqUrl, errors.New("反序列化相应错误："+err.Error()), resp.StatusCode))
+				buf, readErr := io.ReadAll(resp.Body)
+				if readErr != nil {
+					apilogevent.Save(errLog(reqUrl, errors.New("读取相应错误："+err.Error()), resp.StatusCode))
 				} else {
-					if matched := txnFind(order, rm); matched {
-						// 找到该订单
-						orderevent.Paid(order)
-						break
+					var rm respModel
+					if err = json.Unmarshal(buf, &rm); err != nil {
+						apilogevent.Save(errLog(reqUrl, errors.New("反序列化相应错误："+err.Error()), resp.StatusCode))
+					} else {
+						if matched := txnFind(order, rm); matched {
+							// 找到该订单
+							orderevent.Paid(order)
+							break
+						}
 					}
 				}
 			}

@@ -19,19 +19,21 @@ import (
 )
 
 func RandStr(length int, numOnly ...bool) string {
-	no := false
+	num := false
 	if numOnly != nil && len(numOnly) > 0 {
-		no = numOnly[0]
+		num = numOnly[0]
 	}
 	results := make([]string, 0)
+	symbolNum := "0123456789"
 	symbol := "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	for i := 0; i < length; i++ {
-		randLen := len(symbol)
-		if no {
-			randLen = 10
-		}
 		rand.Seed(time.Now().UnixNano())
-		cur := symbol[rand.Intn(10000)%randLen]
+		var cur byte
+		if !num {
+			cur = symbol[rand.Intn(len(symbol))]
+		} else {
+			cur = symbolNum[rand.Intn(len(symbolNum))]
+		}
 		results = append(results, fmt.Sprintf("%c", cur))
 	}
 	return strings.Join(results, "")

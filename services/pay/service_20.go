@@ -55,7 +55,7 @@ func e20Run(req Req, pm channel.GetResp, orderId string) (resp Resp, err error) 
 	// 3. 订单有效期
 	orderCancelTime(curOrder)
 
-	// 4.发送订单 开始监听状态状态
+	// 4.发送订单 开始监听状态变化
 	switch curOrder.PayChannelType {
 	default:
 	case "erc20":
@@ -99,8 +99,6 @@ func getUsableWalletAddress(payChannelType string, orderAmount string) (address 
 		return
 	}
 
-	lock.RLock()
-
 	var (
 		usable       = false
 		usableAddr   = ""
@@ -109,6 +107,8 @@ func getUsableWalletAddress(payChannelType string, orderAmount string) (address 
 		decimalStr   = ""
 		curLockKey   = ""
 	)
+
+	lock.RLock()
 
 loop:
 	for i := 1; i <= 99; i++ {

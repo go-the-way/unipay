@@ -39,6 +39,9 @@ func getPublicIp() string {
 	if err != nil {
 		panic("获取公网ip错误：" + err.Error())
 	}
+	if resp == nil {
+		panic("获取公网ip失败，响应为空")
+	}
 	buf, _ := io.ReadAll(resp.Body)
 	return strings.TrimSpace(string(buf))
 }

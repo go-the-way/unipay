@@ -71,28 +71,32 @@ func startReq(order *models.Order, apikey string, chainShortName string) {
 			}
 			apilogevent.Save(errLog(reqUrl, err, resp.StatusCode))
 		} else {
-			buf, readErr := io.ReadAll(resp.Body)
-			if readErr != nil {
-				apilogevent.Save(errLog(reqUrl, errors.New("读取响应错误："+err.Error()), resp.StatusCode))
+			if resp == nil {
+				apilogevent.Save(errLog(reqUrl, errors.New("读取相应为空"), resp.StatusCode))
 			} else {
-				var rm respModel
-				if err = json.Unmarshal(buf, &rm); err != nil {
-					apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), resp.StatusCode))
-				} else if rm.Data != nil && len(rm.Data) > 0 {
-					d := rm.Data[0]
+				buf, readErr := io.ReadAll(resp.Body)
+				if readErr != nil {
+					apilogevent.Save(errLog(reqUrl, errors.New("读取响应错误："+err.Error()), resp.StatusCode))
+				} else {
+					var rm respModel
+					if err = json.Unmarshal(buf, &rm); err != nil {
+						apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), resp.StatusCode))
+					} else if rm.Data != nil && len(rm.Data) > 0 {
+						d := rm.Data[0]
 
-					if len(d.TransactionLists) > 0 {
-						page++
-					}
+						if len(d.TransactionLists) > 0 {
+							page++
+						}
 
-					if len(d.TransactionLists) <= 0 {
-						page = 1
-					}
+						if len(d.TransactionLists) <= 0 {
+							page = 1
+						}
 
-					if matched := txnFind(order, rm); matched {
-						// 找到该订单
-						orderevent.Paid(order)
-						break
+						if matched := txnFind(order, rm); matched {
+							// 找到该订单
+							orderevent.Paid(order)
+							break
+						}
 					}
 				}
 			}

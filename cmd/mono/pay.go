@@ -72,6 +72,10 @@ func notifyReq(order *orderInfo) (result string) {
 		fmt.Println(fmt.Sprintf("notify[%s] request err:%s", order.OrderId, err.Error()))
 		return
 	}
+	if resp == nil {
+		fmt.Println(fmt.Sprintf("notify[%s] request resp nil", order.OrderId))
+		return
+	}
 	buf, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("notify[%s] read all err:%s", order.OrderId, err.Error()))

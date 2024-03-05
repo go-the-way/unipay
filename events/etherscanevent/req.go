@@ -62,26 +62,30 @@ func startReq(order *models.Order, apikey string) {
 			}
 			apilogevent.Save(errLog(reqUrl, err, resp.StatusCode))
 		} else {
-			buf, readErr := io.ReadAll(resp.Body)
-			if readErr != nil {
-				apilogevent.Save(errLog(reqUrl, errors.New("读取响应错误："+err.Error()), resp.StatusCode))
+			if resp == nil {
+				apilogevent.Save(errLog(reqUrl, errors.New("读取相应为空"), resp.StatusCode))
 			} else {
-				var rm respModel
-				if err = json.Unmarshal(buf, &rm); err != nil {
-					apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), resp.StatusCode))
+				buf, readErr := io.ReadAll(resp.Body)
+				if readErr != nil {
+					apilogevent.Save(errLog(reqUrl, errors.New("读取响应错误："+err.Error()), resp.StatusCode))
 				} else {
-					if len(rm.Result) > 0 {
-						page++
-					}
+					var rm respModel
+					if err = json.Unmarshal(buf, &rm); err != nil {
+						apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), resp.StatusCode))
+					} else {
+						if len(rm.Result) > 0 {
+							page++
+						}
 
-					if len(rm.Result) <= 0 {
-						page = 1
-					}
+						if len(rm.Result) <= 0 {
+							page = 1
+						}
 
-					if matched := txnFind(order, rm); matched {
-						// 找到该订单
-						orderevent.Paid(order)
-						break
+						if matched := txnFind(order, rm); matched {
+							// 找到该订单
+							orderevent.Paid(order)
+							break
+						}
 					}
 				}
 			}
