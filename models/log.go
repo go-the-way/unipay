@@ -50,5 +50,5 @@ func NewApiLog(reqUrl, reqMethod, reqParam, respContent, respCode string) *ApiLo
 }
 
 func NewApiLogGetNoParam(reqUrl, respContent, respCode string) *ApiLog {
-	return NewApiLog(reqUrl, http.MethodGet, "", respContent, respContent)
+	return NewApiLog(reqUrl, http.MethodGet, "", respContent, respCode)
 }
