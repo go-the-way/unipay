@@ -26,10 +26,47 @@ func (r *AddReq) Check() (err error) {
 			return errors.New("支付金额验证条件格式不合法")
 		}
 	}
+
+	switch r.Type {
+	case "normal":
+		if len(r.ReqUrl) == 0 {
+			return errors.New("请求url不能为空")
+		}
+		if !(r.ReqMethod == "GET" || r.ReqMethod == "POST") {
+			return errors.New("请求方式不合法")
+		}
+		if !(r.ReqContentType == "json" || r.ReqContentType == "form" || r.ReqContentType == "urlencoded") {
+			return errors.New("请求数据类型不合法")
+		}
+		if len(r.ReqSuccessExpr) == 0 {
+			return errors.New("请求成功计算表达式不能为空")
+		}
+		if len(r.ReqPayMessageExpr) == 0 {
+			return errors.New("请求支付获取消息表达式不能为空")
+		}
+		if !(r.NotifyPayContentType == "json" || r.NotifyPayContentType == "form" || r.NotifyPayContentType == "urlencoded") {
+			return errors.New("回调支付数据类型不合法")
+		}
+		if len(r.NotifyPaySuccessExpr) == 0 {
+			return errors.New("回调支付成功计算表达式不能为空")
+		}
+		if len(r.NotifyPayReturnContent) == 0 {
+			return errors.New("回调支付成功返回内容不能为空")
+		}
+		if len(r.NotifyPayReturnContent) == 0 {
+			return errors.New("回调支付成功返回内容不能为空")
+		}
+		if !(r.NotifyPayReturnContentType == "text" || r.NotifyPayReturnContentType == "json") {
+			return errors.New("回调支付成功返回数据类型不合法")
+		}
+
+	case "erc20", "trc20":
+	}
+
 	if r.ReqPayPageUrlExpr == "" && r.ReqPayQrUrlExpr == "" {
 		return errors.New("支付页面Url获取表达式和支付二维码Url获取表达式不能同时为空")
 	}
-	if r.ReqChannel == http.MethodGet && r.ReqContentType != "urlencoded" {
+	if r.ReqMethod == http.MethodGet && r.ReqContentType != "urlencoded" {
 		return errors.New("当请求类型为GET时，请求数据类型仅支持urlencoded")
 	}
 	return
@@ -49,7 +86,7 @@ func (r *AddReq) Transform() *models.Channel {
 		AmountType:                 r.AmountType,
 		AmountValidateCond:         r.AmountValidateCond,
 		ReqUrl:                     r.ReqUrl,
-		ReqMethod:                  r.ReqChannel,
+		ReqMethod:                  r.ReqMethod,
 		ReqContentType:             r.ReqContentType,
 		ReqSuccessExpr:             r.ReqSuccessExpr,
 		ReqPayPageUrlExpr:          r.ReqPayPageUrlExpr,
