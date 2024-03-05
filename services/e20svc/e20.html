@@ -275,7 +275,7 @@
         $.ajax({
             type: "GET",
             dataType: "json",
-            url: "{{.CheckOrderState}}",
+            url: "{{.CheckOrderStateUrl}}",
             timeout: 10000,
             success: function (response, status) {
                 if (response.data.status == 2) {
