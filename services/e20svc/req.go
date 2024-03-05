@@ -15,7 +15,7 @@ import "github.com/rwscode/unipay/models"
 
 type (
 	OrderPayHtmlReq struct {
-		OrderId            string `from:"order_id"`              // 订单id
+		OrderId            string `form:"order_id"`              // 订单id
 		CheckOrderStateUrl string `form:"check_order_state_url"` // 检查订单状态Url
 		RedirectUrl        string `form:"redirect_url"`          // 支付成功跳转Url
 
