@@ -111,6 +111,7 @@ func getUsableWalletAddress(payChannelType string, orderAmount string) (address 
 		curLockKey   = ""
 	)
 
+loop:
 	for i := 1; i <= 99; i++ {
 		curAmount, _ = strconv.ParseFloat(orderAmount, 32)
 		for _, addr := range addresses {
@@ -118,7 +119,7 @@ func getUsableWalletAddress(payChannelType string, orderAmount string) (address 
 			if locked := lock.Have(curLockKey); !locked {
 				usable = true
 				usableAddr = addr
-				break
+				break loop
 			}
 		}
 		if i < 10 {
