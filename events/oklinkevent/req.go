@@ -17,7 +17,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
+	"strconv"
 	"time"
 
 	"github.com/rwscode/unipay/deps/pkg"
@@ -46,15 +46,20 @@ var (
 	}
 )
 
+// curl "https://www.oklink.com/api/v5/explorer/address/transaction-list?chainShortName=ETH&tokenContractAddress=0xdac17f958d2ee523a2206206994597c13d831ec7&address=0xEf8801eaf234ff82801821FFe2d78D60a0237F97&protocolType=token_20&page=1&limit=2" -H 'Ok-Access-Key: 523ded74-82c2-420b-b00e-687bc7e3a139'
+
 func startReq(order *models.Order, apikey string, chainShortName string) {
 	var (
-		page       = 1
-		limit      = "100"
-		sleepDur   = time.Millisecond * 200
-		reqTimeout = time.Second * 30
-		client     = &http.Client{Timeout: reqTimeout}
+		page        = 1
+		limit       = "100"
+		errCount    = 0
+		maxErrCount = 3
+		sleepDur    = time.Millisecond * 200
+		reqTimeout  = time.Second * 3
+		client      = &http.Client{Timeout: reqTimeout}
 	)
 	errLog := func(reqUrl string, err error, statusCode int) *models.ApiLog {
+		errCount++
 		return models.NewApiLogGetNoParam(reqUrl, err.Error(), fmt.Sprintf("%d", statusCode))
 	}
 	for {
@@ -64,22 +69,39 @@ func startReq(order *models.Order, apikey string, chainShortName string) {
 		req.Header.Set("Ok-Access-Key", apikey)
 		resp, err := client.Do(req)
 		var statusCode int
-		if resp != nil {
+		if err != nil {
+			apilogevent.Save(errLog(reqUrl, err, statusCode))
+		} else if resp == nil {
+			apilogevent.Save(errLog(reqUrl, errors.New("无响应"), statusCode))
+		} else {
 			statusCode = resp.StatusCode
 			buf, readErr := io.ReadAll(resp.Body)
 			if readErr != nil {
-				apilogevent.Save(errLog(reqUrl, errors.New("读取响应错误："+err.Error()), statusCode))
+				apilogevent.Save(errLog(reqUrl, errors.New("读取响应错误"+err.Error()), statusCode))
+			} else if len(buf) <= 0 {
+				apilogevent.Save(errLog(reqUrl, errors.New("读取响应为空"), statusCode))
 			} else {
 				var rm respModel
 				if err = json.Unmarshal(buf, &rm); err != nil {
 					apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), statusCode))
-				} else if rm.Data != nil && len(rm.Data) > 0 {
+				} else if rm.Data == nil || len(rm.Data) <= 0 {
+					apilogevent.Save(errLog(reqUrl, errors.New("请求错误："+rm.Msg), statusCode))
+				} else {
 					d := rm.Data[0]
-					if len(d.TransactionLists) > 0 {
-						page++
-					}
 					if len(d.TransactionLists) <= 0 {
 						page = 1
+					} else {
+						timeStamp := pkg.FromUnix(d.TransactionLists[0].TransactionTime).UnixMicro()
+						if timeStamp < pkg.ParseTime(order.CreateTime).UnixMicro() {
+							// FIXME
+							// 尝试获取时间，和订单时间进行比较，在订单创建时间之前，则进行下一轮
+							page = 1
+						} else {
+							page++
+							if totalPage, _ := strconv.Atoi(d.TotalPage); page >= totalPage {
+								page = 1
+							}
+						}
 					}
 					if matched := txnFind(order, rm); matched {
 						// 找到该订单
@@ -88,19 +110,18 @@ func startReq(order *models.Order, apikey string, chainShortName string) {
 					}
 				}
 			}
-		} else if err != nil {
-			var urlError *url.Error
-			switch {
-			case errors.As(err, &urlError):
-				// 服务器挂了
-			}
-			apilogevent.Save(errLog(reqUrl, err, statusCode))
-		} else {
-			apilogevent.Save(errLog(reqUrl, errors.New("请求失败"), 0))
 		}
 
 		if order.CancelTimeBeforeNow() {
 			// 订单失效
+			order.Message = "订单超时已被取消"
+			orderevent.Expired(order)
+			break
+		}
+
+		if errCount >= maxErrCount {
+			// 失败次数达到最大次数，则订单失效
+			order.Message = fmt.Sprintf("调用接口错误已达到%d次，订单已被取消", maxErrCount)
 			orderevent.Expired(order)
 			break
 		}

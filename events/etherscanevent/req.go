@@ -15,16 +15,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/rwscode/unipay/deps/pkg"
 	"github.com/rwscode/unipay/events/apilogevent"
 	"github.com/rwscode/unipay/events/oklinkevent"
 	"github.com/rwscode/unipay/events/orderevent"
 	"github.com/rwscode/unipay/models"
-	"io"
-	"net/http"
-	"net/url"
-	"strconv"
-	"time"
 )
 
 // curl -i "https://api.etherscan.io/api?module=account&action=tokentx&contractaddress=0xdac17f958d2ee523a2206206994597c13d831ec7&address=0xdac17f958d2ee523a2206206994597c13d831ec7&startblock=0&endblock=99999999&page=1&offset=2&sort=desc&apikey=VD5PCBEH24K5MYIMATY91XBINHGI2YDSDD"
@@ -43,10 +43,11 @@ func startReq(order *models.Order, apikey string) {
 		errCount    = 0
 		maxErrCount = 3
 		sleepDur    = time.Millisecond * 200
-		reqTimeout  = time.Second * 30
+		reqTimeout  = time.Second * 3
 		client      = &http.Client{Timeout: reqTimeout}
 	)
 	errLog := func(reqUrl string, err error, statusCode int) *models.ApiLog {
+		errCount++
 		return models.NewApiLogGetNoParam(reqUrl, err.Error(), fmt.Sprintf("%d", statusCode))
 	}
 	for {
@@ -54,21 +55,33 @@ func startReq(order *models.Order, apikey string) {
 		req, _ := http.NewRequest(http.MethodGet, reqUrl, nil)
 		resp, err := client.Do(req)
 		var statusCode int
-		if resp != nil {
+		if err != nil {
+			apilogevent.Save(errLog(reqUrl, err, statusCode))
+		} else if resp == nil {
+			apilogevent.Save(errLog(reqUrl, errors.New("无响应"), statusCode))
+		} else {
 			statusCode = resp.StatusCode
 			buf, readErr := io.ReadAll(resp.Body)
 			if readErr != nil {
-				apilogevent.Save(errLog(reqUrl, errors.New("读取响应错误："+err.Error()), statusCode))
+				apilogevent.Save(errLog(reqUrl, errors.New("读取响应错误"+err.Error()), statusCode))
+			} else if len(buf) <= 0 {
+				apilogevent.Save(errLog(reqUrl, errors.New("读取响应为空"), statusCode))
 			} else {
 				var rm respModel
 				if err = json.Unmarshal(buf, &rm); err != nil {
 					apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), statusCode))
 				} else {
-					if len(rm.Result) > 0 {
-						page++
-					}
 					if len(rm.Result) <= 0 {
 						page = 1
+					} else {
+						timeStamp, _ := strconv.ParseInt(rm.Result[0].TimeStamp, 10, 64)
+						if timeStamp < pkg.ParseTime(order.CreateTime).UnixMilli() {
+							// FIXME
+							// 尝试获取时间，和订单时间进行比较，在订单创建时间之前，则进行下一轮
+							page = 1
+						} else {
+							page++
+						}
 					}
 					if matched := txnFind(order, rm); matched {
 						// 找到该订单
@@ -77,20 +90,11 @@ func startReq(order *models.Order, apikey string) {
 					}
 				}
 			}
-		} else if err != nil {
-			var urlError *url.Error
-			switch {
-			case errors.As(err, &urlError):
-				// 服务器挂了
-				errCount++
-			}
-			apilogevent.Save(errLog(reqUrl, err, statusCode))
-		} else {
-			apilogevent.Save(errLog(reqUrl, errors.New("请求失败"), 0))
 		}
 
 		if order.CancelTimeBeforeNow() {
 			// 订单失效
+			order.Message = "订单超时已被取消"
 			orderevent.Expired(order)
 			break
 		}
@@ -100,9 +104,9 @@ func startReq(order *models.Order, apikey string) {
 			oklinkevent.Run(order)
 			break
 		}
-	}
 
-	time.Sleep(sleepDur)
+		time.Sleep(sleepDur)
+	}
 }
 
 func txnFind(order *models.Order, rm respModel) (matched bool) {

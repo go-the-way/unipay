@@ -32,6 +32,7 @@ var (
 
 func init() {
 	paid.Bind(bindPaid)
+	paid.Bind(bindDeleteLock)
 	expired.Bind(bindExpired)
 	expired.Bind(bindDeleteLock)
 }
@@ -48,6 +49,7 @@ func bindPaid(o *models.Order) {
 func bindExpired(o *models.Order) {
 	if err := order.Service.Cancel(order.CancelReq{
 		IdReq:      order.IdReq{Id: o.Id},
+		Message:    o.Message,
 		CancelTime: o.CancelTime,
 	}); err != nil {
 		logevent.Save(models.NewLog(fmt.Sprintf("订单号[%s]类型[%s]保存错误：%s", o.Id, o.PayChannelType, err.Error())))

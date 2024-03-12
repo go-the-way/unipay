@@ -86,7 +86,31 @@ func getEnableWalletAddress(payChannelType string) (addresses []string, err erro
 	return
 }
 
+func getUsdRate() (rate float64, err error) {
+	rateStr := ""
+	err = db.GetDb().Model(new(models.UsdRate)).Where("id=1").Select("rate").Scan(&rateStr).Error
+	if rateStr == "" {
+		err = errors.New("美元汇率未设置")
+		return
+	}
+	if rate, err = strconv.ParseFloat(rateStr, 64); err != nil {
+		err = errors.New("美元汇率不合法")
+		return
+	}
+	return
+}
+
 func getUsableWalletAddress(payChannelType string, orderAmount string) (address string, orderAmountYuan, orderAmountFen string, err error) {
+	// 	0. 查询美元汇率
+	usdRate, usdErr := getUsdRate()
+	if usdErr != nil {
+		err = usdErr
+		return
+	}
+
+	orderAmountFloat, _ := strconv.ParseFloat(orderAmount, 32)
+	orderAmountUsd := fmt.Sprintf("%.2f", orderAmountFloat*usdRate)
+
 	// 1. 查询启用的钱包地址
 	addresses, addErr := getEnableWalletAddress(payChannelType)
 	if addErr != nil {
@@ -110,33 +134,34 @@ func getUsableWalletAddress(payChannelType string, orderAmount string) (address 
 
 	lock.RLock()
 
-loop:
 	for i := 1; i <= 99; i++ {
-		curAmount, _ = strconv.ParseFloat(orderAmount, 32)
+		curAmount, _ = strconv.ParseFloat(orderAmountUsd, 32)
 		for _, addr := range addresses {
 			curLockKey = fmt.Sprintf("%s-%.2f%s", addr, curAmount, decimalStr)
 			if locked := lock.Have(curLockKey); !locked {
 				usable = true
 				usableAddr = addr
-				break loop
 			}
+		}
+		fv, _ := strconv.ParseFloat(decimalStr, 32)
+		curAmount += fv
+		curAmountStr = fmt.Sprintf("%.2f", curAmount)
+		if usable {
+			break
 		}
 		if i < 10 {
 			decimalStr = fmt.Sprintf(".0%d", i)
 		} else {
 			decimalStr = fmt.Sprintf(".%d", i)
 		}
-		fv, _ := strconv.ParseFloat(decimalStr, 32)
-		curAmount += fv
-		curAmountStr = fmt.Sprintf("%.2f", curAmount)
 	}
+
+	lock.RUnlock()
 
 	if !usable {
 		err = errors.New("目前USDT支付通道已满，请稍后支付")
 		return
 	}
-
-	lock.RUnlock()
 
 	lock.SetWithLock(curLockKey)
 

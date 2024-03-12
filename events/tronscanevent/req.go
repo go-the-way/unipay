@@ -15,55 +15,69 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/rwscode/unipay/deps/pkg"
 	"github.com/rwscode/unipay/events/apilogevent"
 	"github.com/rwscode/unipay/events/oklinkevent"
 	"github.com/rwscode/unipay/events/orderevent"
 	"github.com/rwscode/unipay/models"
-	"io"
-	"net/http"
-	"net/url"
-	"strconv"
-	"time"
 )
 
 // curl -i "https://apilist.tronscanapi.com/api/transfer/trc20?sort=-timestamp&direction=2&db_version=1&trc20Id=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t&address=TU8fjcJFpgGd2q9roMBmv5c9wo7q2Pwt2d&start=0&limit=1"
 
 var (
-	apiUrl    = "https://apilist.tronscanapi.com/api/transfer/trc20?sort=-timestamp&direction=2&db_version=1&trc20Id=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t&address=%s&start=%s&limit=%s"
-	getReqUrl = func(address, start, limit string) string {
+	apiUrl    = "https://apilist.tronscanapi.com/api/transfer/trc20?sort=-timestamp&direction=2&db_version=1&trc20Id=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t&address=%s&start=%d&limit=%d"
+	getReqUrl = func(address string, start, limit int) string {
 		return fmt.Sprintf(apiUrl, address, start, limit)
 	}
 )
 
 func startReq(order *models.Order) {
 	var (
+		page        = 1
 		start       = 1
-		limit       = "500"
+		limit       = 50
 		errCount    = 0
 		maxErrCount = 3
 		sleepDur    = time.Millisecond * 200
-		reqTimeout  = time.Second * 30
+		reqTimeout  = time.Second * 3
 		client      = &http.Client{Timeout: reqTimeout}
 	)
 	errLog := func(reqUrl string, err error, statusCode int) *models.ApiLog {
 		return models.NewApiLogGetNoParam(reqUrl, err.Error(), fmt.Sprintf("%d", statusCode))
 	}
 	for {
-		reqUrl := getReqUrl(order.Other1, fmt.Sprintf("%d", start), limit)
+		reqUrl := getReqUrl(order.Other1, start, limit)
 		req, _ := http.NewRequest(http.MethodGet, reqUrl, nil)
 		resp, err := client.Do(req)
 		var statusCode int
-		if resp != nil {
+		if err != nil {
+			apilogevent.Save(errLog(reqUrl, err, statusCode))
+		} else if resp == nil {
+			apilogevent.Save(errLog(reqUrl, errors.New("无响应"), statusCode))
+		} else {
 			statusCode = resp.StatusCode
 			buf, readErr := io.ReadAll(resp.Body)
 			if readErr != nil {
-				apilogevent.Save(errLog(reqUrl, errors.New("读取响应错误："+err.Error()), statusCode))
+				apilogevent.Save(errLog(reqUrl, errors.New("读取响应错误"+err.Error()), statusCode))
+			} else if len(buf) <= 0 {
+				apilogevent.Save(errLog(reqUrl, errors.New("读取响应为空"), statusCode))
 			} else {
 				var rm respModel
 				if err = json.Unmarshal(buf, &rm); err != nil {
-					apilogevent.Save(errLog(reqUrl, errors.New("反序列化相应错误："+err.Error()), statusCode))
+					apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), statusCode))
 				} else {
+					page++
+					if page >= rm.PageSize {
+						page = 1
+					}
+					start = (page-1)*limit + 1
+					// FIXME
+					// 尝试获取时间，和订单时间进行比较，在订单创建时间之前，则进行下一轮
 					if matched := txnFind(order, rm); matched {
 						// 找到该订单
 						orderevent.Paid(order)
@@ -71,19 +85,10 @@ func startReq(order *models.Order) {
 					}
 				}
 			}
-		} else if err != nil {
-			var urlError *url.Error
-			switch {
-			case errors.As(err, &urlError):
-				// 服务器挂了
-				errCount++
-			}
-			apilogevent.Save(errLog(reqUrl, err, statusCode))
-		} else {
-			apilogevent.Save(errLog(reqUrl, errors.New("请求失败"), 0))
 		}
 
 		if order.CancelTimeBeforeNow() {
+			order.Message = "订单超时已被取消"
 			orderevent.Expired(order)
 			break
 		}

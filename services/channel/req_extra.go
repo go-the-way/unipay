@@ -53,6 +53,9 @@ func (r *AddReq) Check() (err error) {
 		if len(r.NotifyPayReturnContent) == 0 {
 			return errors.New("回调支付成功返回内容不能为空")
 		}
+		if len(r.NotifyPayReturnContent) == 0 {
+			return errors.New("回调支付成功返回内容不能为空")
+		}
 		if !(r.NotifyPayReturnContentType == "text" || r.NotifyPayReturnContentType == "json") {
 			return errors.New("回调支付成功返回数据类型不合法")
 		}

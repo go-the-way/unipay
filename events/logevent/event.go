@@ -13,6 +13,7 @@ package logevent
 
 import (
 	"fmt"
+
 	"github.com/go-the-way/events"
 	"github.com/rwscode/unipay/deps/db"
 	"github.com/rwscode/unipay/models"
