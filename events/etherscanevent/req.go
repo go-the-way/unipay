@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -42,7 +43,7 @@ func startReq(order *models.Order, apikey string) {
 		offset      = "500"
 		errCount    = 0
 		maxErrCount = 3
-		sleepDur    = time.Millisecond * 200
+		sleepDur    = time.Second
 		reqTimeout  = time.Second * 3
 		client      = &http.Client{Timeout: reqTimeout}
 	)
@@ -117,10 +118,10 @@ func txnFind(order *models.Order, rm respModel) (matched bool) {
 		tokenDecimal, _ := strconv.Atoi(tx.TokenDecimal)
 		orderAmount, _ := strconv.ParseFloat(order.Other2, 64)
 		// USD
-		amount := int(orderAmount * float64(tokenDecimal))
+		amount := int(orderAmount * math.Pow10(tokenDecimal))
 		timeStamp, _ := strconv.ParseInt(tx.TimeStamp, 10, 64)
 		// "timeStamp": "1535035994",
-		txTime := time.UnixMilli(timeStamp)
+		txTime := pkg.ParseTime(pkg.FormatTime(time.Unix(timeStamp, 0)))
 		if tx.To == order.Other1 && fmt.Sprintf("%d", amount) == tx.Value && order.CreateTimeBeforeTime(txTime) {
 			matched = true
 			order.PayTime = pkg.FormatTime(txTime)

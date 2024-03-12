@@ -36,7 +36,7 @@ func task() {
 	for {
 		select {
 		case order := <-ch:
-			startReq(order)
+			go startReq(order)
 		}
 	}
 }

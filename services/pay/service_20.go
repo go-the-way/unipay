@@ -76,7 +76,7 @@ func orderCancelTime(order *models.Order) {
 func getOrderValidMinute() (m uint) {
 	_ = db.GetDb().Model(new(models.ApiConfig)).Where("id=1").Select("valid_period_minute").Scan(&m).Error
 	if m == 0 {
-		m = 15
+		m = 5
 	}
 	return
 }

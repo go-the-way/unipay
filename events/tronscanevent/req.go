@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -43,7 +44,7 @@ func startReq(order *models.Order) {
 		limit       = 50
 		errCount    = 0
 		maxErrCount = 3
-		sleepDur    = time.Millisecond * 200
+		sleepDur    = time.Second
 		reqTimeout  = time.Second * 3
 		client      = &http.Client{Timeout: reqTimeout}
 	)
@@ -78,7 +79,6 @@ func startReq(order *models.Order) {
 						if page >= rm.PageSize {
 							page = 1
 						}
-						start = (page-1)*limit + 1
 						if len(rm.Data) <= 0 {
 							page = 1
 						} else {
@@ -87,14 +87,14 @@ func startReq(order *models.Order) {
 							if timeStamp < pkg.ParseTime(order.CreateTime).UnixMilli() {
 								page = 1
 							} else {
-								page++
-							}
-							if matched := txnFind(order, rm); matched {
-								// 找到该订单
-								orderevent.Paid(order)
-								break
+								if matched := txnFind(order, rm); matched {
+									// 找到该订单
+									orderevent.Paid(order)
+									break
+								}
 							}
 						}
+						start = (page-1)*limit + 1
 					}
 				}
 			}
@@ -121,10 +121,10 @@ func txnFind(order *models.Order, rm respModel) (matched bool) {
 		decimals := tx.Decimals
 		orderAmount, _ := strconv.ParseFloat(order.Other2, 64)
 		// USD
-		amount := int(orderAmount * float64(decimals*10))
+		amount := int(orderAmount * math.Pow10(decimals))
 		// "block_timestamp": 1709278716000,
 		txTimeStamp := tx.BlockTimestamp
-		txTime := time.UnixMicro(txTimeStamp)
+		txTime := pkg.ParseTime(pkg.FormatTime(time.UnixMilli(txTimeStamp)))
 		if tx.To == order.Other1 && fmt.Sprintf("%d", amount) == tx.Amount && tx.ContractRet == "SUCCESS" && order.CreateTimeBeforeTime(txTime) {
 			matched = true
 			order.PayTime = pkg.FormatTime(txTime)

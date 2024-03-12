@@ -54,7 +54,7 @@ func startReq(order *models.Order, apikey string, chainShortName string) {
 		limit       = "100"
 		errCount    = 0
 		maxErrCount = 3
-		sleepDur    = time.Millisecond * 200
+		sleepDur    = time.Second
 		reqTimeout  = time.Second * 3
 		client      = &http.Client{Timeout: reqTimeout}
 	)
@@ -98,17 +98,17 @@ func startReq(order *models.Order, apikey string, chainShortName string) {
 							var timeStamp int64
 							switch d.ChainShortName {
 							case eth:
-								timeStamp = time.UnixMicro(transactionTime).UnixMicro()
-							case trx:
 								timeStamp = time.UnixMilli(transactionTime).UnixMicro()
+							case trx:
+								timeStamp = time.Unix(transactionTime, 0).UnixMicro()
 							}
 							if timeStamp < pkg.ParseTime(order.CreateTime).UnixMicro() {
 								page = 1
 							} else {
 								page++
-								if totalPage, _ := strconv.Atoi(d.TotalPage); page >= totalPage {
-									page = 1
-								}
+							}
+							if totalPage, _ := strconv.Atoi(d.TotalPage); page >= totalPage {
+								page = 1
 							}
 						}
 						if matched := txnFind(order, rm); matched {
@@ -147,11 +147,11 @@ func txnFind(order *models.Order, rm respModel) (matched bool) {
 		var timeStamp int64
 		switch rm.Data[0].ChainShortName {
 		case eth:
-			timeStamp = time.UnixMicro(transactionTime).UnixMicro()
+			timeStamp = time.UnixMilli(transactionTime).UnixMilli()
 		case trx:
-			timeStamp = time.UnixMilli(transactionTime).UnixMicro()
+			timeStamp = time.Unix(transactionTime, 0).UnixMilli()
 		}
-		txTime := time.UnixMicro(timeStamp)
+		txTime := pkg.ParseTime(pkg.FormatTime(time.UnixMilli(timeStamp)))
 		if tx.To == order.Other1 && tx.State == "success" && order.Other2 == tx.Amount && order.CreateTimeBeforeTime(txTime) {
 			matched = true
 			order.PayTime = pkg.FormatTime(txTime)

@@ -44,7 +44,7 @@ func task() {
 				logevent.Save(models.NewLog(fmt.Sprintf("订单号[%s]类型[%s]查询交易记录退出，erc20_apikey为空", order.Id, order.PayChannelType)))
 				continue
 			}
-			startReq(order, apikey)
+			go startReq(order, apikey)
 		}
 	}
 }

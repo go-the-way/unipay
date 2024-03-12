@@ -12,15 +12,17 @@
 package e20svc
 
 import (
-	"bytes"
 	_ "embed"
+
+	"bytes"
 	"errors"
 	"fmt"
+	"html/template"
+	"time"
+
 	"github.com/rwscode/unipay/deps/db"
 	"github.com/rwscode/unipay/deps/pkg"
 	"github.com/rwscode/unipay/models"
-	"html/template"
-	"time"
 )
 
 //go:embed e20.html
@@ -39,7 +41,7 @@ func (s *service) OrderPayHtml(req OrderPayHtmlReq) (resp OrderPayHtmlResp, err 
 		return
 	}
 	if validPeriodMinute == 0 {
-		validPeriodMinute = 15
+		validPeriodMinute = 5
 	}
 	dur, _ := time.ParseDuration(fmt.Sprintf("%dm", validPeriodMinute))
 	expireTime := pkg.ParseTime(order.CreateTime).Add(dur)

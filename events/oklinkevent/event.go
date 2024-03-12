@@ -49,7 +49,7 @@ func task() {
 				continue
 			}
 			km := map[string]string{"erc20": conf.Erc20Apikey, "trc20": conf.Trc20Apikey}
-			startReq(order, km[order.PayChannelType], tm[order.PayChannelType])
+			go startReq(order, km[order.PayChannelType], tm[order.PayChannelType])
 		}
 	}
 }
