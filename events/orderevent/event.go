@@ -13,8 +13,12 @@ package orderevent
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/go-the-way/events"
+	"github.com/rwscode/unipay/deps/db"
 	"github.com/rwscode/unipay/deps/lock"
+	"github.com/rwscode/unipay/deps/pkg"
 	"github.com/rwscode/unipay/events/logevent"
 	"github.com/rwscode/unipay/models"
 	"github.com/rwscode/unipay/services/order"
@@ -35,6 +39,8 @@ func init() {
 	paid.Bind(bindDeleteLock)
 	expired.Bind(bindExpired)
 	expired.Bind(bindDeleteLock)
+	// E20订单全部失效
+	e20OrderCancelled()
 }
 
 func bindPaid(o *models.Order) {
@@ -57,3 +63,14 @@ func bindExpired(o *models.Order) {
 }
 
 func bindDeleteLock(o *models.Order) { lock.DeleteWithLock(o.LockKey()) }
+
+func e20OrderCancelled() {
+	err := db.GetDb().Model(new(models.Order)).Where("pay_channel_type in ('erc20','trc20') and state=1").Updates(map[string]any{
+		"state":       models.OrderStateCancelled,
+		"message":     "服务重载强制取消",
+		"cancel_time": pkg.FormatTime(time.Now()),
+	}).Error
+	if err != nil {
+		fmt.Println(err)
+	}
+}

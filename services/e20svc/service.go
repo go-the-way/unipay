@@ -30,8 +30,8 @@ type service struct{}
 
 func (s *service) OrderPayHtml(req OrderPayHtmlReq) (resp OrderPayHtmlResp, err error) {
 	order := req.Order
-	if order.State != models.OrderStateWaitPay {
-		err = errors.New(fmt.Sprintf("订单[%s]状态不支持此操作", order.Id))
+	if order.State == models.OrderStateCancelled {
+		err = errors.New(fmt.Sprintf("订单[%s]已失效", order.Id))
 		return
 	}
 	var validPeriodMinute uint
@@ -43,7 +43,8 @@ func (s *service) OrderPayHtml(req OrderPayHtmlReq) (resp OrderPayHtmlResp, err 
 	}
 	dur, _ := time.ParseDuration(fmt.Sprintf("%dm", validPeriodMinute))
 	expireTime := pkg.ParseTime(order.CreateTime).Add(dur)
-	if time.Now().After(expireTime) {
+	nowTime := pkg.ParseTime(pkg.FormatTime(time.Now()))
+	if nowTime.After(expireTime) {
 		// 订单已失效
 		err = errors.New(fmt.Sprintf("订单[%s]已失效", order.Id))
 		return

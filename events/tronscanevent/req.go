@@ -67,21 +67,34 @@ func startReq(order *models.Order) {
 			} else if len(buf) <= 0 {
 				apilogevent.Save(errLog(reqUrl, errors.New("读取响应为空"), statusCode))
 			} else {
-				var rm respModel
-				if err = json.Unmarshal(buf, &rm); err != nil {
-					apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), statusCode))
+				if statusCode != http.StatusOK {
+					apilogevent.Save(errLog(reqUrl, errors.New("状态码异常:"+string(buf)), statusCode))
 				} else {
-					page++
-					if page >= rm.PageSize {
-						page = 1
-					}
-					start = (page-1)*limit + 1
-					// FIXME
-					// 尝试获取时间，和订单时间进行比较，在订单创建时间之前，则进行下一轮
-					if matched := txnFind(order, rm); matched {
-						// 找到该订单
-						orderevent.Paid(order)
-						break
+					var rm respModel
+					if err = json.Unmarshal(buf, &rm); err != nil {
+						apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), statusCode))
+					} else {
+						page++
+						if page >= rm.PageSize {
+							page = 1
+						}
+						start = (page-1)*limit + 1
+						if len(rm.Data) <= 0 {
+							page = 1
+						} else {
+							// 1709278716000
+							timeStamp := rm.Data[0].BlockTimestamp
+							if timeStamp < pkg.ParseTime(order.CreateTime).UnixMilli() {
+								page = 1
+							} else {
+								page++
+							}
+							if matched := txnFind(order, rm); matched {
+								// 找到该订单
+								orderevent.Paid(order)
+								break
+							}
+						}
 					}
 				}
 			}
@@ -122,13 +135,8 @@ func txnFind(order *models.Order, rm respModel) (matched bool) {
 }
 
 type respModel struct {
-	ContractMap struct {
-		// THPvaUhoh2Qn2Y9THCZML3H815HhFhn5YC bool `json:"THPvaUhoh2Qn2y9THCZML3H815hhFhn5YC"`
-		// TSaRZDiBPD8Rd5VrvX8A4ZgunHczM9Mj8S bool `json:"TSaRZDiBPD8Rd5vrvX8a4zgunHczM9mj8S"`
-		// TU8FjcJFpgGd2Q9RoMBmv5C9Wo7Q2Pwt2D bool `json:"TU8fjcJFpgGd2q9roMBmv5c9wo7q2Pwt2d"`
-		// } `json:"contractMap"`
-	} `json:"-"`
-	TokenInfo struct {
+	ContractMap map[string]bool `json:"contractMap"`
+	TokenInfo   struct {
 		TokenId      string `json:"tokenId"`
 		TokenAbbr    string `json:"tokenAbbr"`
 		TokenName    string `json:"tokenName"`

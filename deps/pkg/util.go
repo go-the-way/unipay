@@ -13,7 +13,6 @@ package pkg
 
 import (
 	"fmt"
-	"strconv"
 	"time"
 )
 
@@ -38,13 +37,6 @@ func ParseTime(str string) (t time.Time) {
 }
 func FormatTime(t time.Time) (str string) {
 	return t.Format("2006-01-02 15:04:05")
-}
-func FromUnix(unixStr string) time.Time {
-	unix, _ := strconv.ParseInt(unixStr, 10, 64)
-	if len(unixStr) == 10 {
-		return time.UnixMilli(unix)
-	}
-	return time.UnixMicro(unix)
 }
 func GetTimeMap() map[string]any {
 	// 时间变量 => Time.

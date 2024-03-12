@@ -67,26 +67,28 @@ func startReq(order *models.Order, apikey string) {
 			} else if len(buf) <= 0 {
 				apilogevent.Save(errLog(reqUrl, errors.New("读取响应为空"), statusCode))
 			} else {
-				var rm respModel
-				if err = json.Unmarshal(buf, &rm); err != nil {
-					apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), statusCode))
+				if resp.StatusCode != http.StatusOK {
+					apilogevent.Save(errLog(reqUrl, errors.New("状态码异常:"+string(buf)), statusCode))
 				} else {
-					if len(rm.Result) <= 0 {
-						page = 1
+					var rm respModel
+					if err = json.Unmarshal(buf, &rm); err != nil {
+						apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), statusCode))
 					} else {
-						timeStamp, _ := strconv.ParseInt(rm.Result[0].TimeStamp, 10, 64)
-						if timeStamp < pkg.ParseTime(order.CreateTime).UnixMilli() {
-							// FIXME
-							// 尝试获取时间，和订单时间进行比较，在订单创建时间之前，则进行下一轮
+						if len(rm.Result) <= 0 {
 							page = 1
 						} else {
-							page++
+							timeStamp, _ := strconv.ParseInt(rm.Result[0].TimeStamp, 10, 64)
+							if timeStamp < pkg.ParseTime(order.CreateTime).UnixMilli() {
+								page = 1
+							} else {
+								page++
+							}
 						}
-					}
-					if matched := txnFind(order, rm); matched {
-						// 找到该订单
-						orderevent.Paid(order)
-						break
+						if matched := txnFind(order, rm); matched {
+							// 找到该订单
+							orderevent.Paid(order)
+							break
+						}
 					}
 				}
 			}
@@ -116,8 +118,9 @@ func txnFind(order *models.Order, rm respModel) (matched bool) {
 		orderAmount, _ := strconv.ParseFloat(order.Other2, 64)
 		// USD
 		amount := int(orderAmount * float64(tokenDecimal))
+		timeStamp, _ := strconv.ParseInt(tx.TimeStamp, 10, 64)
 		// "timeStamp": "1535035994",
-		txTime := pkg.FromUnix(tx.TimeStamp)
+		txTime := time.UnixMilli(timeStamp)
 		if tx.To == order.Other1 && fmt.Sprintf("%d", amount) == tx.Value && order.CreateTimeBeforeTime(txTime) {
 			matched = true
 			order.PayTime = pkg.FormatTime(txTime)

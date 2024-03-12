@@ -81,32 +81,41 @@ func startReq(order *models.Order, apikey string, chainShortName string) {
 			} else if len(buf) <= 0 {
 				apilogevent.Save(errLog(reqUrl, errors.New("读取响应为空"), statusCode))
 			} else {
-				var rm respModel
-				if err = json.Unmarshal(buf, &rm); err != nil {
-					apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), statusCode))
-				} else if rm.Data == nil || len(rm.Data) <= 0 {
-					apilogevent.Save(errLog(reqUrl, errors.New("请求错误："+rm.Msg), statusCode))
+				if statusCode != http.StatusOK {
+					apilogevent.Save(errLog(reqUrl, errors.New("状态码异常:"+string(buf)), statusCode))
 				} else {
-					d := rm.Data[0]
-					if len(d.TransactionLists) <= 0 {
-						page = 1
+					var rm respModel
+					if err = json.Unmarshal(buf, &rm); err != nil {
+						apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), statusCode))
+					} else if rm.Data == nil || len(rm.Data) <= 0 {
+						apilogevent.Save(errLog(reqUrl, errors.New("请求错误："+rm.Msg), statusCode))
 					} else {
-						timeStamp := pkg.FromUnix(d.TransactionLists[0].TransactionTime).UnixMicro()
-						if timeStamp < pkg.ParseTime(order.CreateTime).UnixMicro() {
-							// FIXME
-							// 尝试获取时间，和订单时间进行比较，在订单创建时间之前，则进行下一轮
+						d := rm.Data[0]
+						if len(d.TransactionLists) <= 0 {
 							page = 1
 						} else {
-							page++
-							if totalPage, _ := strconv.Atoi(d.TotalPage); page >= totalPage {
+							transactionTime, _ := strconv.ParseInt(d.TransactionLists[0].TransactionTime, 10, 64)
+							var timeStamp int64
+							switch d.ChainShortName {
+							case eth:
+								timeStamp = time.UnixMicro(transactionTime).UnixMicro()
+							case trx:
+								timeStamp = time.UnixMilli(transactionTime).UnixMicro()
+							}
+							if timeStamp < pkg.ParseTime(order.CreateTime).UnixMicro() {
 								page = 1
+							} else {
+								page++
+								if totalPage, _ := strconv.Atoi(d.TotalPage); page >= totalPage {
+									page = 1
+								}
 							}
 						}
-					}
-					if matched := txnFind(order, rm); matched {
-						// 找到该订单
-						orderevent.Paid(order)
-						break
+						if matched := txnFind(order, rm); matched {
+							// 找到该订单
+							orderevent.Paid(order)
+							break
+						}
 					}
 				}
 			}
@@ -134,7 +143,15 @@ func txnFind(order *models.Order, rm respModel) (matched bool) {
 	for _, tx := range rm.Data[0].TransactionLists {
 		// "transactionTime": "1709277731000",  eth
 		// "transactionTime": "1709277731",     trx
-		txTime := pkg.FromUnix(tx.TransactionTime)
+		transactionTime, _ := strconv.ParseInt(tx.TransactionTime, 10, 64)
+		var timeStamp int64
+		switch rm.Data[0].ChainShortName {
+		case eth:
+			timeStamp = time.UnixMicro(transactionTime).UnixMicro()
+		case trx:
+			timeStamp = time.UnixMilli(transactionTime).UnixMicro()
+		}
+		txTime := time.UnixMicro(timeStamp)
 		if tx.To == order.Other1 && tx.State == "success" && order.Other2 == tx.Amount && order.CreateTimeBeforeTime(txTime) {
 			matched = true
 			order.PayTime = pkg.FormatTime(txTime)
