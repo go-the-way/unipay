@@ -13,11 +13,10 @@ package channel
 
 import (
 	"errors"
-	"net/http"
-
 	"github.com/rwscode/unipay/deps/pkg"
 	"github.com/rwscode/unipay/models"
 	"github.com/rwscode/unipay/services/base"
+	"net/http"
 )
 
 func (r *AddReq) Check() (err error) {
@@ -53,22 +52,19 @@ func (r *AddReq) Check() (err error) {
 		if len(r.NotifyPayReturnContent) == 0 {
 			return errors.New("回调支付成功返回内容不能为空")
 		}
-		if len(r.NotifyPayReturnContent) == 0 {
-			return errors.New("回调支付成功返回内容不能为空")
-		}
 		if !(r.NotifyPayReturnContentType == "text" || r.NotifyPayReturnContentType == "json") {
 			return errors.New("回调支付成功返回数据类型不合法")
+		}
+		if r.ReqPayPageUrlExpr == "" && r.ReqPayQrUrlExpr == "" {
+			return errors.New("支付页面Url获取表达式和支付二维码Url获取表达式不能同时为空")
+		}
+		if r.ReqMethod == http.MethodGet && r.ReqContentType != "urlencoded" {
+			return errors.New("当请求类型为GET时，请求数据类型仅支持urlencoded")
 		}
 
 	case "erc20", "trc20":
 	}
 
-	if r.ReqPayPageUrlExpr == "" && r.ReqPayQrUrlExpr == "" {
-		return errors.New("支付页面Url获取表达式和支付二维码Url获取表达式不能同时为空")
-	}
-	if r.ReqMethod == http.MethodGet && r.ReqContentType != "urlencoded" {
-		return errors.New("当请求类型为GET时，请求数据类型仅支持urlencoded")
-	}
 	return
 }
 
