@@ -32,6 +32,10 @@ type service struct{}
 
 func (s *service) OrderPayHtml(req OrderPayHtmlReq) (resp OrderPayHtmlResp, err error) {
 	order := req.Order
+	if order.State == models.OrderStatePaid {
+		err = errors.New(fmt.Sprintf("订单[%s]已支付", order.Id))
+		return
+	}
 	if order.State == models.OrderStateCancelled {
 		err = errors.New(fmt.Sprintf("订单[%s]已失效", order.Id))
 		return
