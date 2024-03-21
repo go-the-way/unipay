@@ -31,6 +31,8 @@ type (
 		Remark2     string `validate:"maxlength(500,备注2长度不能超过500)" form:"remark2" json:"remark2"`                                  // 备注2
 		Remark3     string `validate:"maxlength(500,备注3长度不能超过500)" form:"remark3" json:"remark3"`                                  // 备注3
 
+		Platform byte `validate:"enum(1|2,平台不合法)" form:"platform" json:"platform"` // 平台 1Android 2iOSWeb
+
 		E20PayPageUrl string `form:"-" json:"-"` // erc20/trc20支付页面Url
 
 		Callback func(req Req)
@@ -42,6 +44,6 @@ type (
 		BusinessId2 string `validate:"maxlength(50,业务id2长度不能超过50)" form:"business_id2" json:"business_id2"`                        // 业务id2
 		BusinessId3 string `validate:"maxlength(50,业务id3长度不能超过50)" form:"business_id3" json:"business_id3"`                        // 业务id3
 
-		Callback func(req NotifyReq, order models.Order)
+		Callback func(req NotifyReq, order *models.Order)
 	}
 )

@@ -11,15 +11,12 @@
 
 package e20svc
 
-import "github.com/rwscode/unipay/models"
-
 type (
 	OrderPayHtmlReq struct {
 		OrderId            string `form:"order_id"`              // 订单id
 		CheckOrderStateUrl string `form:"check_order_state_url"` // 检查订单状态Url
 		RedirectUrl        string `form:"redirect_url"`          // 支付成功跳转Url
-
-		*models.Order
+		Platform           string `form:"platform"`              // 平台 1Android 2iOSWeb
 	}
 	E20HtmlReq struct {
 		OrderId            string // 订单id
@@ -29,5 +26,6 @@ type (
 		ExpirationTime     string // 订单失效时间毫秒时间戳
 		CheckOrderStateUrl string // 检查订单状态Url
 		RedirectUrl        string // 支付成功跳转Url
+		Platform           string // 平台 1Android 2iOSWeb
 	}
 )

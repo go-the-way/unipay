@@ -27,12 +27,18 @@ import (
 func Paid(order *models.Order)    { paid.Fire(order) }
 func Expired(order *models.Order) { expired.Fire(order) }
 
-type evt struct{}
+type (
+	evt         struct{}
+	PaidHandler func(order *models.Order)
+)
 
 var (
-	paid    = events.NewHandler[evt, *models.Order]()
-	expired = events.NewHandler[evt, *models.Order]()
+	paid        = events.NewHandler[evt, *models.Order]()
+	expired     = events.NewHandler[evt, *models.Order]()
+	paidHandler PaidHandler
 )
+
+func SetPaidHandler(handler PaidHandler) { paidHandler = handler }
 
 func init() {
 	paid.Bind(bindPaid)
@@ -44,6 +50,9 @@ func init() {
 }
 
 func bindPaid(o *models.Order) {
+	if paidHandler != nil {
+		paidHandler(o)
+	}
 	if err := order.Service.Paid(order.PaidReq{
 		IdReq:   order.IdReq{Id: o.Id},
 		TradeId: o.TradeId,

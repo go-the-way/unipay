@@ -118,6 +118,6 @@ func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r Notif
 
 func (s *service) callback(req NotifyReq) {
 	if fn := req.Callback; fn != nil {
-		go func() { resp, _ := order.Get(order.GetReq{Id: req.OrderId}); fn(req, resp.Order) }()
+		go func() { resp, _ := order.Get(order.GetReq{Id: req.OrderId}); fn(req, &resp.Order) }()
 	}
 }

@@ -22,7 +22,7 @@ import (
 
 type (
 	service      struct{}
-	CallbackFunc func(order models.Order)
+	CallbackFunc func(order *models.Order)
 )
 
 func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
@@ -157,7 +157,7 @@ func (s *service) GetState(req GetStateReq) (resp GetStateResp, err error) {
 func (s *service) callback(id string, callback ...CallbackFunc) {
 	if callback != nil && len(callback) > 0 {
 		if fn := callback[0]; fn != nil {
-			go func() { resp, _ := s.Get(GetReq{Id: id}); fn(resp.Order) }()
+			go func() { resp, _ := s.Get(GetReq{Id: id}); fn(&resp.Order) }()
 		}
 	}
 }

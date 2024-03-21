@@ -31,13 +31,21 @@ func TimeNowStr() string                   { return TimeNow().Format("2006-01-02
 func TimeNowNumStr() string                { return TimeNow().Format("20060102150405") }
 func TimeNowStamp() string                 { return fmt.Sprintf("%d", TimeNow().Unix()) }
 func TimeNowStampLong() string             { return fmt.Sprintf("%d", TimeNow().UnixMilli()) }
+
+func ParseTimeUTC(str string) (t time.Time) {
+	t, _ = time.Parse("2006-01-02 15:04:05", str)
+	return t.Add(-time.Hour * 8)
+}
+
 func ParseTime(str string) (t time.Time) {
 	t, _ = time.Parse("2006-01-02 15:04:05", str)
 	return
 }
+
 func FormatTime(t time.Time) (str string) {
 	return t.Format("2006-01-02 15:04:05")
 }
+
 func GetTimeMap() map[string]any {
 	// 时间变量 => Time.
 	// 当前时间`2006-01-02 15:04:05` => NowTime

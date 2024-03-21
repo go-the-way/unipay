@@ -102,7 +102,7 @@ func startReq(order *models.Order, apikey string, chainShortName string) {
 							case trx:
 								timeStamp = time.Unix(transactionTime, 0).UnixMicro()
 							}
-							if timeStamp < pkg.ParseTime(order.CreateTime).UnixMicro() {
+							if timeStamp < pkg.ParseTimeUTC(order.CreateTime).UnixMicro() {
 								page = 1
 							} else {
 								page++

@@ -40,7 +40,7 @@ var (
 func startReq(order *models.Order) {
 	var (
 		page        = 1
-		start       = 1
+		start       = 0
 		limit       = 50
 		errCount    = 0
 		maxErrCount = 3
@@ -84,7 +84,8 @@ func startReq(order *models.Order) {
 						} else {
 							// 1709278716000
 							timeStamp := rm.Data[0].BlockTimestamp
-							if timeStamp < pkg.ParseTime(order.CreateTime).UnixMilli() {
+							orderTimeStamp := pkg.ParseTimeUTC(order.CreateTime).UnixMilli()
+							if timeStamp < orderTimeStamp {
 								page = 1
 							} else {
 								if matched := txnFind(order, rm); matched {
@@ -94,7 +95,7 @@ func startReq(order *models.Order) {
 								}
 							}
 						}
-						start = (page-1)*limit + 1
+						start = (page - 1) * limit
 					}
 				}
 			}

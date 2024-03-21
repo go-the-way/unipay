@@ -25,19 +25,28 @@ import (
 	"github.com/rwscode/unipay/models"
 )
 
-//go:embed e20.html
-var e20Html string
+var (
+	//go:embed e20.html
+	e20Html string
+	//go:embed error.html
+	errorHtml string
+)
 
 type service struct{}
 
 func (s *service) OrderPayHtml(req OrderPayHtmlReq) (resp OrderPayHtmlResp, err error) {
-	order := req.Order
+	var order models.Order
+	_ = db.GetDb().Model(new(models.Order)).Where("id=?", req.OrderId).First(&order).Error
+	if order.Id == "" {
+		resp.Html = fmt.Sprintf(errorHtml, fmt.Sprintf("订单[%s]不存在", req.OrderId), req.Platform, req.RedirectUrl)
+		return
+	}
 	if order.State == models.OrderStatePaid {
-		err = errors.New(fmt.Sprintf("订单[%s]已支付", order.Id))
+		resp.Html = fmt.Sprintf(errorHtml, fmt.Sprintf("订单[%s]已支付", order.Id), req.Platform, req.RedirectUrl)
 		return
 	}
 	if order.State == models.OrderStateCancelled {
-		err = errors.New(fmt.Sprintf("订单[%s]已失效", order.Id))
+		resp.Html = fmt.Sprintf(errorHtml, fmt.Sprintf("订单[%s]已失效", order.Id), req.Platform, req.RedirectUrl)
 		return
 	}
 	var validPeriodMinute uint
@@ -64,6 +73,7 @@ func (s *service) OrderPayHtml(req OrderPayHtmlReq) (resp OrderPayHtmlResp, err 
 		ExpirationTime:     expireTimeUnixMilli,
 		CheckOrderStateUrl: req.CheckOrderStateUrl,
 		RedirectUrl:        req.RedirectUrl,
+		Platform:           req.Platform,
 	})
 }
 

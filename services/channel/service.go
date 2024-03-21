@@ -115,14 +115,20 @@ func (s *service) getParams(ps []models.ChannelParam) [][2]string {
 }
 
 func (s *service) checkChannelParams(channelId uint) (err error) {
-	var ps []models.ChannelParam
-	if err = db.GetDb().Model(new(models.ChannelParam)).Where("channel_id=?", channelId).Find(&ps).Error; err != nil {
+	var chType string
+	if err = db.GetDb().Model(new(models.Channel)).Where("channel_id=?", channelId).Select("type").Scan(&chType).Error; err != nil {
 		return
 	}
-	if len(ps) <= 0 {
-		return errors.New("请先配置参数列表再开启")
+	if chType == models.OrderTypeNormal {
+		var ps []models.ChannelParam
+		if err = db.GetDb().Model(new(models.ChannelParam)).Where("channel_id=?", channelId).Find(&ps).Error; err != nil {
+			return
+		}
+		if len(ps) <= 0 {
+			return errors.New("请先配置参数列表再开启")
+		}
+		_, err = pkg.EvalParams(s.buildPayMap(), (&models.Channel{}).ToMap(), s.getParams(ps))
 	}
-	_, err = pkg.EvalParams(s.buildPayMap(), (&models.Channel{}).ToMap(), s.getParams(ps))
 	return
 }
 

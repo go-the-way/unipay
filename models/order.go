@@ -70,7 +70,7 @@ func (o *Order) CancelTimeBeforeNow() (yes bool) {
 	if o.CancelTime == "" {
 		return false
 	}
-	return o.CancelTimeBeforeTime(time.Now())
+	return o.CancelTimeBeforeTime(pkg.ParseTime(pkg.TimeNowStr()))
 }
 
 func (o *Order) CancelTimeBeforeTimeStr(str string) (yes bool) {
@@ -85,7 +85,7 @@ func (o *Order) CancelTimeBeforeTime(t time.Time) (yes bool) {
 }
 
 func (o *Order) CreateTimeBeforeNow() (yes bool) {
-	return o.CreateTimeBeforeTime(time.Now())
+	return o.CreateTimeBeforeTime(pkg.ParseTime(pkg.TimeNowStr()))
 }
 
 func (o *Order) CreateTimeBeforeTimeStr(str string) (yes bool) {

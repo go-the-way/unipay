@@ -10,12 +10,3 @@
 // limitations under the License.
 
 package e20svc
-
-import (
-	"github.com/rwscode/unipay/deps/db"
-	"github.com/rwscode/unipay/models"
-)
-
-func (r *OrderPayHtmlReq) Check() (err error) {
-	return db.GetDb().Model(new(models.Order)).Where("id=?", r.OrderId).First(&r.Order).Error
-}

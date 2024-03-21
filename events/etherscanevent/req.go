@@ -79,7 +79,7 @@ func startReq(order *models.Order, apikey string) {
 							page = 1
 						} else {
 							timeStamp, _ := strconv.ParseInt(rm.Result[0].TimeStamp, 10, 64)
-							if timeStamp < pkg.ParseTime(order.CreateTime).UnixMilli() {
+							if timeStamp < pkg.ParseTimeUTC(order.CreateTime).UnixMilli() {
 								page = 1
 							} else {
 								page++
