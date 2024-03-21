@@ -19,11 +19,17 @@ import (
 	"net/http"
 )
 
+var typeMap = map[string]struct{}{"normal": {}, "erc20": {}, "trc20": {}}
+
 func (r *AddReq) Check() (err error) {
 	if cond := r.AmountValidateCond; cond != "" {
 		if !pkg.ValidAmountCond(cond) {
 			return errors.New("支付金额验证条件格式不合法")
 		}
+	}
+
+	if _, ok := typeMap[r.Type]; !ok {
+		return errors.New("类型不合法")
 	}
 
 	switch r.Type {
@@ -68,7 +74,9 @@ func (r *AddReq) Check() (err error) {
 	return
 }
 
-func (r *UpdateReq) Check() (err error) { return base.CheckChannelExist(r.Id) }
+func (r *UpdateReq) Check() (err error) {
+	return base.CheckChannelExist(r.Id)
+}
 
 func (r *DelReq) Check() (err error) { return base.CheckChannelExist(r.Id) }
 
