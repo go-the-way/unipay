@@ -226,6 +226,7 @@
         if("{{.Platform}}" == "1"){
             // for Android
             window.location.href = "{{.RedirectUrl}}";
+            alert("唤醒App失败，请手动打开App。");
         }else{
             // for iOS Web
             window.close();
@@ -244,7 +245,7 @@
             minute %= 60
         }
         if (ms <= 0) {
-            layer.alert("支付超时，请重新发起支付！", {icon: 5});
+            layer.alert("支付超时，请重新发起支付。", {icon: 5});
             redirectHandle();
             return;
         }
@@ -291,10 +292,10 @@
             timeout: 10000,
             success: function (response, status) {
                 if (response.data.state == 2) {
-                    layer.msg('支付成功，正在跳转中...', {icon: 16, shade: 0.01, time: 3});
+                    layer.msg('支付成功，正在跳转中。', {icon: 16, shade: 0.01, time: 3});
                     redirectHandle();
                 } else if (response.data.state == 3) {
-                    layer.alert("支付超时，请重新发起支付！", {icon: 5, time: 3});
+                    layer.alert("支付超时，请重新发起支付。", {icon: 5, time: 3});
                     redirectHandle();
                 } else {
                     setTimeout("checkOrderStatus()", 1000);
