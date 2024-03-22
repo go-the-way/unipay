@@ -36,7 +36,7 @@ channel info
 ---
 app_key: ` + appKey + `
 app_secret: ` + appSecret + `
-signature: md5(join(sort(["app_key="+$Param.app_key,"rand="+$Param.rand,"subject="+$Param.subject,"price="+$Param.price,"notify_url="+$Param.notify_url]),"&")+"&app_secret="+$Param.app_secret)
+signature: md5(join(sort(["app_key="+$Param.app_key,"rand="+$Param.rand,"subject="+$Param.subject,"price="+$Param.price,"notify_url="+$Param.notify_url,"redirect_url="+$Param.redirect_url]),"&")+"&app_secret="+$Param.app_secret)
 
 insert sql info
 ---
@@ -47,14 +47,15 @@ INSERT INTO unipay_channel_params (id, channel_id, name, value, remark, pass) VA
 INSERT INTO unipay_channel_params (id, channel_id, name, value, remark, pass) VALUES (4, 1, 'subject', '$Pay.Subject', 'subject', 1);
 INSERT INTO unipay_channel_params (id, channel_id, name, value, remark, pass) VALUES (5, 1, 'price', '$Pay.AmountYuan', 'price', 1);
 INSERT INTO unipay_channel_params (id, channel_id, name, value, remark, pass) VALUES (6, 1, 'notify_url', '$Pay.NotifyUrl', 'notify_url', 1);
-INSERT INTO unipay_channel_params (id, channel_id, name, value, remark, pass) VALUES (7, 1, 'sign', 'md5(join(sort(["app_key="+$Param.app_key,"rand="+$Param.rand,"subject="+$Param.subject,"price="+$Param.price,"notify_url="+$Param.notify_url]),"&")+"&app_secret="+$Param.app_secret)', 'md5 signature', 1);
+INSERT INTO unipay_channel_params (id, channel_id, name, value, remark, pass) VALUES (7, 1, 'redirect_url', '$Pay.AppWakeUri', 'redirect_url', 1);
+INSERT INTO unipay_channel_params (id, channel_id, name, value, remark, pass) VALUES (8, 1, 'sign', 'md5(join(sort(["app_key="+$Param.app_key,"rand="+$Param.rand,"subject="+$Param.subject,"price="+$Param.price,"notify_url="+$Param.notify_url,"redirect_url="+$Param.redirect_url]),"&")+"&app_secret="+$Param.app_secret)', 'md5 signature', 1);
 
 create order info
 ---
 req url: ` + reqUrl + `
 req method: POST
 req content type: application/json
-req body: {"app_key":"app key","rand":"rand str 30 len","subject":"pay subject","price":"100","notify_url":"notify url","sign": "signature md5 str"}
+req body: {"app_key":"app key","rand":"rand str 30 len","subject":"pay subject","price":"100","notify_url":"notify url","redirect_url":"redirect url","sign": "signature md5 str"}
 resp content type: application/json
 resp body: {"code":"200","data":{"order_id":"order id","pay_url":"http://example.com/api/payOrder?order_id=wow"},"message":"ok"}
 

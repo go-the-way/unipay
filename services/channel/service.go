@@ -103,6 +103,7 @@ func (s *service) buildPayMap() map[string]any {
 		"Remark1":     "",
 		"Remark2":     "",
 		"Remark3":     "",
+		"AppWakeUri":  "myapp://",
 	}
 }
 
