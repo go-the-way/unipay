@@ -116,7 +116,7 @@ func (s *service) getParams(ps []models.ChannelParam) [][2]string {
 
 func (s *service) checkChannelParams(channelId uint) (err error) {
 	var chType string
-	if err = db.GetDb().Model(new(models.Channel)).Where("channel_id=?", channelId).Select("type").Scan(&chType).Error; err != nil {
+	if err = db.GetDb().Model(new(models.Channel)).Where("id=?", channelId).Select("type").Scan(&chType).Error; err != nil {
 		return
 	}
 	if chType == models.OrderTypeNormal {
