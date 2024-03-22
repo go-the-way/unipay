@@ -44,5 +44,6 @@ func (r *Req) ToMap(orderId string) map[string]any {
 		"Remark1":     r.Remark1,
 		"Remark2":     r.Remark2,
 		"Remark3":     r.Remark3,
+		"AppWakeUri":  r.AppWakeUri,
 	}
 }

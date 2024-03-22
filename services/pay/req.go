@@ -31,9 +31,9 @@ type (
 		Remark2     string `validate:"maxlength(500,备注2长度不能超过500)" form:"remark2" json:"remark2"`                                  // 备注2
 		Remark3     string `validate:"maxlength(500,备注3长度不能超过500)" form:"remark3" json:"remark3"`                                  // 备注3
 
-		Platform byte `validate:"enum(1|2,平台不合法)" form:"platform" json:"platform"` // 平台 1Android 2iOSWeb
-
-		E20PayPageUrl string `form:"-" json:"-"` // erc20/trc20支付页面Url
+		Platform      byte   `validate:"enum(1|2,平台不合法)" form:"platform" json:"platform"`                                           // 平台 1Android 2iOSWeb
+		AppWakeUri    string `gorm:"column:app_wake_uri;type:varchar(50);not null;default:'';comment:App唤醒URI" json:"app_wake_uri"` // App唤醒URI
+		E20PayPageUrl string `form:"-" json:"-"`                                                                                    // erc20/trc20支付页面Url
 
 		Callback func(req Req)
 	}
