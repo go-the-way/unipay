@@ -12,6 +12,8 @@
 package main
 
 import (
+	_ "embed"
+
 	"crypto/md5"
 	"encoding/json"
 	"errors"
@@ -26,18 +28,21 @@ import (
 )
 
 var (
-	orderMap = map[string]*orderInfo{}
-	mu       = &sync.Mutex{}
+	//go:embed index.html
+	indexHtml string
+	orderMap  = map[string]*orderInfo{}
+	mu        = &sync.Mutex{}
 )
 
 type (
 	createOrderReq struct {
-		AppKey    string `json:"app_key"`
-		Rand      string `json:"rand"`
-		Subject   string `json:"subject"`
-		Price     string `json:"price"`
-		NotifyUrl string `json:"notify_url"`
-		Sign      string `json:"sign"`
+		AppKey      string `json:"app_key"`
+		Rand        string `json:"rand"`
+		Subject     string `json:"subject"`
+		Price       string `json:"price"`
+		NotifyUrl   string `json:"notify_url"`
+		RedirectUrl string `json:"redirect_url"`
+		Sign        string `json:"sign"`
 	}
 	orderInfo struct {
 		OrderId string
@@ -96,7 +101,9 @@ func writeNon200(w http.ResponseWriter, message string) {
 	_, _ = w.Write([]byte(message))
 }
 
-func htmlH1(str string) string { return fmt.Sprintf("<h1 style='font-size:100px'>%s</h1>", str) }
+func htmlH1(str, redirectUrl string) string {
+	return fmt.Sprintf(indexHtml, str, redirectUrl)
+}
 
 func parseParam(r *http.Request) (cor createOrderReq, err error) {
 	var req createOrderReq
@@ -130,6 +137,10 @@ func checkParam(req createOrderReq) (err error) {
 		return errors.New("参数price不合法")
 	}
 
+	if req.RedirectUrl == "" {
+		return errors.New("参数redirect_url为空")
+	}
+
 	if req.NotifyUrl == "" {
 		return errors.New("参数notify_url为空")
 	}
@@ -143,6 +154,7 @@ func checkParam(req createOrderReq) (err error) {
 func checkSign(req createOrderReq) (err error) {
 	var arr []string
 	arr = append(arr, "app_key="+req.AppKey)
+	arr = append(arr, "redirect_url="+req.RedirectUrl)
 	arr = append(arr, "rand="+req.Rand)
 	arr = append(arr, "subject="+req.Subject)
 	arr = append(arr, "price="+req.Price)
