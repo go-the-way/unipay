@@ -29,7 +29,7 @@ type (
 		AmountYuan     string `form:"amount_yuan"`      // 交易金额（元）
 		AmountFen      string `form:"amount_fen"`       // 交易金额（分）
 		Message        string `form:"message"`          // 支付结果信息
-		State          byte   `form:"state"`            // 支付状态：1待支付2支付成功3支付失败
+		State          byte   `form:"state"`            // 支付状态：1待支付2已支付3已取消
 		Other1         string `form:"other1"`           // 其他1
 		Other2         string `form:"other2"`           // 其他2
 		Other3         string `form:"other3"`           // 其他3
@@ -61,7 +61,7 @@ type (
 		BusinessId3 string `form:"business_id3"`
 	}
 	AddReq struct {
-		PayChannelId   uint   `validate:"min(1,支付通道id不能为空)" json:"pay_channel_id"` // 支付通道Id
+		PayChannelId   uint   `validate:"min(1,支付通道id不能为空)" json:"pay_channel_id"` // 支付通道id
 		PayChannelName string `json:"-"`
 		PayChannelType string `json:"-"`
 		BusinessId1    string `validate:"minlength(1,业务id1不能为空) maxlength(50,业务id1长度不能超过50)" json:"business_id1"` // 业务id1

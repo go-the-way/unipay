@@ -23,6 +23,7 @@ type (
 
 		Id                         uint   `form:"id"`                             // 支付通道id
 		Name                       string `form:"name"`                           // 支付通道名称
+		Type                       string `form:"type"`                           // 支付通道类型
 		AdminUrl                   string `form:"admin_url"`                      // 后台登录Url
 		AdminUser                  string `form:"admin_user"`                     // 后台登录用户名
 		AdminPasswd                string `form:"admin_passwd"`                   // 后台登录密码
