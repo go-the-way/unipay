@@ -45,8 +45,10 @@ func init() {
 	paid.Bind(bindDeleteLock)
 	expired.Bind(bindExpired)
 	expired.Bind(bindDeleteLock)
-	// E20订单全部失效
-	e20OrderCancelled()
+	time.AfterFunc(time.Second*5, func() {
+		// E20订单全部失效
+		e20OrderCancelled()
+	})
 }
 
 func bindPaid(o *models.Order) {
