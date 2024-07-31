@@ -12,7 +12,7 @@
 package apiconfig
 
 import (
-	"github.com/rwscode/unipay/models"
+	"github.com/go-the-way/unipay/models"
 )
 
 func (r *UpdateReq) Transform() models.ApiConfig {

@@ -12,8 +12,8 @@
 package usdrate
 
 import (
-	"github.com/rwscode/unipay/models"
-	"github.com/rwscode/unipay/services/base"
+	"github.com/go-the-way/unipay/models"
+	"github.com/go-the-way/unipay/services/base"
 )
 
 func (r *UpdateReq) Check() (err error) { return base.CheckRateValid(r.Rate) }

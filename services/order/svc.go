@@ -11,7 +11,7 @@
 
 package order
 
-import "github.com/rwscode/unipay/models"
+import "github.com/go-the-way/unipay/models"
 
 var (
 	Service SVC = &service{}

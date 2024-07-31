@@ -13,9 +13,9 @@ package channel
 
 import (
 	"errors"
-	"github.com/rwscode/unipay/deps/pkg"
-	"github.com/rwscode/unipay/models"
-	"github.com/rwscode/unipay/services/base"
+	"github.com/go-the-way/unipay/deps/pkg"
+	"github.com/go-the-way/unipay/models"
+	"github.com/go-the-way/unipay/services/base"
 	"net/http"
 )
 

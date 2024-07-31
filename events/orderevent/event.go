@@ -16,12 +16,12 @@ import (
 	"time"
 
 	"github.com/go-the-way/events"
-	"github.com/rwscode/unipay/deps/db"
-	"github.com/rwscode/unipay/deps/lock"
-	"github.com/rwscode/unipay/deps/pkg"
-	"github.com/rwscode/unipay/events/logevent"
-	"github.com/rwscode/unipay/models"
-	"github.com/rwscode/unipay/services/order"
+	"github.com/go-the-way/unipay/deps/db"
+	"github.com/go-the-way/unipay/deps/lock"
+	"github.com/go-the-way/unipay/deps/pkg"
+	"github.com/go-the-way/unipay/events/logevent"
+	"github.com/go-the-way/unipay/models"
+	"github.com/go-the-way/unipay/services/order"
 )
 
 func Paid(order *models.Order)    { paid.Fire(order) }

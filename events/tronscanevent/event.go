@@ -13,7 +13,7 @@ package tronscanevent
 
 import (
 	"github.com/go-the-way/events"
-	"github.com/rwscode/unipay/models"
+	"github.com/go-the-way/unipay/models"
 )
 
 func Run(order *models.Order) { event.Fire(order) }

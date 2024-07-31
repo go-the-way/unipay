@@ -12,16 +12,16 @@
 package unipay
 
 import (
-	"github.com/rwscode/unipay/services/apiconfig"
-	"github.com/rwscode/unipay/services/apilog"
-	"github.com/rwscode/unipay/services/channel"
-	"github.com/rwscode/unipay/services/channelparam"
-	"github.com/rwscode/unipay/services/e20svc"
-	"github.com/rwscode/unipay/services/log"
-	"github.com/rwscode/unipay/services/order"
-	"github.com/rwscode/unipay/services/pay"
-	"github.com/rwscode/unipay/services/usdrate"
-	"github.com/rwscode/unipay/services/walletaddress"
+	"github.com/go-the-way/unipay/services/apiconfig"
+	"github.com/go-the-way/unipay/services/apilog"
+	"github.com/go-the-way/unipay/services/channel"
+	"github.com/go-the-way/unipay/services/channelparam"
+	"github.com/go-the-way/unipay/services/e20svc"
+	"github.com/go-the-way/unipay/services/log"
+	"github.com/go-the-way/unipay/services/order"
+	"github.com/go-the-way/unipay/services/pay"
+	"github.com/go-the-way/unipay/services/usdrate"
+	"github.com/go-the-way/unipay/services/walletaddress"
 )
 
 var (

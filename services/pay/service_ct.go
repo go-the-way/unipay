@@ -18,9 +18,9 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/rwscode/unipay/models"
-	"github.com/rwscode/unipay/services/channel"
-	"github.com/rwscode/unipay/services/channelparam"
+	"github.com/go-the-way/unipay/models"
+	"github.com/go-the-way/unipay/services/channel"
+	"github.com/go-the-way/unipay/services/channelparam"
 )
 
 func getReqCT(c channel.GetResp, cp channelparam.GetChannelIdResp, params map[string]any) (body string, form url.Values, contentType string) {

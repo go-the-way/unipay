@@ -11,7 +11,7 @@
 
 package order
 
-import "github.com/rwscode/unipay/services/base"
+import "github.com/go-the-way/unipay/services/base"
 
 type (
 	GetPageReq struct {

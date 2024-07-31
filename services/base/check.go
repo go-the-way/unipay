@@ -16,8 +16,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/rwscode/unipay/deps/db"
-	"github.com/rwscode/unipay/models"
+	"github.com/go-the-way/unipay/deps/db"
+	"github.com/go-the-way/unipay/models"
 )
 
 func CheckAll(fns ...func() (err error)) (err error) {

@@ -1,4 +1,4 @@
-module github.com/rwscode/unipay
+module github.com/go-the-way/unipay
 
 go 1.18
 

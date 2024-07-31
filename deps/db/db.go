@@ -12,7 +12,7 @@
 package db
 
 import (
-	"github.com/rwscode/unipay/models"
+	"github.com/go-the-way/unipay/models"
 	"gorm.io/gorm"
 )
 

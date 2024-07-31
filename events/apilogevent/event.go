@@ -13,9 +13,9 @@ package apilogevent
 
 import (
 	"github.com/go-the-way/events"
-	"github.com/rwscode/unipay/deps/db"
-	"github.com/rwscode/unipay/events/logevent"
-	"github.com/rwscode/unipay/models"
+	"github.com/go-the-way/unipay/deps/db"
+	"github.com/go-the-way/unipay/events/logevent"
+	"github.com/go-the-way/unipay/models"
 )
 
 func Save(log *models.ApiLog) { event.Fire(log) }

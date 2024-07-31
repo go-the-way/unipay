@@ -12,9 +12,9 @@
 package apilog
 
 import (
-	"github.com/rwscode/unipay/deps/db"
-	"github.com/rwscode/unipay/deps/pkg"
-	"github.com/rwscode/unipay/models"
+	"github.com/go-the-way/unipay/deps/db"
+	"github.com/go-the-way/unipay/deps/pkg"
+	"github.com/go-the-way/unipay/models"
 )
 
 type service struct{}

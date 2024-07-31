@@ -11,7 +11,7 @@
 
 package channel
 
-import "github.com/rwscode/unipay/models"
+import "github.com/go-the-way/unipay/models"
 
 type (
 	GetPageResp struct {

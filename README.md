@@ -77,7 +77,7 @@ The unified payment package
 
 ## install
 ```
-go install github.com/rwscode/unipay/cmd/mono@latest
+go install github.com/go-the-way/unipay/cmd/mono@latest
 ```
 
 ## run

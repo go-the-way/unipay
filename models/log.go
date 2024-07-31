@@ -14,7 +14,7 @@ package models
 import (
 	"net/http"
 
-	"github.com/rwscode/unipay/deps/pkg"
+	"github.com/go-the-way/unipay/deps/pkg"
 )
 
 type (

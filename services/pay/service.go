@@ -16,11 +16,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/rwscode/unipay/deps/pkg"
-	"github.com/rwscode/unipay/models"
-	"github.com/rwscode/unipay/services/channel"
-	"github.com/rwscode/unipay/services/channelparam"
-	"github.com/rwscode/unipay/services/order"
+	"github.com/go-the-way/unipay/deps/pkg"
+	"github.com/go-the-way/unipay/models"
+	"github.com/go-the-way/unipay/services/channel"
+	"github.com/go-the-way/unipay/services/channelparam"
+	"github.com/go-the-way/unipay/services/order"
 )
 
 type service struct{}

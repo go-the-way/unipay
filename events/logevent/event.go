@@ -15,8 +15,8 @@ import (
 	"fmt"
 
 	"github.com/go-the-way/events"
-	"github.com/rwscode/unipay/deps/db"
-	"github.com/rwscode/unipay/models"
+	"github.com/go-the-way/unipay/deps/db"
+	"github.com/go-the-way/unipay/models"
 )
 
 func Save(log *models.Log) { event.Fire(log) }

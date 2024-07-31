@@ -12,7 +12,7 @@
 package log
 
 import (
-	"github.com/rwscode/unipay/services/base"
+	"github.com/go-the-way/unipay/services/base"
 )
 
 type (
