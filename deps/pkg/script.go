@@ -21,7 +21,7 @@ import (
 
 var (
 	importModules = []string{
-		"text", "crypto", "rand", "sort",
+		"text", "crypto", "rand", "sort", "util",
 	}
 	replaceMap = map[string]string{
 		"upper": "text.to_upper",
@@ -34,6 +34,8 @@ var (
 		"md5": "crypto.md5_hex",
 
 		"sort": "sort.sort",
+
+		"to_int": "util.to_int",
 	}
 )
 
