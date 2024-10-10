@@ -35,6 +35,7 @@ func (r *Req) ToMap(orderId string) map[string]any {
 		"Subject":     r.Subject,
 		"ClientIp":    r.ClientIp,
 		"NotifyUrl":   notifyUrl,
+		"OrderId":     orderId,
 		"BusinessId1": r.BusinessId1,
 		"BusinessId2": r.BusinessId2,
 		"BusinessId3": r.BusinessId3,
