@@ -71,7 +71,7 @@ func (s *service) Add(req AddReq) (err error) {
 }
 
 func (s *service) Update(req UpdateReq) (err error) {
-	return db.GetDb().Model(&models.Channel{Id: req.Id}).Omit("state", "create_time").Updates(req.Transform()).Error
+	return db.GetDb().Model(&models.Channel{Id: req.Id}).Select("*").Omit("state", "create_time").Updates(req.Transform()).Error
 }
 
 func (s *service) Del(req DelReq) (err error) {
