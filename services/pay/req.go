@@ -38,11 +38,11 @@ type (
 		Callback func(req Req)
 	}
 	NotifyReq struct {
-		ChannelId   uint   `validate:"min(1,支付通道id不能为空)" form:"channel_id" json:"channel_id"`                                      // 支付通道id
-		OrderId     string `validate:"minlength(1,订单id不能为空) maxlength(50,订单id长度不能超过50)" form:"order_id" json:"order_id"`           // 订单id
-		BusinessId1 string `validate:"minlength(1,业务id1不能为空) maxlength(50,业务id1长度不能超过50)" form:"business_id1" json:"business_id1"` // 业务id1
-		BusinessId2 string `validate:"maxlength(50,业务id2长度不能超过50)" form:"business_id2" json:"business_id2"`                        // 业务id2
-		BusinessId3 string `validate:"maxlength(50,业务id3长度不能超过50)" form:"business_id3" json:"business_id3"`                        // 业务id3
+		ChannelId   uint   `validate:"min(1,支付通道id不能为空)" uri:"channel_id" form:"channel_id" json:"channel_id"`                                        // 支付通道id
+		OrderId     string `validate:"minlength(1,订单id不能为空) maxlength(50,订单id长度不能超过50)" uri:"order_id" form:"order_id" json:"order_id"`               // 订单id
+		BusinessId1 string `validate:"minlength(1,业务id1不能为空) maxlength(50,业务id1长度不能超过50)" uri:"business_id1" form:"business_id1" json:"business_id1"` // 业务id1
+		BusinessId2 string `validate:"maxlength(50,业务id2长度不能超过50)" uri:"business_id2" form:"business_id2" json:"business_id2"`                        // 业务id2
+		BusinessId3 string `validate:"maxlength(50,业务id3长度不能超过50)" uri:"business_id3" form:"business_id3" json:"business_id3"`                        // 业务id3
 
 		Callback func(req NotifyReq, order *models.Order)
 	}

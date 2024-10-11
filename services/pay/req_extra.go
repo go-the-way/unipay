@@ -12,6 +12,7 @@
 package pay
 
 import (
+	"encoding/base64"
 	"fmt"
 )
 
@@ -19,7 +20,8 @@ func (r *Req) ToMap(orderId string) map[string]any {
 	notifyUrl := r.NotifyUrl
 	notifyUrl += fmt.Sprintf("/%d", r.ChannelId)
 	notifyUrl += fmt.Sprintf("/%s", orderId)
-	notifyUrl += fmt.Sprintf("/%s_%s_%s", r.BusinessId1, r.BusinessId2, r.BusinessId3)
+	businessId := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s-%s-%s", r.BusinessId1, r.BusinessId2, r.BusinessId3)))
+	notifyUrl += fmt.Sprintf("/%s", businessId)
 	return map[string]any{
 		"ChannelId":   fmt.Sprintf("%d", r.ChannelId),
 		"AmountYuan":  r.AmountYuan,
