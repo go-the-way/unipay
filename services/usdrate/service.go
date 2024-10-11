@@ -14,9 +14,16 @@ package usdrate
 import (
 	"github.com/go-the-way/unipay/deps/db"
 	"github.com/go-the-way/unipay/models"
+	"sync"
 )
 
-type service struct{}
+type service struct{ *sync.Once }
+
+func (s *service) syncRate() { s.Do(s.syncRate0) }
+
+func (s *service) syncRate0() {
+	// TODO: sync usd rate from https://www.waihui999.com/usdcny
+}
 
 func (s *service) Get() (resp GetResp, err error) {
 	err = db.GetDb().Model(new(models.UsdRate)).Where("id=1").Select("rate").Scan(&resp.Rate).Error

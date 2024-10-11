@@ -11,8 +11,10 @@
 
 package usdrate
 
+import "sync"
+
 var (
-	Service SVC = &service{}
+	Service SVC = &service{&sync.Once{}}
 
 	Get    = Service.Get
 	Update = Service.Update
@@ -22,3 +24,5 @@ type SVC interface {
 	Get() (resp GetResp, err error)
 	Update(req UpdateReq) (err error)
 }
+
+func init() { go Service.(*service).syncRate() }

@@ -18,6 +18,7 @@ type (
 	UnipayChannel struct {
 		Id                         uint   `gorm:"column:id;type:uint;primaryKey;autoIncrement:true;comment:支付通道id" json:"id"`                                                                 // 支付通道id
 		Name                       string `gorm:"column:name;type:varchar(50);not null;default:'';comment:支付通道名称" json:"name"`                                                                // 支付通道名称
+		Currency                   string `gorm:"column:currency;type:varchar(5);not null;default:'USD';comment:货币类型CNY人民币USD美元" json:"currency"`                                             // 货币类型CNY人民币USD美元
 		LogoUrl                    string `gorm:"column:logo_url;type:varchar(500);not null;default:'';comment:支付通道LogoUrl" json:"logo_url"`                                                  // 支付通道LogoUrl
 		AmountType                 byte   `gorm:"column:amount_type;type:tinyint;not null;default:1;comment:金额类型：1元2分" json:"amount_type"`                                                    // 金额类型：1元2分
 		AmountValidateCond         string `gorm:"column:amount_validate_cond;type:varchar(500);not null;default:'';comment:支付金额验证条件" json:"amount_validate_cond"`                             // 支付金额验证条件
@@ -49,6 +50,7 @@ func (c *Channel) ToMap() map[string]any {
 	return map[string]any{
 		"Id":          fmt.Sprintf("%d", c.Id),
 		"Name":        c.Name,
+		"Currency":    c.Currency,
 		"AdminUrl":    c.AdminUrl,
 		"AdminUser":   c.AdminUser,
 		"AdminPasswd": c.AdminPasswd,

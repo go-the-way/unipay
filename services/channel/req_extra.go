@@ -83,6 +83,7 @@ func (r *DelReq) Check() (err error) { return base.CheckChannelExist(r.Id) }
 func (r *AddReq) Transform() *models.Channel {
 	return &models.Channel{
 		Name:                       r.Name,
+		Currency:                   r.Currency,
 		AdminUrl:                   r.AdminUrl,
 		AdminUser:                  r.AdminUser,
 		AdminPasswd:                r.AdminPasswd,
@@ -112,6 +113,7 @@ func (r *AddReq) Transform() *models.Channel {
 func (r *UpdateReq) Transform() map[string]any {
 	return map[string]any{
 		"name":                           r.Name,
+		"currency":                       r.Currency,
 		"admin_url":                      r.AdminUrl,
 		"admin_user":                     r.AdminUser,
 		"admin_passwd":                   r.AdminPasswd,

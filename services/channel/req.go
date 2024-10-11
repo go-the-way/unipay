@@ -51,6 +51,7 @@ type (
 	GetReq IdReq
 	AddReq struct {
 		Name                       string `validate:"minlength(1,支付通道名称不能为空) maxlength(50,支付通道名称长度不能超过50)" json:"name"`           // 支付通道名称
+		Currency                   string `validate:"enum(CNY|USD,货币类型不合法)" json:"currency"`                                      // 货币类型:CNY人民币 USD美元
 		Type                       string `json:"type"`                                                                           // 类型
 		AdminUrl                   string `validate:"maxlength(500,后台登录Url长度不能超过500)" json:"admin_url"`                           // 后台登录Url
 		AdminUser                  string `validate:"maxlength(200,后台登录用户名长度不能超过200)" json:"admin_user"`                          // 后台登录用户名
