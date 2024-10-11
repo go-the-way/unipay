@@ -109,8 +109,29 @@ func (r *AddReq) Transform() *models.Channel {
 	}
 }
 
-func (r *UpdateReq) Transform() *models.Channel {
-	m := r.AddReq.Transform()
-	m.Id = r.Id
-	return m
+func (r *UpdateReq) Transform() map[string]any {
+	return map[string]any{
+		"name":                           r.Name,
+		"admin_url":                      r.AdminUrl,
+		"admin_user":                     r.AdminUser,
+		"admin_passwd":                   r.AdminPasswd,
+		"logo_url":                       r.LogoUrl,
+		"amount_type":                    r.AmountType,
+		"amount_validate_cond":           r.AmountValidateCond,
+		"req_url":                        r.ReqUrl,
+		"req_method":                     r.ReqMethod,
+		"req_content_type":               r.ReqContentType,
+		"req_success_expr":               r.ReqSuccessExpr,
+		"req_pay_page_url_expr":          r.ReqPayPageUrlExpr,
+		"req_pay_qr_url_expr":            r.ReqPayQrUrlExpr,
+		"req_pay_message_expr":           r.ReqPayMessageExpr,
+		"notify_pay_content_type":        r.NotifyPayContentType,
+		"notify_pay_success_expr":        r.NotifyPaySuccessExpr,
+		"notify_pay_id_expr":             r.NotifyPayIdExpr,
+		"notify_pay_return_content":      r.NotifyPayReturnContent,
+		"notify_pay_return_content_type": r.NotifyPayReturnContentType,
+		"remark":                         r.Remark,
+		"sort":                           r.Sort,
+		"update_time":                    pkg.TimeNowStr(),
+	}
 }
