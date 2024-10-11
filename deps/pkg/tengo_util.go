@@ -19,7 +19,7 @@ import (
 var utilModule = make(map[string]tengo.Object, 2)
 
 func init() {
-	utilModule["to_int"] = &tengo.UserFunction{Name: "rand_str", Value: toIntFunc()}
+	utilModule["to_int"] = &tengo.UserFunction{Name: "to_int", Value: toIntFunc()}
 	stdlib.BuiltinModules["util"] = utilModule
 }
 
