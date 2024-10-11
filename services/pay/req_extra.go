@@ -13,21 +13,13 @@ package pay
 
 import (
 	"fmt"
-	"strings"
 )
 
 func (r *Req) ToMap(orderId string) map[string]any {
 	notifyUrl := r.NotifyUrl
-	if strings.Index(r.NotifyUrl, "?") == -1 {
-		notifyUrl += "?"
-	} else {
-		notifyUrl += "&"
-	}
-	notifyUrl += fmt.Sprintf("channel_id=%d", r.ChannelId)
-	notifyUrl += fmt.Sprintf("&order_id=%s", orderId)
-	notifyUrl += fmt.Sprintf("&business_id1=%s", r.BusinessId1)
-	notifyUrl += fmt.Sprintf("&business_id2=%s", r.BusinessId2)
-	notifyUrl += fmt.Sprintf("&business_id3=%s", r.BusinessId3)
+	notifyUrl += fmt.Sprintf("/%d", r.ChannelId)
+	notifyUrl += fmt.Sprintf("/%s", orderId)
+	notifyUrl += fmt.Sprintf("/%s_%s_%s", r.BusinessId1, r.BusinessId2, r.BusinessId3)
 	return map[string]any{
 		"ChannelId":   fmt.Sprintf("%d", r.ChannelId),
 		"AmountYuan":  r.AmountYuan,
