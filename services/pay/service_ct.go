@@ -107,14 +107,14 @@ func buildUrlencodedCT(passMap map[string]struct{}, params map[string]any) (body
 }
 
 func parseJsonCTResp(req *http.Request) map[string]any {
-	var m map[string]any
+	var m = map[string]any{}
 	buf, _ := io.ReadAll(req.Body)
 	_ = json.Unmarshal(buf, &m)
 	return m
 }
 
 func parseFormCTResp(req *http.Request) map[string]any {
-	var m map[string]any
+	var m = map[string]any{}
 	for k := range req.PostForm {
 		m[k] = req.PostFormValue(k)
 	}
@@ -122,7 +122,10 @@ func parseFormCTResp(req *http.Request) map[string]any {
 }
 
 func parseUrlencodedCTResp(req *http.Request) map[string]any {
-	var m map[string]any
+	if req.Form == nil {
+		_ = req.ParseForm()
+	}
+	var m = map[string]any{}
 	for k := range req.Form {
 		m[k] = req.FormValue(k)
 	}
