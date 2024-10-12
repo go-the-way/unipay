@@ -11,7 +11,10 @@
 
 package usdrate
 
-import "sync"
+import (
+	"sync"
+	"time"
+)
 
 var (
 	Service SVC = &service{&sync.Once{}}
@@ -25,4 +28,4 @@ type SVC interface {
 	Update(req UpdateReq) (err error)
 }
 
-func init() { Service.(*service).syncRate() }
+func init() { time.AfterFunc(time.Second*10, func() { Service.(*service).syncRate() }) }

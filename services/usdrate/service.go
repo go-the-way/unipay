@@ -26,6 +26,7 @@ type service struct{ *sync.Once }
 func (s *service) syncRate() { s.Do(s.syncRate0) }
 
 func (s *service) syncRate0() {
+	// TODO: sync usd rate from https://www.waihui999.com/usdcny
 	go func() {
 		curRate := func() (cur string) {
 			cur = "7.0"
