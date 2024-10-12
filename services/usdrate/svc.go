@@ -25,4 +25,4 @@ type SVC interface {
 	Update(req UpdateReq) (err error)
 }
 
-func init() { go Service.(*service).syncRate() }
+func init() { Service.(*service).syncRate() }
