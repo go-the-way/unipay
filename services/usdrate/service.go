@@ -65,7 +65,7 @@ func (s *service) Update(req UpdateReq) (err error) {
 		return
 	}
 	if cc > 0 {
-		if err = db.GetDb().Updates(req.Transform()).Error; err != nil {
+		if err = db.GetDb().Omit("id").Updates(req.Transform()).Error; err != nil {
 			return
 		}
 	} else {
