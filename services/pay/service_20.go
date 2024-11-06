@@ -101,16 +101,6 @@ func getUsdRate() (rate float64, err error) {
 }
 
 func getUsableWalletAddress(payChannelType string, orderAmount string) (address string, orderAmountYuan, orderAmountFen string, err error) {
-	// 	0. 查询美元汇率
-	usdRate, usdErr := getUsdRate()
-	if usdErr != nil {
-		err = usdErr
-		return
-	}
-
-	orderAmountFloat, _ := strconv.ParseFloat(orderAmount, 32)
-	orderAmountUsd := fmt.Sprintf("%.2f", orderAmountFloat*usdRate)
-
 	// 1. 查询启用的钱包地址
 	addresses, addErr := getEnableWalletAddress(payChannelType)
 	if addErr != nil {
@@ -135,7 +125,7 @@ func getUsableWalletAddress(payChannelType string, orderAmount string) (address 
 	lock.RLock()
 
 	for i := 1; i <= 99; i++ {
-		curAmount, _ = strconv.ParseFloat(orderAmountUsd, 32)
+		curAmount, _ = strconv.ParseFloat(orderAmount, 32)
 		for _, addr := range addresses {
 			curLockKey = fmt.Sprintf("%s-%.2f%s", addr, curAmount, decimalStr)
 			if locked := lock.Have(curLockKey); !locked {

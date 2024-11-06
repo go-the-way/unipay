@@ -14,13 +14,14 @@ package pay
 import (
 	"errors"
 	"fmt"
-	"net/http"
-
 	"github.com/go-the-way/unipay/deps/pkg"
 	"github.com/go-the-way/unipay/models"
 	"github.com/go-the-way/unipay/services/channel"
 	"github.com/go-the-way/unipay/services/channelparam"
 	"github.com/go-the-way/unipay/services/order"
+	"math"
+	"net/http"
+	"strconv"
 )
 
 type service struct{}
@@ -49,7 +50,16 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 	}
 
 	// 订单id
-	orderId := pkg.RandStr(30)
+	orderId := pkg.RandStr(20)
+
+	// 汇率计算
+	amountYuan, amountFen, getErr := rateHandle(pm.Currency, req.AmountYuan, req.AmountCurrency, req.CurrencyRateType)
+	if getErr != nil {
+		err = getErr
+		return
+	}
+	req.AmountYuan = amountYuan
+	req.AmountFen = amountFen
 
 	switch pm.Type {
 	default:
@@ -73,6 +83,31 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 		return e20Run(req, pm, orderId)
 
 	}
+}
+
+func rateHandle(channelCurrency, orderAmount, amountCurrency string, currencyRateType byte) (realAmountYuan, realAmountFen string, err error) {
+	// 	0. 查询美元汇率
+	usdRate, usdErr := getUsdRate()
+	if usdErr != nil {
+		err = usdErr
+		return
+	}
+	//usdRate := float64(7.1201)
+	respAmount, _ := strconv.ParseFloat(orderAmount, 32)
+
+	if channelCurrency != amountCurrency {
+		if currencyRateType == 1 { // 货币汇率类型 1美元兑人民币（人民币=支付金额*汇率）
+			orderAmountFloat, _ := strconv.ParseFloat(orderAmount, 32)
+			respAmount = math.Round(orderAmountFloat * usdRate)
+		} else if currencyRateType == 2 { // 货币汇率类型 2人民币兑美元（美元=支付金额/汇率）
+			orderAmountFloat, _ := strconv.ParseFloat(orderAmount, 32)
+			respAmount = math.Round(orderAmountFloat / usdRate)
+		}
+	}
+
+	realAmountYuan = fmt.Sprintf("%d", int(respAmount))
+	realAmountFen = fmt.Sprintf("%d", int(respAmount*100))
+	return
 }
 
 func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r NotifyReq) (err error) {
