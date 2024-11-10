@@ -129,7 +129,7 @@ func orderCancelledTask() {
 	}
 
 	var orders []*models.Order
-	if err := db.GetDb().Model(new(models.Order)).Where("state = ? and pay_channel_type = ? and adddate(create_time, interval  minute) < NOW()", models.OrderStateWaitPay, models.OrderTypeNormal, orderValidMinute).Select(cols).Find(&orders).Error; err != nil {
+	if err := db.GetDb().Model(new(models.Order)).Where("state = ? and pay_channel_type = ? and adddate(create_time, interval ? minute) < NOW()", models.OrderStateWaitPay, models.OrderTypeNormal, orderValidMinute).Select(cols).Find(&orders).Error; err != nil {
 		return
 	}
 	for _, order := range orders {
