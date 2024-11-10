@@ -13,6 +13,7 @@ package orderevent
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/go-the-way/events"
@@ -28,27 +29,36 @@ func Paid(order *models.Order)    { paid.Fire(order) }
 func Expired(order *models.Order) { expired.Fire(order) }
 
 type (
-	evt         struct{}
-	PaidHandler func(order *models.Order)
+	evt            struct{}
+	PaidHandler    func(order *models.Order)
+	ExpiredHandler func(order *models.Order)
 )
 
 var (
-	paid        = events.NewHandler[evt, *models.Order]()
-	expired     = events.NewHandler[evt, *models.Order]()
-	paidHandler PaidHandler
+	paid    = events.NewHandler[evt, *models.Order]()
+	expired = events.NewHandler[evt, *models.Order]()
+
+	paidHandler    PaidHandler
+	expiredHandler ExpiredHandler
+
+	orderValidMinute = 10 // 订单有效期，默认10分钟
+	orderTaskDur     = time.Minute
+	orderTaskMu      = &sync.Mutex{}
 )
 
-func SetPaidHandler(handler PaidHandler) { paidHandler = handler }
+func SetPaidHandler(handler PaidHandler)       { paidHandler = handler }
+func SetExpiredHandler(handler ExpiredHandler) { expiredHandler = handler }
 
 func init() {
+	bindAll()
+	tasks()
+}
+
+func bindAll() {
 	paid.Bind(bindPaid)
 	paid.Bind(bindDeleteLock)
 	expired.Bind(bindExpired)
 	expired.Bind(bindDeleteLock)
-	time.AfterFunc(time.Second*5, func() {
-		// E20订单全部失效
-		e20OrderCancelled()
-	})
 }
 
 func bindPaid(o *models.Order) {
@@ -64,18 +74,31 @@ func bindPaid(o *models.Order) {
 }
 
 func bindExpired(o *models.Order) {
+	if expiredHandler != nil {
+		expiredHandler(o)
+	}
 	if err := order.Service.Cancel(order.CancelReq{
 		IdReq:      order.IdReq{Id: o.Id},
 		Message:    o.Message,
-		CancelTime: o.CancelTime,
+		CancelTime: pkg.TimeNowStr(),
 	}); err != nil {
 		logevent.Save(models.NewLog(fmt.Sprintf("订单号[%s]类型[%s]保存错误：%s", o.Id, o.PayChannelType, err.Error())))
 	}
 }
 
-func bindDeleteLock(o *models.Order) { lock.DeleteWithLock(o.LockKey()) }
+func bindDeleteLock(o *models.Order) {
+	if o.PayChannelType == models.OrderTypeErc20 || o.PayChannelType == models.OrderTypeTrc20 {
+		// only release lock erc20 & trc20
+		lock.DeleteWithLock(o.LockKey())
+	}
+}
 
-func e20OrderCancelled() {
+func tasks() {
+	time.AfterFunc(time.Second*5, func() { e20Cancelled() }) // e20订单全部失效
+	go orderTask()
+}
+
+func e20Cancelled() {
 	err := db.GetDb().Model(new(models.Order)).Where("pay_channel_type in ('erc20','trc20') and state=1").Updates(map[string]any{
 		"state":       models.OrderStateCancelled,
 		"message":     "服务重载强制取消",
@@ -83,5 +106,33 @@ func e20OrderCancelled() {
 	}).Error
 	if err != nil {
 		fmt.Println(err)
+	}
+}
+
+func orderTask() {
+	ticker := time.NewTicker(orderTaskDur)
+	defer ticker.Stop()
+	for range ticker.C {
+		orderCancelledTask()
+	}
+}
+
+func orderCancelledTask() {
+	if !orderTaskMu.TryLock() {
+		return
+	}
+	defer orderTaskMu.Unlock()
+
+	var cols = "id"
+	if expiredHandler != nil {
+		cols = "*"
+	}
+
+	var orders []*models.Order
+	if err := db.GetDb().Model(new(models.Order)).Where("state = ? and pay_channel_type = ? and adddate(create_time, interval  minute) < NOW()", models.OrderStateWaitPay, models.OrderTypeNormal, orderValidMinute).Select(cols).Find(&orders).Error; err != nil {
+		return
+	}
+	for _, order := range orders {
+		expired.Fire(order)
 	}
 }
