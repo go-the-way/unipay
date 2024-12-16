@@ -20,6 +20,7 @@ type (
 		Name                       string `gorm:"column:name;type:varchar(50);not null;default:'';comment:支付通道名称" json:"name"`                                                                // 支付通道名称
 		Currency                   string `gorm:"column:currency;type:varchar(5);not null;default:'USD';comment:货币类型CNY人民币USD美元" json:"currency"`                                             // 货币类型CNY人民币USD美元
 		LogoUrl                    string `gorm:"column:logo_url;type:varchar(500);not null;default:'';comment:支付通道LogoUrl" json:"logo_url"`                                                  // 支付通道LogoUrl
+		PcLogoUrl                  string `gorm:"column:pc_logo_url;type:varchar(500);not null;default:'';comment:支付通道PCLogoUrl" json:"pc_logo_url"`                                          // 支付通道PCLogoUrl
 		AmountType                 byte   `gorm:"column:amount_type;type:tinyint;not null;default:1;comment:金额类型：1元2分" json:"amount_type"`                                                    // 金额类型：1元2分
 		AmountValidateCond         string `gorm:"column:amount_validate_cond;type:varchar(500);not null;default:'';comment:支付金额验证条件" json:"amount_validate_cond"`                             // 支付金额验证条件
 		Type                       string `gorm:"column:type;type:varchar(20);not null;default:'normal';comment:类型 normal/trc20/erc20;index" json:"type"`                                     // 类型 normal/trc20/erc20
