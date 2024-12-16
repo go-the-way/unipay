@@ -51,29 +51,30 @@ type (
 	}
 	GetReq IdReq
 	AddReq struct {
-		Name                       string `validate:"minlength(1,支付通道名称不能为空) maxlength(50,支付通道名称长度不能超过50)" json:"name"`           // 支付通道名称
-		Currency                   string `validate:"enum(CNY|USD,货币类型不合法)" json:"currency"`                                      // 货币类型:CNY人民币 USD美元
-		Type                       string `json:"type"`                                                                           // 类型
-		AdminUrl                   string `validate:"maxlength(500,后台登录Url长度不能超过500)" json:"admin_url"`                           // 后台登录Url
-		AdminUser                  string `validate:"maxlength(200,后台登录用户名长度不能超过200)" json:"admin_user"`                          // 后台登录用户名
-		AdminPasswd                string `validate:"maxlength(200,后台登录密码长度不能超过200)" json:"admin_passwd"`                         // 后台登录密码
-		LogoUrl                    string `validate:"minlength(1,支付通道Logo不能为空) maxlength(500,支付通道Logo长度不能超过500)" json:"logo_url"` // 支付通道LogoUrl
-		AmountType                 byte   `validate:"enum(1|2,金额类型不合法)" json:"amount_type"`                                       // 金额类型：1元2分
-		AmountValidateCond         string `json:"amount_validate_cond"`                                                           // 支付金额验证条件
-		ReqUrl                     string `validate:"maxlength(500,请求url长度不能超过500)" json:"req_url"`                               // 请求url
-		ReqMethod                  string `json:"req_method"`                                                                     // 请求方式
-		ReqContentType             string `json:"req_content_type"`                                                               // 请求数据类型
-		ReqSuccessExpr             string `validate:"maxlength(500,请求成功计算表达式长度不能超过500)" json:"req_success_expr"`                  // 请求成功计算表达式
-		ReqPayPageUrlExpr          string `validate:"maxlength(500,请求支付页面Url获取表达式长度不能超过500)" json:"req_pay_page_url_expr"`        // 请求支付页面Url获取表达式
-		ReqPayQrUrlExpr            string `validate:"maxlength(500,请求支付二维码Url获取表达式长度不能超过500)" json:"req_pay_qr_url_expr"`         // 请求支付二维码Url获取表达式
-		ReqPayMessageExpr          string `validate:"maxlength(500,请求支付获取消息表达式长度不能超过500)" json:"req_pay_message_expr"`            // 请求支付获取消息表达式
-		NotifyPayContentType       string `json:"notify_pay_content_type"`                                                        // 回调支付数据类型
-		NotifyPaySuccessExpr       string `validate:"maxlength(500,回调支付成功计算表达式长度不能超过500)"  json:"notify_pay_success_expr"`        // 回调支付成功计算表达式
-		NotifyPayIdExpr            string `validate:"maxlength(500,回调支付成功获取Id表达式长度不能超过500)" json:"notify_pay_id_expr"`            // 回调支付成功获取Id表达式
-		NotifyPayReturnContent     string `validate:"maxlength(500,回调支付成功返回内容长度不能超过500)" json:"notify_pay_return_content"`        // 回调支付成功返回内容
-		NotifyPayReturnContentType string `json:"notify_pay_return_content_type"`                                                 // 回调支付成功返回数据类型
-		Remark                     string `validate:"maxlength(500,备注长度不能超过500)" json:"remark"`                                   // 备注
-		Sort                       byte   `json:"sort"`                                                                           // 升序排序值
+		Name                       string `validate:"minlength(1,支付通道名称不能为空) maxlength(50,支付通道名称长度不能超过50)" json:"name"`                  // 支付通道名称
+		Currency                   string `validate:"enum(CNY|USD,货币类型不合法)" json:"currency"`                                             // 货币类型:CNY人民币 USD美元
+		Type                       string `json:"type"`                                                                                  // 类型
+		AdminUrl                   string `validate:"maxlength(500,后台登录Url长度不能超过500)" json:"admin_url"`                                  // 后台登录Url
+		AdminUser                  string `validate:"maxlength(200,后台登录用户名长度不能超过200)" json:"admin_user"`                                 // 后台登录用户名
+		AdminPasswd                string `validate:"maxlength(200,后台登录密码长度不能超过200)" json:"admin_passwd"`                                // 后台登录密码
+		LogoUrl                    string `validate:"minlength(1,支付通道Logo不能为空) maxlength(500,支付通道Logo长度不能超过500)" json:"logo_url"`        // 支付通道LogoUrl
+		PcLogoUrl                  string `validate:"minlength(1,支付通道PCLogo不能为空) maxlength(500,支付通道PCLogo长度不能超过500)" json:"pc_logo_url"` // 支付通道PCLogoUrl
+		AmountType                 byte   `validate:"enum(1|2,金额类型不合法)" json:"amount_type"`                                              // 金额类型：1元2分
+		AmountValidateCond         string `json:"amount_validate_cond"`                                                                  // 支付金额验证条件
+		ReqUrl                     string `validate:"maxlength(500,请求url长度不能超过500)" json:"req_url"`                                      // 请求url
+		ReqMethod                  string `json:"req_method"`                                                                            // 请求方式
+		ReqContentType             string `json:"req_content_type"`                                                                      // 请求数据类型
+		ReqSuccessExpr             string `validate:"maxlength(500,请求成功计算表达式长度不能超过500)" json:"req_success_expr"`                         // 请求成功计算表达式
+		ReqPayPageUrlExpr          string `validate:"maxlength(500,请求支付页面Url获取表达式长度不能超过500)" json:"req_pay_page_url_expr"`               // 请求支付页面Url获取表达式
+		ReqPayQrUrlExpr            string `validate:"maxlength(500,请求支付二维码Url获取表达式长度不能超过500)" json:"req_pay_qr_url_expr"`                // 请求支付二维码Url获取表达式
+		ReqPayMessageExpr          string `validate:"maxlength(500,请求支付获取消息表达式长度不能超过500)" json:"req_pay_message_expr"`                   // 请求支付获取消息表达式
+		NotifyPayContentType       string `json:"notify_pay_content_type"`                                                               // 回调支付数据类型
+		NotifyPaySuccessExpr       string `validate:"maxlength(500,回调支付成功计算表达式长度不能超过500)"  json:"notify_pay_success_expr"`               // 回调支付成功计算表达式
+		NotifyPayIdExpr            string `validate:"maxlength(500,回调支付成功获取Id表达式长度不能超过500)" json:"notify_pay_id_expr"`                   // 回调支付成功获取Id表达式
+		NotifyPayReturnContent     string `validate:"maxlength(500,回调支付成功返回内容长度不能超过500)" json:"notify_pay_return_content"`               // 回调支付成功返回内容
+		NotifyPayReturnContentType string `json:"notify_pay_return_content_type"`                                                        // 回调支付成功返回数据类型
+		Remark                     string `validate:"maxlength(500,备注长度不能超过500)" json:"remark"`                                          // 备注
+		Sort                       byte   `json:"sort"`                                                                                  // 升序排序值
 	}
 	UpdateReq struct {
 		IdReq  `validate:"valid(T)"`
