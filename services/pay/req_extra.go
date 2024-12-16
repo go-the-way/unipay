@@ -16,7 +16,7 @@ import (
 	"fmt"
 )
 
-func (r *Req) ToMap(orderId string) map[string]any {
+func (r *Req) ToMap(orderId, realAmountYuan, realAmountFen string) map[string]any {
 	notifyUrl := r.NotifyUrl
 	notifyUrl += fmt.Sprintf("/%d", r.ChannelId)
 	notifyUrl += fmt.Sprintf("/%s", orderId)
@@ -24,8 +24,8 @@ func (r *Req) ToMap(orderId string) map[string]any {
 	notifyUrl += fmt.Sprintf("/%s", businessId)
 	return map[string]any{
 		"ChannelId":   fmt.Sprintf("%d", r.ChannelId),
-		"AmountYuan":  r.AmountYuan,
-		"AmountFen":   r.AmountFen,
+		"AmountYuan":  realAmountYuan,
+		"AmountFen":   realAmountFen,
 		"Subject":     r.Subject,
 		"ClientIp":    r.ClientIp,
 		"NotifyUrl":   notifyUrl,

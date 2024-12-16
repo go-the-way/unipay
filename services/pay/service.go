@@ -58,8 +58,6 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 		err = getErr
 		return
 	}
-	req.AmountYuan = amountYuan
-	req.AmountFen = amountFen
 
 	switch pm.Type {
 	default:
@@ -67,7 +65,7 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 		return
 
 	case models.OrderTypeNormal:
-		evalEdParams, evalErr := pkg.EvalParams(req.ToMap(orderId), pm.ToMap(), s.getParams(pmm.List))
+		evalEdParams, evalErr := pkg.EvalParams(req.ToMap(orderId, amountYuan, amountFen), pm.ToMap(), s.getParams(pmm.List))
 		if evalErr != nil {
 			err = evalErr
 			return
