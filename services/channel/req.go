@@ -28,6 +28,7 @@ type (
 		AdminUrl                   string `form:"admin_url"`                      // 后台登录Url
 		AdminUser                  string `form:"admin_user"`                     // 后台登录用户名
 		AdminPasswd                string `form:"admin_passwd"`                   // 后台登录密码
+		KeepDecimal                byte   `form:"keep_decimal"`                   // 保留小数：1保留2不保留
 		AmountType                 byte   `form:"amount_type"`                    // 金额类型：1元2分
 		AmountValidateCond         string `form:"amount_validate_cond"`           // 支付金额验证条件
 		ReqUrl                     string `form:"req_url"`                        // 请求url
@@ -60,6 +61,7 @@ type (
 		LogoUrl                    string `validate:"minlength(1,支付通道Logo不能为空) maxlength(500,支付通道Logo长度不能超过500)" json:"logo_url"`        // 支付通道LogoUrl
 		PcLogoUrl                  string `validate:"minlength(1,支付通道PCLogo不能为空) maxlength(500,支付通道PCLogo长度不能超过500)" json:"pc_logo_url"` // 支付通道PCLogoUrl
 		AmountType                 byte   `validate:"enum(1|2,金额类型不合法)" json:"amount_type"`                                              // 金额类型：1元2分
+		KeepDecimal                byte   `validate:"enum(1|2,保留小数不合法)" json:"keep_decimal"`                                             // 保留小数：1保留2不保留
 		AmountValidateCond         string `json:"amount_validate_cond"`                                                                  // 支付金额验证条件
 		ReqUrl                     string `validate:"maxlength(500,请求url长度不能超过500)" json:"req_url"`                                      // 请求url
 		ReqMethod                  string `json:"req_method"`                                                                            // 请求方式

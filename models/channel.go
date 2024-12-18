@@ -22,6 +22,7 @@ type (
 		LogoUrl                    string `gorm:"column:logo_url;type:varchar(500);not null;default:'';comment:支付通道LogoUrl" json:"logo_url"`                                                  // 支付通道LogoUrl
 		PcLogoUrl                  string `gorm:"column:pc_logo_url;type:varchar(500);not null;default:'';comment:支付通道PCLogoUrl" json:"pc_logo_url"`                                          // 支付通道PCLogoUrl
 		AmountType                 byte   `gorm:"column:amount_type;type:tinyint;not null;default:1;comment:金额类型：1元2分" json:"amount_type"`                                                    // 金额类型：1元2分
+		KeepDecimal                byte   `gorm:"column:keep_decimal;type:tinyint;not null;default:1;comment:保留小数：1保留2不保留" json:"keep_decimal"`                                               // 保留小数：1保留2保留
 		AmountValidateCond         string `gorm:"column:amount_validate_cond;type:varchar(500);not null;default:'';comment:支付金额验证条件" json:"amount_validate_cond"`                             // 支付金额验证条件
 		Type                       string `gorm:"column:type;type:varchar(20);not null;default:'normal';comment:类型 normal/trc20/erc20;index" json:"type"`                                     // 类型 normal/trc20/erc20
 		AdminUrl                   string `gorm:"column:admin_url;type:varchar(500);not null;default:'';comment:后台登录Url" json:"admin_url"`                                                    // 后台登录Url

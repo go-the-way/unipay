@@ -31,6 +31,7 @@ func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
 	pkg.IfNotEmptyFunc(req.AdminUser, func() { q.Where("admin_user like concat('%',?,'%')", req.AdminUser) })
 	pkg.IfNotEmptyFunc(req.AdminPasswd, func() { q.Where("admin_passwd like concat('%',?,'%')", req.AdminPasswd) })
 	pkg.IfGt0Func(req.AmountType, func() { q.Where("amount_type=?", req.AmountType) })
+	pkg.IfGt0Func(req.KeepDecimal, func() { q.Where("keep_decimal=?", req.KeepDecimal) })
 	pkg.IfNotEmptyFunc(req.AmountValidateCond, func() { q.Where("amount_validate_cond like concat('%',?,'%')", req.AmountValidateCond) })
 	pkg.IfNotEmptyFunc(req.ReqUrl, func() { q.Where("req_url like concat('%',?,'%')", req.ReqUrl) })
 	pkg.IfNotEmptyFunc(req.ReqMethod, func() { q.Where("req_method = ?", req.ReqMethod) })

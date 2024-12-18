@@ -53,7 +53,7 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 	orderId := pkg.RandStr(20)
 
 	// 汇率计算
-	amountYuan, amountFen, getErr := rateHandle(pm.Currency, req.AmountYuan, req.AmountCurrency, req.CurrencyRateType)
+	amountYuan, amountFen, getErr := rateHandle(pm.Currency, req.AmountYuan, req.AmountCurrency, req.CurrencyRateType, pm.KeepDecimal == 1)
 	if getErr != nil {
 		err = getErr
 		return
@@ -83,14 +83,14 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 	}
 }
 
-func rateHandle(channelCurrency, orderAmount, amountCurrency string, currencyRateType byte) (realAmountYuan, realAmountFen string, err error) {
+func rateHandle(channelCurrency, orderAmount, amountCurrency string, currencyRateType byte, keepDecimal bool) (realAmountYuan, realAmountFen string, err error) {
 	// 	0. 查询美元汇率
 	usdRate, usdErr := getUsdRate()
 	if usdErr != nil {
 		err = usdErr
 		return
 	}
-	//usdRate := float64(7.1201)
+	// usdRate := float64(7.1201)
 	respAmount, _ := strconv.ParseFloat(orderAmount, 32)
 
 	if channelCurrency != amountCurrency {
@@ -103,8 +103,13 @@ func rateHandle(channelCurrency, orderAmount, amountCurrency string, currencyRat
 		}
 	}
 
-	realAmountYuan = fmt.Sprintf("%d", int(respAmount))
-	realAmountFen = fmt.Sprintf("%d", int(respAmount*100))
+	if keepDecimal {
+		realAmountYuan = fmt.Sprintf("%.2f", respAmount)
+		realAmountFen = fmt.Sprintf("%.2f", respAmount*100)
+	} else {
+		realAmountYuan = fmt.Sprintf("%d", int(respAmount))
+		realAmountFen = fmt.Sprintf("%d", int(respAmount*100))
+	}
 	return
 }
 
