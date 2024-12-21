@@ -19,7 +19,6 @@ import (
 	"github.com/go-the-way/unipay/services/channel"
 	"github.com/go-the-way/unipay/services/channelparam"
 	"github.com/go-the-way/unipay/services/order"
-	"math"
 	"net/http"
 	"strconv"
 )
@@ -96,19 +95,20 @@ func rateHandle(channelCurrency, orderAmount, amountCurrency string, currencyRat
 	if channelCurrency != amountCurrency {
 		if currencyRateType == 1 { // 货币汇率类型 1美元兑人民币（人民币=支付金额*汇率）
 			orderAmountFloat, _ := strconv.ParseFloat(orderAmount, 32)
-			respAmount = math.Round(orderAmountFloat * usdRate)
+			respAmount = orderAmountFloat * usdRate
 		} else if currencyRateType == 2 { // 货币汇率类型 2人民币兑美元（美元=支付金额/汇率）
 			orderAmountFloat, _ := strconv.ParseFloat(orderAmount, 32)
-			respAmount = math.Round(orderAmountFloat / usdRate)
+			respAmount = orderAmountFloat / usdRate
 		}
 	}
 
 	if keepDecimal {
 		realAmountYuan = fmt.Sprintf("%.2f", respAmount)
-		realAmountFen = fmt.Sprintf("%.2f", respAmount*100)
+		realAmountYuan1, _ := strconv.ParseFloat(realAmountYuan, 32)
+		realAmountFen = fmt.Sprintf("%d", int(realAmountYuan1*100))
 	} else {
 		realAmountYuan = fmt.Sprintf("%d", int(respAmount))
-		realAmountFen = fmt.Sprintf("%d", int(respAmount*100))
+		realAmountFen = fmt.Sprintf("%d", int(respAmount)*100)
 	}
 	return
 }
