@@ -80,6 +80,7 @@ type (
 		OrderId    string `json:"-"`
 		PayPageUrl string `json:"-"`
 		PayQrUrl   string `json:"-"`
+		NotifyUrl  string `json:"-"`
 	}
 	UpdateReq struct {
 		Id          string `validate:"minlength(1,订单id不能为空) maxlength(50,订单id长度不能超过50)" form:"id" json:"id"`   // 订单id

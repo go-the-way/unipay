@@ -26,6 +26,7 @@ func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
 	q := db.GetDb().Model(new(models.Channel))
 	pkg.IfGt0Func(req.Id, func() { q.Where("id=?", req.Id) })
 	pkg.IfNotEmptyFunc(req.Name, func() { q.Where("name like concat('%',?,'%')", req.Name) })
+	pkg.IfNotEmptyFunc(req.ProductName, func() { q.Where("product_name like concat('%',?,'%')", req.ProductName) })
 	pkg.IfNotEmptyFunc(req.Currency, func() { q.Where("currency=?", req.Currency) })
 	pkg.IfNotEmptyFunc(req.AdminUrl, func() { q.Where("admin_url like concat('%',?,'%')", req.AdminUrl) })
 	pkg.IfNotEmptyFunc(req.AdminUser, func() { q.Where("admin_user like concat('%',?,'%')", req.AdminUser) })

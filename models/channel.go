@@ -18,6 +18,7 @@ type (
 	UnipayChannel struct {
 		Id                         uint   `gorm:"column:id;type:uint;primaryKey;autoIncrement:true;comment:支付通道id" json:"id"`                                                                 // 支付通道id
 		Name                       string `gorm:"column:name;type:varchar(50);not null;default:'';comment:支付通道名称" json:"name"`                                                                // 支付通道名称
+		ProductName                string `gorm:"column:product_name;type:varchar(100);not null;default:'VIP卡业务';comment:产品名称" json:"product_name"`                                           // 产品名称
 		Currency                   string `gorm:"column:currency;type:varchar(5);not null;default:'USD';comment:货币类型CNY人民币USD美元" json:"currency"`                                             // 货币类型CNY人民币USD美元
 		LogoUrl                    string `gorm:"column:logo_url;type:varchar(500);not null;default:'';comment:支付通道LogoUrl" json:"logo_url"`                                                  // 支付通道LogoUrl
 		PcLogoUrl                  string `gorm:"column:pc_logo_url;type:varchar(500);not null;default:'';comment:支付通道PCLogoUrl" json:"pc_logo_url"`                                          // 支付通道PCLogoUrl

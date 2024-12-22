@@ -104,9 +104,7 @@ func (s *service) GetIdAndBusinessId(req GetIdAndBusinessIdReq) (resp GetIdAndBu
 	return
 }
 
-func (s *service) Add(req AddReq) (err error) {
-	return db.GetDb().Create(req.Transform()).Error
-}
+func (s *service) Add(req AddReq) (err error) { return db.GetDb().Create(req.Transform()).Error }
 
 func (s *service) AddReturn(req AddReq) (order *models.Order, err error) {
 	odr := req.Transform()

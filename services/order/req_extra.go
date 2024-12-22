@@ -67,6 +67,7 @@ func (r *AddReq) Transform() *models.Order {
 		Message:        r.Message,
 		PayPageUrl:     r.PayPageUrl,
 		PayQrUrl:       r.PayQrUrl,
+		NotifyUrl:      r.NotifyUrl,
 		State:          models.OrderStateWaitPay,
 		Other1:         r.Other1,
 		Other2:         r.Other2,

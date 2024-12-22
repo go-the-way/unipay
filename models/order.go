@@ -33,6 +33,7 @@ type (
 		Message        string `gorm:"column:message;type:varchar(500);not null;default:'';comment:支付结果信息" json:"message"`                                             // 支付结果信息
 		PayPageUrl     string `gorm:"column:pay_page_url;type:varchar(500);not null;default:'';comment:支付页面Url" json:"pay_page_url"`                                  // 支付页面Url
 		PayQrUrl       string `gorm:"column:pay_qr_url;type:varchar(500);not null;default:'';comment:支付二维码Url" json:"pay_qr_url"`                                     // 支付二维码Url
+		NotifyUrl      string `gorm:"column:notify_url;type:varchar(1000);not null;default:'';comment:回调地址" json:"notify_url"`                                        // 回调地址
 		State          byte   `gorm:"column:state;type:tinyint;not null;default:1;comment:支付状态：1待支付2已支付3已取消;index" json:"state"`                                      // 支付状态：1待支付2已支付3已取消
 		// 当类型为 trc20/erc20时 这个字段保存的是 钱包地址
 		Other1 string `gorm:"column:other1;type:varchar(100);not null;default:'';comment:其他字段1;index" json:"other1"` // 其他字段1

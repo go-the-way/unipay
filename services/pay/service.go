@@ -39,6 +39,10 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 		return
 	}
 
+	if req.Subject == "" {
+		req.Subject = pm.ProductName
+	}
+
 	if err = channelValid(pm, req); err != nil {
 		return
 	}

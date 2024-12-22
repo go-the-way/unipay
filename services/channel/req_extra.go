@@ -13,10 +13,11 @@ package channel
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/go-the-way/unipay/deps/pkg"
 	"github.com/go-the-way/unipay/models"
 	"github.com/go-the-way/unipay/services/base"
-	"net/http"
 )
 
 var typeMap = map[string]struct{}{"normal": {}, "erc20": {}, "trc20": {}}
@@ -83,6 +84,7 @@ func (r *DelReq) Check() (err error) { return base.CheckChannelExist(r.Id) }
 func (r *AddReq) Transform() *models.Channel {
 	return &models.Channel{
 		Name:                       r.Name,
+		ProductName:                r.ProductName,
 		Currency:                   r.Currency,
 		AdminUrl:                   r.AdminUrl,
 		AdminUser:                  r.AdminUser,
@@ -115,6 +117,7 @@ func (r *AddReq) Transform() *models.Channel {
 func (r *UpdateReq) Transform() map[string]any {
 	return map[string]any{
 		"name":                           r.Name,
+		"product_name":                   r.ProductName,
 		"currency":                       r.Currency,
 		"admin_url":                      r.AdminUrl,
 		"admin_user":                     r.AdminUser,

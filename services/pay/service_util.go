@@ -185,6 +185,7 @@ func buildOrderAddReq(c channel.GetResp, req Req, resp Resp) order.AddReq {
 		OrderId:        resp.OrderId,
 		PayPageUrl:     resp.PayPageUrl,
 		PayQrUrl:       resp.PayQrUrl,
+		NotifyUrl:      req.NotifyUrl,
 	}
 }
 
