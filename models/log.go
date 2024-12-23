@@ -36,7 +36,8 @@ type (
 	}
 )
 
-func NewLog(text string) *Log { return &Log{Text: text, CreateTime: pkg.TimeNowStr()} }
+func NewLog(text string) *Log                    { return &Log{Text: text, CreateTime: pkg.TimeNowStr()} }
+func NewLogError(orderId string, err error) *Log { return NewLog("[" + orderId + "]" + err.Error()) }
 
 func NewApiLog(reqUrl, reqMethod, reqParam, respContent, respCode string) *ApiLog {
 	return &ApiLog{

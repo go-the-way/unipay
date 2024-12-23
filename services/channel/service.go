@@ -164,7 +164,7 @@ func (s *service) GetMatches(req GetMatchesReq) (resp GetMatchesResp, err error)
 	if len(list) > 0 && req.Amount > 0 {
 		for _, c := range list {
 			cond := c.AmountValidateCond
-			if ok := cond == "" || pkg.ValidAmount(req.Amount, c.AmountType == models.ChannelAmountTypeYuan, cond); ok {
+			if ok := cond == "" || pkg.ValidAmount(req.Amount, cond); ok {
 				result = append(result, c)
 			}
 			if req.Limit > 0 && uint(len(result)) >= req.Limit {

@@ -15,6 +15,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-the-way/unipay/deps/pkg"
+	"github.com/go-the-way/unipay/events/logevent"
 	"github.com/go-the-way/unipay/models"
 	"github.com/go-the-way/unipay/services/channel"
 	"github.com/go-the-way/unipay/services/channelparam"
@@ -56,7 +57,7 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 	orderId := pkg.RandStr(20)
 
 	// 汇率计算
-	amountYuan, amountFen, getErr := rateHandle(pm.Currency, req.AmountYuan, req.AmountCurrency, req.CurrencyRateType, pm.KeepDecimal == 1)
+	amountYuan, amountFen, getErr := rateHandle(pm.Currency, req.AmountYuan, req.AmountCurrency, req.CurrencyRateType, pm.KeepDecimal == 1, orderId)
 	if getErr != nil {
 		err = getErr
 		return
@@ -65,6 +66,7 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 	switch pm.Type {
 	default:
 		err = errors.New("不支持的渠道类型：" + pm.Type)
+		logevent.Save(models.NewLogError(orderId, err))
 		return
 
 	case models.OrderTypeNormal:
@@ -73,12 +75,12 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 			err = evalErr
 			return
 		}
-		respMap, respErr := reqDo(pm, pmm, evalEdParams)
+		respStr, respMap, respErr := reqDo(pm, pmm, evalEdParams, orderId)
 		if respErr != nil {
 			err = respErr
 			return
 		}
-		return reqCallback(req, pm, respMap, orderId)
+		return reqCallback(req, pm, respStr, respMap, orderId)
 
 	case models.OrderTypeErc20, models.OrderTypeTrc20:
 		return e20Run(req, pm, orderId)
@@ -86,9 +88,9 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 	}
 }
 
-func rateHandle(channelCurrency, orderAmount, amountCurrency string, currencyRateType byte, keepDecimal bool) (realAmountYuan, realAmountFen string, err error) {
+func rateHandle(channelCurrency, orderAmount, amountCurrency string, currencyRateType byte, keepDecimal bool, orderId string) (realAmountYuan, realAmountFen string, err error) {
 	// 	0. 查询美元汇率
-	usdRate, usdErr := getUsdRate()
+	usdRate, usdErr := getUsdRate(orderId)
 	if usdErr != nil {
 		err = usdErr
 		return
@@ -139,7 +141,8 @@ func (s *service) NotifyPay(req *http.Request, resp http.ResponseWriter, r Notif
 	respMap := ctRespFuncMap[c.NotifyPayContentType](req)
 	paySuccess, pErr := pkg.EvalBool(c.NotifyPaySuccessExpr, respMap)
 	if pErr != nil {
-		err = errors.New(fmt.Sprintf("回调处理成功，但是解析回调支付成功计算表达式：%s，错误：%s", c.NotifyPaySuccessExpr, pErr.Error()))
+		err = errors.New(fmt.Sprintf("回调处理成功，但是解析回调支付成功计算表达式，错误：%s", pErr.Error()))
+		models.NewLogError(r.OrderId, err)
 		return
 	}
 	if paySuccess {

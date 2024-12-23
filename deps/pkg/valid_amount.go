@@ -24,14 +24,10 @@ func ValidAmountCond(cond string) (ok bool) {
 	return re.MatchString(cond)
 }
 
-func ValidAmount(amount uint, amountYuan bool, cond string) (valid bool) {
+func ValidAmount(amount uint, cond string) (valid bool) {
 	condS := strings.Split(strings.TrimSpace(cond), ",")
 	if len(condS) <= 0 {
 		return
-	}
-	mulVal := uint(1)
-	if amountYuan {
-		mulVal = 100
 	}
 	var (
 		condExprS []condExpr
@@ -44,15 +40,15 @@ func ValidAmount(amount uint, amountYuan bool, cond string) (valid bool) {
 			c1, c2 := cs[0], cs[1]
 			r1, _ := strconv.ParseUint(c1, 10, 64)
 			r2, _ := strconv.ParseUint(c2, 10, 64)
-			condExprS = append(condExprS, newRangeCondExpr(uint(r1)*mulVal, uint(r2)*mulVal))
+			condExprS = append(condExprS, newRangeCondExpr(uint(r1), uint(r2)))
 		} else {
 			// N1,N2,N3,...
 			v, _ := strconv.ParseUint(cnd, 10, 64)
-			vs = append(vs, uint(v)*mulVal)
+			vs = append(vs, uint(v))
+			valueExpr := newValuesCondExpr(vs...)
+			condExprS = append(condExprS, valueExpr)
 		}
 	}
-	valueExpr := newValuesCondExpr(vs...)
-	condExprS = append(condExprS, valueExpr)
 	for _, cnd := range condExprS {
 		if cnd.Valid(amount) {
 			valid = true

@@ -28,7 +28,7 @@ import (
 
 func e20Run(req Req, pm channel.GetResp, orderId string) (resp Resp, err error) {
 	// 0.获取可用钱包+可用金额
-	address, amountYuan, amountFen, getErr := getUsableWalletAddress(pm.Type, req.AmountYuan)
+	address, amountYuan, amountFen, getErr := getUsableWalletAddress(pm.Type, req.AmountYuan, orderId)
 	if getErr != nil {
 		err = getErr
 		return
@@ -86,21 +86,23 @@ func getEnableWalletAddress(payChannelType string) (addresses []string, err erro
 	return
 }
 
-func getUsdRate() (rate float64, err error) {
+func getUsdRate(orderId string) (rate float64, err error) {
 	rateStr := ""
 	err = db.GetDb().Model(new(models.UsdRate)).Where("id=1").Select("rate").Scan(&rateStr).Error
 	if rateStr == "" {
 		err = errors.New("美元汇率未设置")
+		models.NewLogError(orderId, err)
 		return
 	}
 	if rate, err = strconv.ParseFloat(rateStr, 64); err != nil {
 		err = errors.New("美元汇率不合法")
+		models.NewLogError(orderId, err)
 		return
 	}
 	return
 }
 
-func getUsableWalletAddress(payChannelType string, orderAmount string) (address string, orderAmountYuan, orderAmountFen string, err error) {
+func getUsableWalletAddress(payChannelType, orderAmount, orderId string) (address, orderAmountYuan, orderAmountFen string, err error) {
 	// 1. 查询启用的钱包地址
 	addresses, addErr := getEnableWalletAddress(payChannelType)
 	if addErr != nil {
@@ -110,6 +112,7 @@ func getUsableWalletAddress(payChannelType string, orderAmount string) (address 
 
 	if len(addresses) <= 0 {
 		err = errors.New("没有可用的钱包地址")
+		models.NewLogError(orderId, err)
 		return
 	}
 
@@ -149,7 +152,8 @@ func getUsableWalletAddress(payChannelType string, orderAmount string) (address 
 	lock.RUnlock()
 
 	if !usable {
-		err = errors.New("目前USDT支付通道已满，请稍后支付")
+		err = errors.New("目前USDT支付通道已满，请稍后重试")
+		models.NewLogError(orderId, err)
 		return
 	}
 
