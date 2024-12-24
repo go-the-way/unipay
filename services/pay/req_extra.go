@@ -23,6 +23,10 @@ func (r *Req) ToMap(orderId, realAmountYuan, realAmountFen string) map[string]an
 	businessId := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s-%s-%s", r.BusinessId1, r.BusinessId2, r.BusinessId3)))
 	notifyUrl += fmt.Sprintf("/%s", businessId)
 	r.NotifyUrl = notifyUrl
+
+	returnUrl := r.ReturnUrl
+	returnUrl += fmt.Sprintf("/%s", orderId)
+
 	return map[string]any{
 		"ChannelId":   fmt.Sprintf("%d", r.ChannelId),
 		"AmountYuan":  realAmountYuan,
@@ -30,6 +34,7 @@ func (r *Req) ToMap(orderId, realAmountYuan, realAmountFen string) map[string]an
 		"Subject":     r.Subject,
 		"ClientIp":    r.ClientIp,
 		"NotifyUrl":   notifyUrl,
+		"ReturnUrl":   returnUrl,
 		"OrderId":     orderId,
 		"BusinessId1": r.BusinessId1,
 		"BusinessId2": r.BusinessId2,
