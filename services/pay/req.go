@@ -23,6 +23,7 @@ type (
 		Subject          string `validate:"minlength(1,支付主题不能为空) maxlength(200,支付主题长度不能超过200)" form:"subject" json:"subject"`           // 支付主题
 		ClientIp         string `validate:"minlength(1,客户端Ip不能为空) maxlength(20,客户端Ip长度不能超过50)" form:"client_ip" json:"client_ip"`       // 客户端Ip
 		NotifyUrl        string `validate:"minlength(1,回调Url不能为空) maxlength(500,回调Url长度不能超过500)" form:"notify_url" json:"notify_url"`   // 回调Url
+		ReturnUrl        string `validate:"minlength(1,页面Url不能为空) maxlength(500,页面Url长度不能超过500)" form:"return_url" json:"return_url"`   // 页面Url
 		BusinessId1      string `validate:"minlength(1,业务id1不能为空) maxlength(50,业务id1长度不能超过50)" form:"business_id1" json:"business_id1"` // 业务id1
 		BusinessId2      string `validate:"maxlength(50,业务id2长度不能超过50)" form:"business_id2" json:"business_id2"`                        // 业务id2
 		BusinessId3      string `validate:"maxlength(50,业务id3长度不能超过50)" form:"business_id3" json:"business_id3"`                        // 业务id3
