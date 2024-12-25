@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>支付成功</title>
+  <style>
+      /* 全局样式 */
+      body {
+          font-family: 'Arial', sans-serif;
+          background-color: #f7f7f7; /* 白色背景 */
+          color: #333;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          text-align: center;
+      }
+
+      .container {
+          background-color: #fff;
+          padding: 40px;
+          border-radius: 20px;
+          box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+          width: 100%;
+          max-width: 500px;
+      }
+
+      /* 成功图标 */
+      .icon {
+          font-size: 120px;
+          color: #FFD700; /* 金色 */
+          margin-bottom: 30px;
+          animation: bounce 1s ease-in-out infinite; /* 动画效果 */
+      }
+
+      /* 主标题 */
+      .message {
+          font-size: 36px;
+          font-weight: 700;
+          color: #2C3E50; /* 深蓝色 */
+          margin-bottom: 20px;
+      }
+
+      /* 子标题 */
+      .info {
+          font-size: 18px;
+          margin-bottom: 30px;
+          color: #7F8C8D; /* 灰色 */
+      }
+
+      /* 动画效果 */
+      @keyframes bounce {
+          0%, 100% {
+              transform: translateY(0);
+          }
+          50% {
+              transform: translateY(-10px);
+          }
+      }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="icon">&#x2714;</div>
+  <div class="message">支付成功！</div>
+  <div class="info">您的支付已成功处理，感谢您的购买。</div>
+</div>
+
+</body>
+</html>

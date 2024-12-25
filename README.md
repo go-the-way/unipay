@@ -6,6 +6,8 @@ The unified payment package
 ## Pay 支付和回调
 - pay.ReqPay 请求支付接口
 - pay.NotifyPay 回调支付接口
+- pay.ReturnPaySuccessHtml 返回支付成功html
+- pay.ReturnPayFailureHtml 返回支付失败html
 
 ## Channel 支付通道
 - channel.GetPage 分页查询

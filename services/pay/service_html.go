@@ -11,27 +11,15 @@
 
 package pay
 
-import "net/http"
+import _ "embed"
 
 var (
-	Service SVC = &service{}
+	//go:embed html/success.html
+	successHtml string
 
-	ReqPay               = Service.ReqPay
-	NotifyPay            = Service.NotifyPay
-	ReturnPaySuccessHtml = Service.ReturnPaySuccessHtml
-	ReturnPayFailureHtml = Service.ReturnPayFailureHtml
+	//go:embed html/failure.html
+	failureHtml string
 )
 
-type SVC interface {
-	// ReqPay 请求支付接口
-	ReqPay(req Req) (resp Resp, err error)
-
-	// NotifyPay 回调支付接口
-	NotifyPay(req *http.Request, resp http.ResponseWriter, r NotifyReq) (err error)
-
-	// ReturnPaySuccessHtml Get return pay success html
-	ReturnPaySuccessHtml() (html string)
-
-	// ReturnPayFailureHtml Get return pay failure html
-	ReturnPayFailureHtml() (html string)
-}
+func (s *service) ReturnPaySuccessHtml() (html string) { return successHtml }
+func (s *service) ReturnPayFailureHtml() (html string) { return failureHtml }

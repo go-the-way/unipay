@@ -38,8 +38,10 @@ var (
 )
 
 var (
-	ReqPay    = pay.ReqPay
-	NotifyPay = pay.NotifyPay
+	ReqPay               = pay.ReqPay
+	NotifyPay            = pay.NotifyPay
+	ReturnPaySuccessHtml = pay.ReturnPaySuccessHtml
+	ReturnPayFailureHtml = pay.ReturnPayFailureHtml
 )
 
 var (
