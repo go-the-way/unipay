@@ -17,7 +17,7 @@ type (
 		Id        uint   `gorm:"column:id;type:uint;primaryKey;autoIncrement:true;comment:id" json:"id"`                                                // id
 		ChannelId uint   `gorm:"column:channel_id;type:uint;not null;default:0;comment:支付通道Id;index;uniqueIndex:idx_channel_id_name" json:"channel_id"` // 支付通道Id
 		Name      string `gorm:"column:name;type:varchar(50);not null;default:'';comment:参数名称;uniqueIndex:idx_channel_id_name" json:"name"`             // 参数名称
-		Value     string `gorm:"column:value;type:varchar(500);not null;default:'';comment:参数值" json:"value"`                                           // 参数值
+		Value     string `gorm:"column:value;type:varchar(5000);not null;default:'';comment:参数值" json:"value"`                                          // 参数值
 		Remark    string `gorm:"column:remark;type:varchar(500);not null;default:'';comment:备注" json:"remark"`                                          // 备注
 		Pass      byte   `gorm:"column:pass;type:tinyint;not null;default:2;comment:1传递2不传递" json:"pass"`                                               // 1传递2不传递
 	}

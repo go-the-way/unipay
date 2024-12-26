@@ -24,11 +24,11 @@ type (
 		Name      string `validate:"minlength(1,参数名称不能为空)" form:"name"`
 	}
 	AddReq struct {
-		ChannelId uint   `validate:"min(1,支付通道id不能为空)" json:"channel_id"`                           // 支付通道Id
-		Name      string `validate:"minlength(1,参数名称不能为空) maxlength(50,参数名称长度不能超过50)" json:"name"`  // 参数名称
-		Value     string `validate:"minlength(1,参数值不能为空) maxlength(500,参数值长度不能超过500)" json:"value"` // 参数值
-		Remark    string `validate:"maxlength(500,备注长度不能超过500)" json:"remark"`                      // 备注
-		Pass      byte   `validate:"enum(1|2,是否传递不合法)" json:"pass"`                                 // 1传递2不传递
+		ChannelId uint   `validate:"min(1,支付通道id不能为空)" json:"channel_id"`                             // 支付通道Id
+		Name      string `validate:"minlength(1,参数名称不能为空) maxlength(50,参数名称长度不能超过50)" json:"name"`    // 参数名称
+		Value     string `validate:"minlength(1,参数值不能为空) maxlength(5000,参数值长度不能超过5000)" json:"value"` // 参数值
+		Remark    string `validate:"maxlength(500,备注长度不能超过500)" json:"remark"`                        // 备注
+		Pass      byte   `validate:"enum(1|2,是否传递不合法)" json:"pass"`                                   // 1传递2不传递
 	}
 	UpdateReq struct {
 		IdReq  `validate:"valid(T)"`
