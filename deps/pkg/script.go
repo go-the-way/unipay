@@ -33,6 +33,8 @@ var (
 
 		"md5": "crypto.md5_hex",
 
+		"rsa": "crypto.sha256WithRSA",
+
 		"sort": "sort.sort",
 
 		"to_int": "util.to_int",
