@@ -18,7 +18,12 @@ import (
 	"crypto/cipher"
 	"crypto/hmac"
 	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha256"
+	"crypto/x509"
+	"encoding/base64"
 	"encoding/hex"
+	"encoding/pem"
 	"errors"
 	"fmt"
 	"hash"
@@ -38,6 +43,7 @@ var cryptoModule = make(map[string]tengo.Object,
 
 func init() {
 	ReloadCryptoAlgorithms()
+	LoadCustomCryptoAlgorithms()
 	registerBlockCipher(&blockCiph{
 		MName:      "aes",
 		MBlockSize: aes.BlockSize,
@@ -101,6 +107,10 @@ func ReloadCryptoAlgorithms() {
 
 		registerHash(n, h.New)
 	}
+}
+
+func LoadCustomCryptoAlgorithms() {
+	cryptoModule["sha256WithRSA"] = &tengo.UserFunction{Name: "sha256WithRSA", Value: newSHA256WithRSA}
 }
 
 func padPKCS7(args ...tengo.Object) (tengo.Object, error) {
@@ -437,6 +447,67 @@ func newHashFunc(newHash func() hash.Hash, returnHex bool) tengo.CallableFunc {
 			}, nil
 		}
 	}
+}
+
+func newSHA256WithRSA(args ...tengo.Object) (tengo.Object, error) {
+	if len(args) != 2 {
+		return nil, tengo.ErrWrongNumArguments
+	}
+	// 待加密的字符串
+	text, ok := tengo.ToString(args[0])
+	if !ok {
+		return nil, tengo.ErrInvalidArgumentType{Name: "text", Expected: "string", Found: args[0].TypeName()}
+	}
+	//私钥 private_key
+	privateKey, ok := tengo.ToString(args[1])
+	if !ok {
+		return nil, tengo.ErrInvalidArgumentType{Name: "private_key", Expected: "string", Found: args[1].TypeName()}
+	}
+	priKeyPEM := `
+-----BEGIN PRIVATE KEY-----
+` + privateKey + `
+-----END PRIVATE KEY-----
+`
+	block, _ := pem.Decode([]byte(priKeyPEM))
+	if block == nil {
+		return nil, errors.New("encrypt error: block is nil")
+	}
+
+	priKey, err := x509.ParsePKCS8PrivateKey(block.Bytes)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("failed to parse RSA private key: %v", err))
+	}
+
+	h := sha256.New()
+	h.Write([]byte(text))
+	d := h.Sum(nil)
+
+	signature, err := rsa.SignPKCS1v15(rand.Reader, priKey.(*rsa.PrivateKey), crypto.SHA256, d)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("failed to RSA sign: %v", err))
+	}
+
+	signatureStr := base64.StdEncoding.EncodeToString(signature)
+
+	return &tengo.String{Value: signatureStr}, nil
+}
+
+func formatPrivateKeyToPEM(privateKey string) string {
+	// 移除空格或换行符
+	privateKey = strings.ReplaceAll(privateKey, "\n", "")
+	privateKey = strings.ReplaceAll(privateKey, "\r", "")
+
+	// 每 64 个字符换行
+	var formattedKey string
+	for i := 0; i < len(privateKey); i += 64 {
+		end := i + 64
+		if end > len(privateKey) {
+			end = len(privateKey)
+		}
+		formattedKey += privateKey[i:end] + "\n"
+	}
+	// 拼接 PEM 格式头尾
+	return "-----BEGIN PRIVATE KEY-----\n" + formattedKey + "-----END PRIVATE KEY-----"
 }
 
 func newHMACFunc(newMac func(key []byte) hash.Hash, returnHex bool) tengo.CallableFunc {

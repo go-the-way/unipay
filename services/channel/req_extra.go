@@ -86,6 +86,7 @@ func (r *AddReq) Transform() *models.Channel {
 		Name:                       r.Name,
 		ProductName:                r.ProductName,
 		Currency:                   r.Currency,
+		Type:                       r.Type,
 		AdminUrl:                   r.AdminUrl,
 		AdminUser:                  r.AdminUser,
 		AdminPasswd:                r.AdminPasswd,
