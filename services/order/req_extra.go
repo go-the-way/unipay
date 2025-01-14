@@ -21,7 +21,12 @@ import (
 	"github.com/go-the-way/unipay/services/base"
 )
 
-func (r *AddReq) Check() (err error) { return base.CheckChannelExist(r.PayChannelId) }
+func (r *AddReq) Check() (err error) {
+	if r.PayChannelId > 0 {
+		return base.CheckChannelExist(r.PayChannelId)
+	}
+	return nil
+}
 
 func (r *UpdateReq) Check() (err error) { return base.CheckOrderExist(r.Id) }
 
