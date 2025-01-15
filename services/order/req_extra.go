@@ -59,6 +59,9 @@ func (r *AddReq) Transform() *models.Order {
 	if r.OrderId == "" {
 		r.OrderId = pkg.RandStr(30)
 	}
+	if r.Upgrade == 0 {
+		r.Upgrade = models.OrderNoUpgrade
+	}
 	return &models.Order{
 		Id:             r.OrderId,
 		BusinessId1:    r.BusinessId1,
@@ -80,6 +83,7 @@ func (r *AddReq) Transform() *models.Order {
 		Remark1:        r.Remark1,
 		Remark2:        r.Remark2,
 		Remark3:        r.Remark3,
+		Upgrade:        r.Upgrade,
 		CreateTime:     pkg.TimeNowStr(),
 		UpdateTime:     pkg.TimeNowStr(),
 	}
