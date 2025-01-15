@@ -33,6 +33,7 @@ type (
 		Remark1          string `validate:"maxlength(500,备注1长度不能超过500)" form:"remark1" json:"remark1"`                                  // 备注1
 		Remark2          string `validate:"maxlength(500,备注2长度不能超过500)" form:"remark2" json:"remark2"`                                  // 备注2
 		Remark3          string `validate:"maxlength(500,备注3长度不能超过500)" form:"remark3" json:"remark3"`                                  // 备注3
+		Upgrade          byte   `json:"upgrade"`                                                                                        // 是否升级订单1:是2不是
 
 		Platform      byte   `validate:"enum(1|2|3,平台不合法)" form:"platform" json:"platform"`                                         // 平台 1Android 2iOS 3Web
 		AppWakeUri    string `gorm:"column:app_wake_uri;type:varchar(50);not null;default:'';comment:App唤醒URI" json:"app_wake_uri"` // App唤醒URI

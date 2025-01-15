@@ -193,6 +193,7 @@ func buildOrderAddReq(c channel.GetResp, req Req, resp Resp) order.AddReq {
 		Remark1:        req.Remark1,
 		Remark2:        req.Remark2,
 		Remark3:        req.Remark3,
+		Upgrade:        req.Upgrade,
 		OrderId:        resp.OrderId,
 		PayPageUrl:     resp.PayPageUrl,
 		PayQrUrl:       resp.PayQrUrl,

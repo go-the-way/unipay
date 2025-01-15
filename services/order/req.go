@@ -36,6 +36,7 @@ type (
 		Remark1        string `form:"remark1"`          // 备注1
 		Remark2        string `form:"remark2"`          // 备注2
 		Remark3        string `form:"remark3"`          // 备注3
+		Upgrade        byte   `form:"upgrade"`          // 是否升级订单1:是2不是
 		CreateTime1    string `form:"create_time1"`     // 创建时间
 		CreateTime2    string `form:"create_time2"`     // 创建时间
 		PayTime1       string `form:"pay_time1"`        // 支付时间
@@ -76,6 +77,7 @@ type (
 		Remark1        string `validate:"maxlength(500,备注1长度不能超过500)" json:"remark1"`                             // 备注1
 		Remark2        string `validate:"maxlength(500,备注2长度不能超过500)" json:"remark2"`                             // 备注2
 		Remark3        string `validate:"maxlength(500,备注3长度不能超过500)" json:"remark3"`                             // 备注3
+		Upgrade        byte   `json:"upgrade"`                                                                    // 是否升级订单1:是2不是
 
 		OrderId    string `json:"-"`
 		PayPageUrl string `json:"-"`

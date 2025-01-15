@@ -38,6 +38,7 @@ func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
 	pkg.IfNotEmptyFunc(req.AmountFen, func() { q.Where("amount_fen=?", req.AmountFen) })
 	pkg.IfNotEmptyFunc(req.Message, func() { q.Where("message=?", req.Message) })
 	pkg.IfGt0Func(req.State, func() { q.Where("state=?", req.State) })
+	pkg.IfGt0Func(req.Upgrade, func() { q.Where("upgrade=?", req.Upgrade) })
 	pkg.IfNotEmptyFunc(req.Other1, func() { q.Where("other1 like concat('%',?,'%')", req.Other1) })
 	pkg.IfNotEmptyFunc(req.Other2, func() { q.Where("other2 like concat('%',?,'%')", req.Other2) })
 	pkg.IfNotEmptyFunc(req.Other3, func() { q.Where("other3 like concat('%',?,'%')", req.Other3) })
