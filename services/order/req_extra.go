@@ -62,6 +62,10 @@ func (r *AddReq) Transform() *models.Order {
 	if r.Upgrade == 0 {
 		r.Upgrade = models.OrderNoUpgrade
 	}
+	state := r.State
+	if state == 0 {
+		state = models.OrderStateWaitPay
+	}
 	return &models.Order{
 		Id:             r.OrderId,
 		BusinessId1:    r.BusinessId1,
@@ -76,7 +80,7 @@ func (r *AddReq) Transform() *models.Order {
 		PayPageUrl:     r.PayPageUrl,
 		PayQrUrl:       r.PayQrUrl,
 		NotifyUrl:      r.NotifyUrl,
-		State:          models.OrderStateWaitPay,
+		State:          state,
 		Other1:         r.Other1,
 		Other2:         r.Other2,
 		Other3:         r.Other3,
