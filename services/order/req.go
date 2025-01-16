@@ -78,6 +78,7 @@ type (
 		Remark2        string `validate:"maxlength(500,备注2长度不能超过500)" json:"remark2"`                             // 备注2
 		Remark3        string `validate:"maxlength(500,备注3长度不能超过500)" json:"remark3"`                             // 备注3
 		Upgrade        byte   `json:"upgrade"`                                                                    // 是否升级订单1:是2不是
+		State          byte   `json:"state"`                                                                      // 支付状态：1待支付2已支付3已取消
 
 		OrderId    string `json:"-"`
 		PayPageUrl string `json:"-"`
