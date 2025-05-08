@@ -83,6 +83,9 @@ func (r *DelReq) Check() (err error) { return base.CheckChannelExist(r.Id) }
 
 func (r *AddReq) Transform() *models.Channel {
 	return &models.Channel{
+		BusinessId1:                r.BusinessId1,
+		BusinessId2:                r.BusinessId2,
+		BusinessId3:                r.BusinessId3,
 		Name:                       r.Name,
 		ProductName:                r.ProductName,
 		Currency:                   r.Currency,
@@ -110,6 +113,9 @@ func (r *AddReq) Transform() *models.Channel {
 		State:                      models.ChannelStateDisable,
 		Sort:                       r.Sort,
 		Remark:                     r.Remark,
+		Remark1:                    r.Remark1,
+		Remark2:                    r.Remark2,
+		Remark3:                    r.Remark3,
 		CreateTime:                 pkg.TimeNowStr(),
 		UpdateTime:                 pkg.TimeNowStr(),
 	}
@@ -117,6 +123,9 @@ func (r *AddReq) Transform() *models.Channel {
 
 func (r *UpdateReq) Transform() map[string]any {
 	return map[string]any{
+		"business_id1":                   r.BusinessId1,
+		"business_id2":                   r.BusinessId2,
+		"business_id3":                   r.BusinessId3,
 		"name":                           r.Name,
 		"product_name":                   r.ProductName,
 		"currency":                       r.Currency,
@@ -141,6 +150,9 @@ func (r *UpdateReq) Transform() map[string]any {
 		"notify_pay_return_content":      r.NotifyPayReturnContent,
 		"notify_pay_return_content_type": r.NotifyPayReturnContentType,
 		"remark":                         r.Remark,
+		"remark1":                        r.Remark1,
+		"remark2":                        r.Remark2,
+		"remark3":                        r.Remark3,
 		"sort":                           r.Sort,
 		"update_time":                    pkg.TimeNowStr(),
 	}
