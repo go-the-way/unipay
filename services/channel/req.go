@@ -22,6 +22,9 @@ type (
 		OrderBy string `form:"order_by"` // 排序
 
 		Id                         uint   `form:"id"`                             // 支付通道id
+		BusinessId1                string `form:"business_id1"`                   // 业务id1
+		BusinessId2                string `form:"business_id2"`                   // 业务id2
+		BusinessId3                string `form:"business_id3"`                   // 业务id3
 		Name                       string `form:"name"`                           // 支付通道名称
 		ProductName                string `form:"product_name"`                   // 产品名称
 		Currency                   string `form:"currency"`                       // 货币类型CNY人民币USD美元
@@ -43,6 +46,9 @@ type (
 		Sort1                      byte   `form:"sort1"`                          // 升序排序值
 		Sort2                      byte   `form:"sort2"`                          // 升序排序值
 		Remark                     string `form:"remark"`                         // 备注
+		Remark1                    string `form:"remark1"`                        // 备注1
+		Remark2                    string `form:"remark2"`                        // 备注2
+		Remark3                    string `form:"remark3"`                        // 备注3
 		CreateTime1                string `form:"create_time1"`                   // 创建时间
 		CreateTime2                string `form:"create_time2"`                   // 创建时间
 		UpdateTime1                string `form:"update_time1"`                   // 修改时间
@@ -53,6 +59,9 @@ type (
 	}
 	GetReq IdReq
 	AddReq struct {
+		BusinessId1                string `validate:"maxlength(50,业务id1长度不能超过50)" json:"business_id1"`                                   // 业务id1
+		BusinessId2                string `validate:"maxlength(50,业务id2长度不能超过50)" json:"business_id2"`                                   // 业务id2
+		BusinessId3                string `validate:"maxlength(50,业务id3长度不能超过50)" json:"business_id3"`                                   // 业务id3
 		Name                       string `validate:"minlength(1,支付通道名称不能为空) maxlength(50,支付通道名称长度不能超过50)" json:"name"`                  // 支付通道名称
 		ProductName                string `validate:"minlength(1,产品名称不能为空) maxlength(100,产品名称长度不能超过100)" json:"product_name"`            // 产品名称
 		Currency                   string `validate:"enum(CNY|USD,货币类型不合法)" json:"currency"`                                             // 货币类型:CNY人民币 USD美元
@@ -78,6 +87,9 @@ type (
 		NotifyPayReturnContent     string `validate:"maxlength(500,回调支付成功返回内容长度不能超过500)" json:"notify_pay_return_content"`               // 回调支付成功返回内容
 		NotifyPayReturnContentType string `json:"notify_pay_return_content_type"`                                                        // 回调支付成功返回数据类型
 		Remark                     string `validate:"maxlength(500,备注长度不能超过500)" json:"remark"`                                          // 备注
+		Remark1                    string `validate:"maxlength(500,备注1长度不能超过500)" json:"remark1"`                                        // 备注1
+		Remark2                    string `validate:"maxlength(500,备注2长度不能超过500)" json:"remark2"`                                        // 备注2
+		Remark3                    string `validate:"maxlength(500,备注3长度不能超过500)" json:"remark3"`                                        // 备注3
 		Sort                       byte   `json:"sort"`                                                                                  // 升序排序值
 	}
 	UpdateReq struct {

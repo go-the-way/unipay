@@ -17,6 +17,9 @@ type (
 	Channel       = UnipayChannel
 	UnipayChannel struct {
 		Id                         uint   `gorm:"column:id;type:uint;primaryKey;autoIncrement:true;comment:支付通道id" json:"id"`                                                                 // 支付通道id
+		BusinessId1                string `gorm:"column:business_id1;type:varchar(50);not null;default:'';comment:业务id1;index" json:"business_id1"`                                           // 业务id1
+		BusinessId2                string `gorm:"column:business_id2;type:varchar(50);not null;default:'';comment:业务id2;index" json:"business_id2"`                                           // 业务id2
+		BusinessId3                string `gorm:"column:business_id3;type:varchar(50);not null;default:'';comment:业务id3;index" json:"business_id3"`                                           // 业务id3
 		Name                       string `gorm:"column:name;type:varchar(50);not null;default:'';comment:支付通道名称" json:"name"`                                                                // 支付通道名称
 		ProductName                string `gorm:"column:product_name;type:varchar(100);not null;default:'VIP卡业务';comment:产品名称" json:"product_name"`                                           // 产品名称
 		Currency                   string `gorm:"column:currency;type:varchar(5);not null;default:'USD';comment:货币类型CNY人民币USD美元" json:"currency"`                                             // 货币类型CNY人民币USD美元
@@ -44,6 +47,9 @@ type (
 		State                      byte   `gorm:"column:state;type:tinyint;not null;default:1;comment:状态：1启用2禁用;index" json:"state"`                                                          // 状态：1启用2禁用
 		Sort                       byte   `gorm:"column:sort;type:tinyint;not null;default:0;comment:升序排序值" json:"sort"`                                                                      // 升序排序值
 		Remark                     string `gorm:"column:remark;type:varchar(500);not null;default:'';comment:备注" json:"remark"`                                                               // 备注
+		Remark1                    string `gorm:"column:remark1;type:varchar(500);not null;default:'';comment:备注1" json:"remark1"`                                                            // 备注1
+		Remark2                    string `gorm:"column:remark2;type:varchar(500);not null;default:'';comment:备注2" json:"remark2"`                                                            // 备注2
+		Remark3                    string `gorm:"column:remark3;type:varchar(500);not null;default:'';comment:备注3" json:"remark3"`                                                            // 备注3
 		CreateTime                 string `gorm:"column:create_time;type:varchar(20);not null;default:'';comment:创建时间" json:"create_time"`                                                    // 创建时间
 		UpdateTime                 string `gorm:"column:update_time;type:varchar(20);not null;default:'';comment:修改时间" json:"update_time"`                                                    // 修改时间
 	}
