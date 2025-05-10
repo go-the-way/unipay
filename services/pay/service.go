@@ -57,7 +57,7 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 	orderId := pkg.RandStr(20)
 
 	// 汇率计算
-	amountYuan, amountFen, getErr := rateHandle(pm.Currency, req.AmountYuan, req.AmountCurrency, req.CurrencyRateType, pm.KeepDecimal == 1, orderId)
+	amountYuan, amountFen, getErr := rateHandle(pm.Currency, req.AmountYuan, req.AmountCurrency, pm.KeepDecimal == 1, orderId)
 	if getErr != nil {
 		err = getErr
 		return
@@ -88,7 +88,7 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 	}
 }
 
-func rateHandle(channelCurrency, orderAmount, amountCurrency string, currencyRateType byte, keepDecimal bool, orderId string) (realAmountYuan, realAmountFen string, err error) {
+func rateHandle(channelCurrency, orderAmount, amountCurrency string, keepDecimal bool, orderId string) (realAmountYuan, realAmountFen string, err error) {
 	// 	0. 查询美元汇率
 	usdRate, usdErr := getUsdRate(orderId)
 	if usdErr != nil {
@@ -97,14 +97,20 @@ func rateHandle(channelCurrency, orderAmount, amountCurrency string, currencyRat
 	}
 	// usdRate := float64(7.1201)
 	respAmount, _ := strconv.ParseFloat(orderAmount, 32)
-
-	if channelCurrency != amountCurrency {
-		if currencyRateType == 1 { // 货币汇率类型 1美元兑人民币（人民币=支付金额*汇率）
-			orderAmountFloat, _ := strconv.ParseFloat(orderAmount, 32)
-			respAmount = orderAmountFloat * usdRate
-		} else if currencyRateType == 2 { // 货币汇率类型 2人民币兑美元（美元=支付金额/汇率）
-			orderAmountFloat, _ := strconv.ParseFloat(orderAmount, 32)
-			respAmount = orderAmountFloat / usdRate
+	if amountCurrency != channelCurrency {
+		orderAmountFloat, _ := strconv.ParseFloat(orderAmount, 32)
+		usd2cny := func() { respAmount = orderAmountFloat * usdRate }
+		cny2usd := func() { respAmount = orderAmountFloat / usdRate }
+		// amountCurrency => channelCurrency
+		switch amountCurrency {
+		case "USD":
+			// channelCurrency: CNY
+			// USD => CNY
+			usd2cny()
+		case "CNY":
+			// channelCurrency: USD
+			// CNY => USD
+			cny2usd()
 		}
 	}
 
