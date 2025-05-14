@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/go-the-way/unipay/events/backupevent"
 	"io"
 	"math"
 	"net/http"
@@ -23,7 +24,6 @@ import (
 
 	"github.com/go-the-way/unipay/deps/pkg"
 	"github.com/go-the-way/unipay/events/apilogevent"
-	"github.com/go-the-way/unipay/events/oklinkevent"
 	"github.com/go-the-way/unipay/events/orderevent"
 	"github.com/go-the-way/unipay/models"
 )
@@ -49,6 +49,7 @@ func startReq(order *models.Order) {
 		client      = &http.Client{Timeout: reqTimeout}
 	)
 	errLog := func(reqUrl string, err error, statusCode int) *models.ApiLog {
+		errCount++
 		return models.NewApiLogGetNoParam(reqUrl, err.Error(), fmt.Sprintf("%d", statusCode))
 	}
 	for {
@@ -108,7 +109,7 @@ func startReq(order *models.Order) {
 		}
 
 		if errCount >= maxErrCount {
-			oklinkevent.Run(order)
+			backupevent.Run(order)
 			break
 		}
 

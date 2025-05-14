@@ -19,8 +19,8 @@ func (r *UpdateReq) Transform() models.ApiConfig {
 	return models.ApiConfig{
 		Id:                1,
 		Erc20Apikey:       r.Erc20Apikey,
-		OkLinkTrc20Apikey: r.OkLinkTrc20Apikey,
-		OkLinkErc20Apikey: r.OkLinkErc20Apikey,
+		BackupPlan:        r.BackupPlan,
+		BackupVar1:        r.BackupVar1,
 		ValidPeriodMinute: r.ValidPeriodMinute,
 	}
 }
