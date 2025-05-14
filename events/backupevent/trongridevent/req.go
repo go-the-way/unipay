@@ -9,13 +9,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package etherscanevent
+package trongridevent
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/go-the-way/unipay/events/backupevent"
 	"io"
 	"math"
 	"net/http"
@@ -28,19 +27,19 @@ import (
 	"github.com/go-the-way/unipay/models"
 )
 
-// curl -i "https://api.etherscan.io/api?module=account&action=tokentx&contractaddress=0xdac17f958d2ee523a2206206994597c13d831ec7&address=0xdac17f958d2ee523a2206206994597c13d831ec7&startblock=0&endblock=99999999&page=1&offset=2&sort=desc&apikey=VD5PCBEH24K5MYIMATY91XBINHGI2YDSDD"
-
 var (
-	apiUrl    = "https://api.etherscan.io/api?module=account&action=tokentx&contractaddress=0xdac17f958d2ee523a2206206994597c13d831ec7&address=%s&startblock=0&endblock=99999999&apikey=%s&page=%s&offset=%s&sort=desc"
-	getReqUrl = func(address, apikey, page, offset string) string {
-		return fmt.Sprintf(apiUrl, address, apikey, page, offset)
+	apiUrl               = "https://api.shasta.trongrid.io/v1/accounts/%s/transactions/trc20?contract_address=%s&limit=%s&min_timestamp=%d"
+	tokenContractAddress = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"
+	getReqUrl            = func(address, limit string) string {
+		minTimestamp := time.Now().Add(-time.Hour).UnixMilli()
+		return fmt.Sprintf(apiUrl, address, tokenContractAddress, limit, minTimestamp)
 	}
 )
 
 func startReq(order *models.Order, apikey string) {
 	var (
 		page        = 1
-		offset      = "500"
+		limit       = "200"
 		errCount    = 0
 		maxErrCount = 3
 		sleepDur    = time.Second
@@ -52,8 +51,11 @@ func startReq(order *models.Order, apikey string) {
 		return models.NewApiLogGetNoParam(reqUrl, err.Error(), fmt.Sprintf("%d", statusCode))
 	}
 	for {
-		reqUrl := getReqUrl(order.Other1, apikey, fmt.Sprintf("%d", page), offset)
+		reqUrl := getReqUrl(order.Other1, limit)
 		req, _ := http.NewRequest(http.MethodGet, reqUrl, nil)
+		req.Header = make(http.Header)
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("TRON-PRO-API-KEY", apikey)
 		resp, err := client.Do(req)
 		var statusCode int
 		if err != nil {
@@ -68,21 +70,27 @@ func startReq(order *models.Order, apikey string) {
 			} else if len(buf) <= 0 {
 				apilogevent.Save(errLog(reqUrl, errors.New("读取响应为空"), statusCode))
 			} else {
-				if resp.StatusCode != http.StatusOK {
+				if statusCode != http.StatusOK {
 					apilogevent.Save(errLog(reqUrl, errors.New("状态码异常:"+string(buf)), statusCode))
 				} else {
 					var rm respModel
 					if err = json.Unmarshal(buf, &rm); err != nil {
 						apilogevent.Save(errLog(reqUrl, errors.New("反序列化响应错误："+err.Error()), statusCode))
+					} else if !rm.Success {
+						apilogevent.Save(errLog(reqUrl, errors.New("请求错误"), statusCode))
 					} else {
-						if len(rm.Result) <= 0 {
+						if len(rm.Data) <= 0 {
 							page = 1
 						} else {
-							timeStamp, _ := strconv.ParseInt(rm.Result[0].TimeStamp, 10, 64)
-							if timeStamp < pkg.ParseTimeUTC(order.CreateTime).UnixMilli() {
+							transactionTime := rm.Data[0].BlockTimestamp
+							timeStamp := time.UnixMilli(transactionTime).UnixMicro()
+							if timeStamp < pkg.ParseTimeUTC(order.CreateTime).UnixMicro() {
 								page = 1
 							} else {
 								page++
+							}
+							if totalPage := rm.Meta.PageSize; page >= totalPage {
+								page = 1
 							}
 						}
 						if matched := txnFind(order, rm); matched {
@@ -103,8 +111,9 @@ func startReq(order *models.Order, apikey string) {
 		}
 
 		if errCount >= maxErrCount {
-			// 切换到backup
-			backupevent.Run(order)
+			// 失败次数达到最大次数，则订单失效
+			order.Message = fmt.Sprintf("调用接口错误已达到%d次，订单已被取消", maxErrCount)
+			orderevent.Expired(order)
 			break
 		}
 
@@ -113,16 +122,16 @@ func startReq(order *models.Order, apikey string) {
 }
 
 func txnFind(order *models.Order, rm respModel) (matched bool) {
-	for _, tx := range rm.Result {
-		// "tokenDecimal": "6",
-		tokenDecimal, _ := strconv.Atoi(tx.TokenDecimal)
+	for _, tx := range rm.Data {
+		var timeStamp int64
+		timeStamp = time.UnixMilli(tx.BlockTimestamp).UnixMilli() // 1739443548000
+		txTime := pkg.ParseTime(pkg.FormatTime(time.UnixMilli(timeStamp)))
+
+		decimals := tx.TokenInfo.Decimals
 		orderAmount, _ := strconv.ParseFloat(order.Other2, 64)
-		// USD
-		amount := int(orderAmount * math.Pow10(tokenDecimal))
-		timeStamp, _ := strconv.ParseInt(tx.TimeStamp, 10, 64)
-		// "timeStamp": "1535035994",
-		txTime := pkg.ParseTime(pkg.FormatTime(time.Unix(timeStamp, 0)))
-		if tx.To == order.Other1 && fmt.Sprintf("%d", amount) == tx.Value && order.CreateTimeBeforeTime(txTime) {
+		amount := int(orderAmount * math.Pow10(decimals)) // USD
+
+		if tx.To == order.Other1 && order.Other2 == fmt.Sprintf("%d", amount) && order.CreateTimeBeforeTime(txTime) {
 			matched = true
 			order.PayTime = pkg.FormatTime(txTime)
 			break
@@ -132,27 +141,27 @@ func txnFind(order *models.Order, rm respModel) (matched bool) {
 }
 
 type respModel struct {
-	Status  string `json:"status"`
-	Message string `json:"message"`
-	Result  []struct {
-		BlockNumber       string `json:"blockNumber"`
-		TimeStamp         string `json:"timeStamp"`
-		Hash              string `json:"hash"`
-		Nonce             string `json:"nonce"`
-		BlockHash         string `json:"blockHash"`
-		From              string `json:"from"`
-		ContractAddress   string `json:"contractAddress"`
-		To                string `json:"to"`
-		Value             string `json:"value"`
-		TokenName         string `json:"tokenName"`
-		TokenSymbol       string `json:"tokenSymbol"`
-		TokenDecimal      string `json:"tokenDecimal"`
-		TransactionIndex  string `json:"transactionIndex"`
-		Gas               string `json:"gas"`
-		GasPrice          string `json:"gasPrice"`
-		GasUsed           string `json:"gasUsed"`
-		CumulativeGasUsed string `json:"cumulativeGasUsed"`
-		Input             string `json:"input"`
-		Confirmations     string `json:"confirmations"`
-	} `json:"result"`
+	Data []struct {
+		TransactionId string `json:"transaction_id"`
+		TokenInfo     struct {
+			Symbol   string `json:"symbol"`
+			Address  string `json:"address"`
+			Decimals int    `json:"decimals"`
+			Name     string `json:"name"`
+		} `json:"token_info"`
+		BlockTimestamp int64  `json:"block_timestamp"`
+		From           string `json:"from"`
+		To             string `json:"to"`
+		Type           string `json:"type"`
+		Value          string `json:"value"`
+	} `json:"data"`
+	Success bool `json:"success"`
+	Meta    struct {
+		At          int64  `json:"at"`
+		Fingerprint string `json:"fingerprint"`
+		Links       struct {
+			Next string `json:"next"`
+		} `json:"links"`
+		PageSize int `json:"page_size"`
+	} `json:"meta"`
 }

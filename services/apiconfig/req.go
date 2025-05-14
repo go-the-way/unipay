@@ -15,10 +15,10 @@ import "github.com/go-the-way/unipay/models"
 
 type (
 	UpdateReq struct {
-		Erc20Apikey       string `validate:"minlength(1,erc20_apikey不能为空) maxlength(100,erc20_apikey长度不能超过100)" json:"erc20_apikey"`                         // erc20_apikey
-		OkLinkTrc20Apikey string `validate:"minlength(1,ok_link_trc20_apikey不能为空) maxlength(100,ok_link_trc20_apikey长度不能超过100)" json:"ok_link_trc20_apikey"` // ok_link_trc20_apikey
-		OkLinkErc20Apikey string `validate:"minlength(1,ok_link_erc20_apikey不能为空) maxlength(100,ok_link_erc20_apikey长度不能超过100)" json:"ok_link_erc20_apikey"` // ok_link_erc20_apikey
-		ValidPeriodMinute uint   `validate:"min(1,valid_period_minute不能为空)" json:"valid_period_minute"`                                                      // valid_period_minute
+		Erc20Apikey       string `validate:"minlength(1,erc20_apikey不能为空) maxlength(100,erc20_apikey长度不能超过100)" json:"erc20_apikey"` // erc20_apikey
+		BackupPlan        string `validate:"minlength(1,备用方案不能为空) maxlength(100,备用方案长度不能超过100)" json:"backup_plan"`                  // 备用方案
+		BackupVar1        string `validate:"minlength(1,备用字段1不能为空) maxlength(100,备用字段1长度不能超过100)" json:"backup_var1"`                // 备用字段1:目前记录备用方案Trc20秘钥
+		ValidPeriodMinute uint   `validate:"min(1,valid_period_minute不能为空)" json:"valid_period_minute"`                              // valid_period_minute
 
 		Callback func(config models.ApiConfig) `json:"callback"`
 	}
