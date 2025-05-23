@@ -25,12 +25,15 @@ func (r *DelReq) Check() (err error) { return base.CheckWalletAddressExist(r.Id)
 
 func (r *AddReq) Transform() *models.WalletAddress {
 	return &models.WalletAddress{
-		Address:    r.Address,
-		Protocol:   r.Protocol,
-		State:      models.WalletAddressStateEnable,
-		Remark:     r.Remark,
-		CreateTime: pkg.TimeNowStr(),
-		UpdateTime: pkg.TimeNowStr(),
+		Address:     r.Address,
+		Protocol:    r.Protocol,
+		State:       models.WalletAddressStateEnable,
+		BusinessId1: r.BusinessId1,
+		BusinessId2: r.BusinessId2,
+		BusinessId3: r.BusinessId3,
+		Remark:      r.Remark,
+		CreateTime:  pkg.TimeNowStr(),
+		UpdateTime:  pkg.TimeNowStr(),
 	}
 }
 

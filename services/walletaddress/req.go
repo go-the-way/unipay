@@ -21,10 +21,13 @@ type (
 
 		OrderBy string `form:"order_by"` // 排序
 
-		Id          uint   `form:"id"`           // id
-		Address     string `form:"address"`      // 钱包地址
-		Protocol    string `form:"protocol"`     // 协议 trc20/erc20
-		State       byte   `form:"state"`        // 状态：1启用2禁用
+		Id          uint   `form:"id"`       // id
+		Address     string `form:"address"`  // 钱包地址
+		Protocol    string `form:"protocol"` // 协议 trc20/erc20
+		State       byte   `form:"state"`    // 状态：1启用2禁用
+		BusinessId1 string `form:"business_id1"`
+		BusinessId2 string `form:"business_id2"`
+		BusinessId3 string `form:"business_id3"`
 		Remark      string `form:"remark"`       // 备注
 		CreateTime1 string `form:"create_time1"` // 创建时间
 		CreateTime2 string `form:"create_time2"` // 创建时间
@@ -36,9 +39,12 @@ type (
 	}
 	GetReq IdReq
 	AddReq struct {
-		Address  string `validate:"minlength(1,钱包地址不能为空) maxlength(100,钱包地址长度不能超过100)" json:"address"` // 钱包地址
-		Protocol string `validate:"enum(erc20|trc20,协议不合法)" json:"protocol"`                           // 协议
-		Remark   string `validate:"maxlength(500,备注长度不能超过500)" json:"remark"`                          // 备注
+		Address     string `validate:"minlength(1,钱包地址不能为空) maxlength(100,钱包地址长度不能超过100)" json:"address"` // 钱包地址
+		Protocol    string `validate:"enum(erc20|trc20,协议不合法)" json:"protocol"`                           // 协议
+		Remark      string `validate:"maxlength(500,备注长度不能超过500)" json:"remark"`                          // 备注
+		BusinessId1 string `json:"business_id1"`
+		BusinessId2 string `json:"business_id2"`
+		BusinessId3 string `json:"business_id3"`
 	}
 	UpdateReq struct {
 		IdReq  `validate:"valid(T)"`

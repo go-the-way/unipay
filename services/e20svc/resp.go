@@ -13,7 +13,5 @@ package e20svc
 
 type (
 	OrderPayHtmlResp = E20HtmlResp
-	E20HtmlResp      struct {
-		Html string
-	}
+	E20HtmlResp      struct{ Html string }
 )

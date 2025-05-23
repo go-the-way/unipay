@@ -25,9 +25,9 @@ type service struct{}
 func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
 	q := db.GetDb().Model(new(models.Channel))
 	pkg.IfGt0Func(req.Id, func() { q.Where("id=?", req.Id) })
-	pkg.IfNotEmptyFunc(req.BusinessId1, func() { q.Where("business_id1 like concat('%',?,'%')", req.BusinessId1) })
-	pkg.IfNotEmptyFunc(req.BusinessId2, func() { q.Where("business_id2 like concat('%',?,'%')", req.BusinessId2) })
-	pkg.IfNotEmptyFunc(req.BusinessId3, func() { q.Where("business_id3 like concat('%',?,'%')", req.BusinessId3) })
+	pkg.IfNotEmptyFunc(req.BusinessId1, func() { q.Where("business_id1=?", req.BusinessId1) })
+	pkg.IfNotEmptyFunc(req.BusinessId2, func() { q.Where("business_id2=?", req.BusinessId2) })
+	pkg.IfNotEmptyFunc(req.BusinessId3, func() { q.Where("business_id3=?", req.BusinessId3) })
 	pkg.IfNotEmptyFunc(req.Name, func() { q.Where("name like concat('%',?,'%')", req.Name) })
 	pkg.IfNotEmptyFunc(req.ProductName, func() { q.Where("product_name like concat('%',?,'%')", req.ProductName) })
 	pkg.IfNotEmptyFunc(req.Currency, func() { q.Where("currency=?", req.Currency) })

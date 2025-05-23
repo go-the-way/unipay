@@ -26,6 +26,9 @@ func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
 	pkg.IfNotEmptyFunc(req.Protocol, func() { q.Where("protocol=?", req.Protocol) })
 	pkg.IfGt0Func(req.State, func() { q.Where("state=?", req.State) })
 	pkg.IfNotEmptyFunc(req.Remark, func() { q.Where("remark like concat('%',?,'%')", req.Remark) })
+	pkg.IfNotEmptyFunc(req.BusinessId1, func() { q.Where("business_id1=?", req.BusinessId1) })
+	pkg.IfNotEmptyFunc(req.BusinessId2, func() { q.Where("business_id2=?", req.BusinessId2) })
+	pkg.IfNotEmptyFunc(req.BusinessId3, func() { q.Where("business_id3=?", req.BusinessId3) })
 	pkg.IfNotEmptyFunc(req.CreateTime1, func() { q.Where("create_time>=concat(?,' 00:00:00')", req.CreateTime1) })
 	pkg.IfNotEmptyFunc(req.CreateTime2, func() { q.Where("create_time<=concat(?,' 23:59:59')", req.CreateTime2) })
 	pkg.IfNotEmptyFunc(req.UpdateTime1, func() { q.Where("update_time>=concat(?,' 00:00:00')", req.UpdateTime1) })
@@ -37,9 +40,7 @@ func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
 	return
 }
 
-func (s *service) Add(req AddReq) (err error) {
-	return db.GetDb().Create(req.Transform()).Error
-}
+func (s *service) Add(req AddReq) (err error) { return db.GetDb().Create(req.Transform()).Error }
 
 func (s *service) Update(req UpdateReq) (err error) {
 	return db.GetDb().Model(&models.Channel{Id: req.Id}).Omit("create_time").Updates(req.Transform()).Error
