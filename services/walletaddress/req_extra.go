@@ -23,7 +23,7 @@ func (r *UpdateReq) Check() (err error) { return base.CheckWalletAddressExist(r.
 
 func (r *DelReq) Check() (err error) { return base.CheckWalletAddressExist(r.Id) }
 
-func (r *AddReq) Transform() *models.WalletAddress {
+func (r *AddReq) transform() *models.WalletAddress {
 	return &models.WalletAddress{
 		Address:     r.Address,
 		Protocol:    r.Protocol,
@@ -37,8 +37,14 @@ func (r *AddReq) Transform() *models.WalletAddress {
 	}
 }
 
-func (r *UpdateReq) Transform() *models.WalletAddress {
-	m := r.AddReq.Transform()
-	m.Id = r.Id
-	return m
+func (r *UpdateReq) transform() map[string]any {
+	return map[string]any{
+		"address":      r.Address,
+		"protocol":     r.Protocol,
+		"business_id1": r.BusinessId1,
+		"business_id2": r.BusinessId2,
+		"business_id3": r.BusinessId3,
+		"remark":       r.Remark,
+		"update_time":  pkg.TimeNowStr(),
+	}
 }

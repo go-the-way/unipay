@@ -56,7 +56,7 @@ func (s *service) GetName(req GetNameReq) (resp GetNameResp, err error) {
 
 func (s *service) Add(req AddReq) (err error) {
 	tx := db.GetDb().Begin()
-	if err = tx.Create(req.Transform()).Error; err != nil {
+	if err = tx.Create(req.transform()).Error; err != nil {
 		_ = tx.Rollback().Error
 		return
 	}
@@ -70,7 +70,7 @@ func (s *service) Add(req AddReq) (err error) {
 
 func (s *service) Update(req UpdateReq) (err error) {
 	tx := db.GetDb().Begin()
-	if err = tx.Model(&models.ChannelParam{Id: req.Id}).Updates(req.Transform()).Error; err != nil {
+	if err = tx.Model(&models.ChannelParam{Id: req.Id}).Updates(req.transform()).Error; err != nil {
 		_ = tx.Rollback().Error
 		return
 	}

@@ -11,16 +11,22 @@
 
 package apiconfig
 
-import (
-	"github.com/go-the-way/unipay/models"
-)
+import "github.com/go-the-way/unipay/models"
 
-func (r *UpdateReq) Transform() models.ApiConfig {
+func (r *UpdateReq) transformCreate() models.ApiConfig {
 	return models.ApiConfig{
-		Id:                1,
 		Erc20Apikey:       r.Erc20Apikey,
 		BackupPlan:        r.BackupPlan,
 		BackupVar1:        r.BackupVar1,
 		ValidPeriodMinute: r.ValidPeriodMinute,
+	}
+}
+
+func (r *UpdateReq) transformUpdate() map[string]any {
+	return map[string]any{
+		"erc20_apikey":        r.Erc20Apikey,
+		"backup_plan":         r.BackupPlan,
+		"backup_var1":         r.BackupVar1,
+		"valid_period_minute": r.ValidPeriodMinute,
 	}
 }

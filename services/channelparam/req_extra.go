@@ -33,12 +33,22 @@ func (r *UpdateReq) Check() (err error) {
 
 func (r *DelReq) Check() (err error) { return base.CheckChannelParamExist(r.Id) }
 
-func (r *AddReq) Transform() *models.ChannelParam {
-	return &models.ChannelParam{ChannelId: r.ChannelId, Name: r.Name, Value: r.Value, Remark: r.Remark, Pass: r.Pass}
+func (r *AddReq) transform() *models.ChannelParam {
+	return &models.ChannelParam{
+		ChannelId: r.ChannelId,
+		Name:      r.Name,
+		Value:     r.Value,
+		Remark:    r.Remark,
+		Pass:      r.Pass,
+	}
 }
 
-func (r *UpdateReq) Transform() *models.ChannelParam {
-	m := r.AddReq.Transform()
-	m.Id = r.Id
-	return m
+func (r *UpdateReq) transform() map[string]any {
+	return map[string]any{
+		"channel_id": r.ChannelId,
+		"name":       r.Name,
+		"value":      r.Value,
+		"remark":     r.Remark,
+		"pass":       r.Pass,
+	}
 }

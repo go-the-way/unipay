@@ -18,6 +18,5 @@ import (
 
 func (r *UpdateReq) Check() (err error) { return base.CheckRateValid(r.Rate) }
 
-func (r *UpdateReq) Transform() models.UsdRate {
-	return models.UsdRate{Id: 1, Rate: r.Rate}
-}
+func (r *UpdateReq) transformCreate() *models.UsdRate { return &models.UsdRate{Rate: r.Rate} }
+func (r *UpdateReq) transformUpdate() map[string]any  { return map[string]any{"rate": r.Rate} }

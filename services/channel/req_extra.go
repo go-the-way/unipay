@@ -81,7 +81,7 @@ func (r *UpdateReq) Check() (err error) {
 
 func (r *DelReq) Check() (err error) { return base.CheckChannelExist(r.Id) }
 
-func (r *AddReq) Transform() *models.Channel {
+func (r *AddReq) transform() *models.Channel {
 	return &models.Channel{
 		BusinessId1:                r.BusinessId1,
 		BusinessId2:                r.BusinessId2,
@@ -121,7 +121,7 @@ func (r *AddReq) Transform() *models.Channel {
 	}
 }
 
-func (r *UpdateReq) Transform() map[string]any {
+func (r *UpdateReq) transform() map[string]any {
 	return map[string]any{
 		"business_id1":                   r.BusinessId1,
 		"business_id2":                   r.BusinessId2,

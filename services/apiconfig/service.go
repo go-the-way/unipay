@@ -29,11 +29,11 @@ func (s *service) Update(req UpdateReq) (err error) {
 		return
 	}
 	if cc > 0 {
-		if err = db.GetDb().Updates(req.Transform()).Error; err != nil {
+		if err = db.GetDb().Model(&models.ApiConfig{Id: 1}).Updates(req.transformUpdate()).Error; err != nil {
 			return
 		}
 	} else {
-		if err = db.GetDb().Create(req.Transform()).Error; err != nil {
+		if err = db.GetDb().Create(req.transformCreate()).Error; err != nil {
 			return
 		}
 	}

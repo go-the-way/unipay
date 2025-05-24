@@ -76,11 +76,11 @@ func (s *service) Get(req GetReq) (resp GetResp, err error) {
 }
 
 func (s *service) Add(req AddReq) (err error) {
-	return db.GetDb().Create(req.Transform()).Error
+	return db.GetDb().Create(req.transform()).Error
 }
 
 func (s *service) Update(req UpdateReq) (err error) {
-	return db.GetDb().Model(&models.Channel{Id: req.Id}).Updates(req.Transform()).Error
+	return db.GetDb().Model(&models.Channel{Id: req.Id}).Updates(req.transform()).Error
 }
 
 func (s *service) Del(req DelReq) (err error) {

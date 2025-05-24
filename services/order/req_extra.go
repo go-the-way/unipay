@@ -52,7 +52,7 @@ func (r *PaidReq) Check() (err error) {
 
 func (r *CancelReq) Check() (err error) { return (&PaidReq{IdReq: IdReq{Id: r.Id}}).Check() }
 
-func (r *AddReq) Transform() *models.Order {
+func (r *AddReq) transform() *models.Order {
 	if r.PayChannelId > 0 && r.PayChannelName == "" {
 		_ = db.GetDb().Model(new(models.Channel)).Select("name").Where("id=?", r.PayChannelId).Scan(&r.PayChannelName).Error
 	}
@@ -93,15 +93,24 @@ func (r *AddReq) Transform() *models.Order {
 	}
 }
 
-func (r *UpdateReq) Transform() *models.Order {
-	return &models.Order{
-		BusinessId1: r.BusinessId1,
-		BusinessId2: r.BusinessId2,
-		BusinessId3: r.BusinessId3,
-		Message:     r.Message,
-		Remark1:     r.Remark1,
-		Remark2:     r.Remark2,
-		Remark3:     r.Remark3,
-		UpdateTime:  pkg.TimeNowStr(),
+func (r *UpdateReq) transform() map[string]any {
+	return map[string]any{
+		"business_id1": r.BusinessId1,
+		"business_id2": r.BusinessId2,
+		"business_id3": r.BusinessId3,
+		"message":      r.Message,
+		"remark1":      r.Remark1,
+		"remark2":      r.Remark2,
+		"remark3":      r.Remark3,
+		"update_time":  pkg.TimeNowStr(),
+	}
+}
+
+func (r *CancelReq) transform() map[string]any {
+	return map[string]any{
+		"message":     r.Message,
+		"state":       models.OrderStateCancelled,
+		"cancel_time": r.CancelTime,
+		"update_time": pkg.TimeNowStr(),
 	}
 }
