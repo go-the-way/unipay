@@ -43,7 +43,7 @@ func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
 func (s *service) Add(req AddReq) (err error) { return db.GetDb().Create(req.transform()).Error }
 
 func (s *service) Update(req UpdateReq) (err error) {
-	return db.GetDb().Model(&models.Channel{Id: req.Id}).Updates(req.transform()).Error
+	return db.GetDb().Model(&models.WalletAddress{Id: req.Id}).Updates(req.transform()).Error
 }
 
 func (s *service) Del(req DelReq) (err error) {
