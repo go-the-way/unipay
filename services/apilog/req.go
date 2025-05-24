@@ -13,6 +13,7 @@ package apilog
 
 import (
 	"github.com/go-the-way/unipay/services/base"
+	"gorm.io/gorm"
 )
 
 type (
@@ -27,5 +28,7 @@ type (
 		RespCode    string `form:"resp_code"`    // 响应码
 		CreateTime1 string `form:"create_time1"` // 创建时间
 		CreateTime2 string `form:"create_time2"` // 创建时间
+
+		ExtraCallback func(q *gorm.DB) `form:"-"`
 	}
 )

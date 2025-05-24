@@ -11,7 +11,10 @@
 
 package order
 
-import "github.com/go-the-way/unipay/services/base"
+import (
+	"github.com/go-the-way/unipay/services/base"
+	"gorm.io/gorm"
+)
 
 type (
 	GetPageReq struct {
@@ -45,6 +48,8 @@ type (
 		UpdateTime2    string `form:"update_time2"`     // 修改时间
 		CancelTime1    string `form:"cancel_time1"`     // 取消时间
 		CancelTime2    string `form:"cancel_time2"`     // 取消时间
+
+		ExtraCallback func(q *gorm.DB) `form:"-"`
 	}
 	IdReq struct {
 		Id string `validate:"minlength(1,订单id不能为空) maxlength(50,订单id长度不能超过50)" form:"id" json:"id"` // 订单id

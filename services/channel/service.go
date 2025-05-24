@@ -55,6 +55,9 @@ func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
 	pkg.IfNotEmptyFunc(req.CreateTime2, func() { q.Where("create_time<=concat(?,' 23:59:59')", req.CreateTime2) })
 	pkg.IfNotEmptyFunc(req.UpdateTime1, func() { q.Where("update_time>=concat(?,' 00:00:00')", req.UpdateTime1) })
 	pkg.IfNotEmptyFunc(req.UpdateTime2, func() { q.Where("update_time<=concat(?,' 23:59:59')", req.UpdateTime2) })
+	if fn := req.ExtraCallback; fn != nil {
+		fn(q)
+	}
 	if req.OrderBy != "" {
 		q.Order(req.OrderBy)
 	}

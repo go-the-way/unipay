@@ -13,6 +13,7 @@ package walletaddress
 
 import (
 	"github.com/go-the-way/unipay/services/base"
+	"gorm.io/gorm"
 )
 
 type (
@@ -33,6 +34,8 @@ type (
 		CreateTime2 string `form:"create_time2"` // 创建时间
 		UpdateTime1 string `form:"update_time1"` // 修改时间
 		UpdateTime2 string `form:"update_time2"` // 修改时间
+
+		ExtraCallback func(q *gorm.DB) `form:"-"`
 	}
 	IdReq struct {
 		Id uint `validate:"min(1,id不能为空)" json:"id"`

@@ -13,6 +13,7 @@ package log
 
 import (
 	"github.com/go-the-way/unipay/services/base"
+	"gorm.io/gorm"
 )
 
 type (
@@ -25,5 +26,7 @@ type (
 		Text        string `form:"text"`         // 日志内容
 		CreateTime1 string `form:"create_time1"` // 创建时间
 		CreateTime2 string `form:"create_time2"` // 创建时间
+
+		ExtraCallback func(q *gorm.DB) `form:"-"`
 	}
 )

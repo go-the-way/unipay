@@ -25,6 +25,9 @@ func (s *service) GetPage(req GetPageReq) (resp GetPageResp, err error) {
 	pkg.IfNotEmptyFunc(req.Text, func() { q.Where("text like concat('%',?,'%')", req.Text) })
 	pkg.IfNotEmptyFunc(req.CreateTime1, func() { q.Where("create_time>=concat(?,' 00:00:00')", req.CreateTime1) })
 	pkg.IfNotEmptyFunc(req.CreateTime2, func() { q.Where("create_time<=concat(?,' 23:59:59')", req.CreateTime2) })
+	if fn := req.ExtraCallback; fn != nil {
+		fn(q)
+	}
 	if req.OrderBy != "" {
 		q.Order(req.OrderBy)
 	}
