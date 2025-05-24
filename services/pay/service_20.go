@@ -14,6 +14,10 @@ package pay
 import (
 	"errors"
 	"fmt"
+	"gorm.io/gorm"
+	"strconv"
+	"time"
+
 	"github.com/go-the-way/unipay/deps/db"
 	"github.com/go-the-way/unipay/deps/lock"
 	"github.com/go-the-way/unipay/deps/pkg"
@@ -22,13 +26,11 @@ import (
 	"github.com/go-the-way/unipay/models"
 	"github.com/go-the-way/unipay/services/channel"
 	"github.com/go-the-way/unipay/services/order"
-	"strconv"
-	"time"
 )
 
 func e20Run(req Req, pm channel.GetResp, orderId string) (resp Resp, err error) {
 	// 0.获取可用钱包+可用金额
-	address, amountYuan, amountFen, getErr := getUsableWalletAddress(pm.Type, req.AmountYuan, orderId)
+	address, amountYuan, amountFen, getErr := getUsableWalletAddress(pm.Type, req.AmountYuan, orderId, req.QueryWalletExtraCallback)
 	if getErr != nil {
 		err = getErr
 		return
@@ -81,8 +83,12 @@ func getOrderValidMinute() (m uint) {
 	return
 }
 
-func getEnableWalletAddress(payChannelType string) (addresses []string, err error) {
-	err = db.GetDb().Model(new(models.WalletAddress)).Where("state=? and protocol=?", models.WalletAddressStateEnable, payChannelType).Select("address").Find(&addresses).Error
+func getEnableWalletAddress(payChannelType string, extraCallback func(q *gorm.DB)) (addresses []string, err error) {
+	q := db.GetDb().Model(new(models.WalletAddress)).Where("state=? and protocol=?", models.WalletAddressStateEnable, payChannelType)
+	if extraCallback != nil {
+		extraCallback(q)
+	}
+	err = q.Select("address").Find(&addresses).Error
 	return
 }
 
@@ -102,9 +108,9 @@ func getUsdRate(orderId string) (rate float64, err error) {
 	return
 }
 
-func getUsableWalletAddress(payChannelType, orderAmount, orderId string) (address, orderAmountYuan, orderAmountFen string, err error) {
+func getUsableWalletAddress(payChannelType, orderAmount, orderId string, addressExtraCallback func(q *gorm.DB)) (address, orderAmountYuan, orderAmountFen string, err error) {
 	// 1. 查询启用的钱包地址
-	addresses, addErr := getEnableWalletAddress(payChannelType)
+	addresses, addErr := getEnableWalletAddress(payChannelType, addressExtraCallback)
 	if addErr != nil {
 		err = addErr
 		return

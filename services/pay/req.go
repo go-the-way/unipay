@@ -11,7 +11,10 @@
 
 package pay
 
-import "github.com/go-the-way/unipay/models"
+import (
+	"github.com/go-the-way/unipay/models"
+	"gorm.io/gorm"
+)
 
 type (
 	Req struct {
@@ -38,7 +41,8 @@ type (
 		AppWakeUri    string `gorm:"column:app_wake_uri;type:varchar(50);not null;default:'';comment:App唤醒URI" json:"app_wake_uri"` // App唤醒URI
 		E20PayPageUrl string `form:"-" json:"-"`                                                                                    // erc20/trc20支付页面Url
 
-		Callback func(req Req)
+		Callback                 func(req Req)    `form:"-" json:"-"`
+		QueryWalletExtraCallback func(q *gorm.DB) `form:"-" json:"-"`
 	}
 	NotifyReq struct {
 		ChannelId   uint   `validate:"min(1,支付通道id不能为空)" uri:"channel_id" form:"channel_id" json:"channel_id"`                                        // 支付通道id

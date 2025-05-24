@@ -99,11 +99,12 @@ func tasks() {
 }
 
 func e20Cancelled() {
-	err := db.GetDb().Model(new(models.Order)).Where("pay_channel_type in ('erc20','trc20') and state=1").Updates(map[string]any{
-		"state":       models.OrderStateCancelled,
+	var m = map[string]any{
 		"message":     "服务重载强制取消",
+		"state":       models.OrderStateCancelled,
 		"cancel_time": pkg.FormatTime(time.Now()),
-	}).Error
+	}
+	err := db.GetDb().Model(new(models.Order)).Where("pay_channel_type in ('erc20','trc20') and state=1").Updates(m).Error
 	if err != nil {
 		fmt.Println(err)
 	}
