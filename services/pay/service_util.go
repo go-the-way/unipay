@@ -51,11 +51,11 @@ func channelAmountValid(c channel.GetResp, req Req) (err error) {
 	if avCond == "" {
 		return
 	}
-	ay, ayErr := strconv.ParseUint(req.AmountYuan, 10, 64)
+	ay, ayErr := strconv.ParseFloat(req.AmountYuan, 32)
 	if ayErr != nil {
 		return errors.New("支付金额元不合法")
 	}
-	af, afErr := strconv.ParseUint(req.AmountFen, 10, 64)
+	af, afErr := strconv.ParseFloat(req.AmountFen, 32)
 	if afErr != nil {
 		return errors.New("支付金额分不合法")
 	}
