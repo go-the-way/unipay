@@ -62,14 +62,10 @@ func bindAll() {
 }
 
 func bindPaid(o *models.Order) {
-	if paidHandler != nil {
-		paidHandler(o)
-	}
-	if err := order.Service.Paid(order.PaidReq{
-		IdReq:   order.IdReq{Id: o.Id},
-		TradeId: o.TradeId,
-	}); err != nil {
+	if err := order.Service.Paid(order.PaidReq{IdReq: order.IdReq{Id: o.Id}, TradeId: o.TradeId}); err != nil {
 		logevent.Save(models.NewLog(fmt.Sprintf("订单号[%s]类型[%s]保存错误：%s", o.Id, o.PayChannelType, err.Error())))
+	} else if paidHandler != nil {
+		paidHandler(o)
 	}
 }
 
