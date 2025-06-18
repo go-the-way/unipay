@@ -30,4 +30,4 @@ func HaveWithLock(key string) (have bool) { RLock(); have = Have(key); RUnlock()
 func Delete(key string)                   { delete(m, key) }
 func DeleteWithLock(key string)           { Lock(); Delete(key); Unlock() }
 func Clear()                              { mInit() }
-func ClearWithLock()                      { Lock(); mInit(); Unlock() }
+func ClearWithLock()                      { Lock(); Clear(); Unlock() }

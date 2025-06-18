@@ -42,7 +42,7 @@ var (
 	expiredHandler ExpiredHandler
 
 	orderValidMinute = 10 // 订单有效期，默认10分钟
-	orderTaskDur     = time.Second
+	orderTaskDur     = time.Second * 5
 	orderTaskMu      = &sync.Mutex{}
 )
 
@@ -114,7 +114,16 @@ func orderTask() {
 	ticker := time.NewTicker(orderTaskDur)
 	defer ticker.Stop()
 	for range ticker.C {
+		queryOrderValidMinute()
 		orderCancelledTask()
+	}
+}
+
+func queryOrderValidMinute() {
+	var ovm int
+	_ = db.GetDb().Model(new(models.ApiConfig)).Select("valid_period_minute").Scan(&ovm).Limit(1).Error
+	if ovm > 0 {
+		orderValidMinute = ovm
 	}
 }
 
@@ -130,7 +139,7 @@ func orderCancelledTask() {
 	}
 
 	var orders []*models.Order
-	if err := db.GetDb().Model(new(models.Order)).Where("state = ? and pay_channel_type = ? and adddate(create_time, interval ? minute) < NOW()", models.OrderStateWaitPay, models.OrderTypeNormal, orderValidMinute).Select(cols).Find(&orders).Error; err != nil {
+	if err := db.GetDb().Model(new(models.Order)).Where("state = ? and adddate(create_time, interval ? minute) < NOW()", models.OrderStateWaitPay, orderValidMinute).Select(cols).Find(&orders).Error; err != nil {
 		return
 	}
 	for _, order := range orders {
