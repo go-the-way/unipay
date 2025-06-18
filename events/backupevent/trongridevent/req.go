@@ -133,6 +133,7 @@ func txnFind(order *models.Order, rm respModel) (matched bool) {
 
 		if tx.To == order.Other1 && order.Other2 == fmt.Sprintf("%d", amount) && order.CreateTimeBeforeTime(txTime) {
 			matched = true
+			order.TradeId = tx.TransactionId
 			order.PayTime = pkg.FormatTime(txTime)
 			break
 		}

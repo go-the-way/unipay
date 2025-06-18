@@ -124,6 +124,7 @@ func txnFind(order *models.Order, rm respModel) (matched bool) {
 		txTime := pkg.ParseTime(pkg.FormatTime(time.Unix(timeStamp, 0)))
 		if tx.To == order.Other1 && fmt.Sprintf("%d", amount) == tx.Value && order.CreateTimeBeforeTime(txTime) {
 			matched = true
+			order.TradeId = tx.Hash
 			order.PayTime = pkg.FormatTime(txTime)
 			break
 		}
