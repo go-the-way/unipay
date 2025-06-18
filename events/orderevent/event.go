@@ -42,7 +42,7 @@ var (
 	expiredHandler ExpiredHandler
 
 	orderValidMinute = 10 // 订单有效期，默认10分钟
-	orderTaskDur     = time.Minute
+	orderTaskDur     = time.Second
 	orderTaskMu      = &sync.Mutex{}
 )
 
