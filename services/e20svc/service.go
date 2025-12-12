@@ -27,10 +27,29 @@ import (
 
 var (
 	//go:embed e20.html
-	e20Html string
+	e20Html0 string
 	//go:embed error.html
-	errorHtml string
+	errorHtml0 string
+
+	e20Html, errorHtml string
 )
+
+func SetE20Html(html0 string)   { e20Html = html0 }
+func SetErrorHtml(html0 string) { errorHtml = html0 }
+
+func getE20Html() string {
+	if e20Html == "" {
+		return e20Html0
+	}
+	return e20Html
+}
+
+func getErrorHtml() string {
+	if errorHtml == "" {
+		return errorHtml0
+	}
+	return errorHtml
+}
 
 type service struct{}
 
@@ -38,15 +57,15 @@ func (s *service) OrderPayHtml(req OrderPayHtmlReq) (resp OrderPayHtmlResp, err 
 	var order models.Order
 	_ = db.GetDb().Model(new(models.Order)).Where("id=?", req.OrderId).First(&order).Error
 	if order.Id == "" {
-		resp.Html = fmt.Sprintf(errorHtml, fmt.Sprintf("订单[%s]不存在", req.OrderId), req.Platform, req.RedirectUrl)
+		resp.Html = fmt.Sprintf(getErrorHtml(), fmt.Sprintf("订单[%s]不存在", req.OrderId), req.Platform, req.RedirectUrl)
 		return
 	}
 	if order.State == models.OrderStatePaid {
-		resp.Html = fmt.Sprintf(errorHtml, fmt.Sprintf("订单[%s]已支付", order.Id), req.Platform, req.RedirectUrl)
+		resp.Html = fmt.Sprintf(getErrorHtml(), fmt.Sprintf("订单[%s]已支付", order.Id), req.Platform, req.RedirectUrl)
 		return
 	}
 	if order.State == models.OrderStateCancelled {
-		resp.Html = fmt.Sprintf(errorHtml, fmt.Sprintf("订单[%s]已失效", order.Id), req.Platform, req.RedirectUrl)
+		resp.Html = fmt.Sprintf(getErrorHtml(), fmt.Sprintf("订单[%s]已失效", order.Id), req.Platform, req.RedirectUrl)
 		return
 	}
 	var validPeriodMinute uint
@@ -79,7 +98,7 @@ func (s *service) OrderPayHtml(req OrderPayHtmlReq) (resp OrderPayHtmlResp, err 
 
 func (s *service) E20Html(req E20HtmlReq) (resp E20HtmlResp, err error) {
 	buf := &bytes.Buffer{}
-	tpl := template.Must(template.New("").Parse(e20Html))
+	tpl := template.Must(template.New("").Parse(getE20Html()))
 	if err = tpl.Execute(buf, req); err != nil {
 		err = errors.New("解析错误：" + err.Error())
 		return
