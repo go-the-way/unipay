@@ -12,8 +12,12 @@
 package pay
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
+
+	"github.com/go-the-way/unipay/debug"
 	"github.com/go-the-way/unipay/deps/pkg"
 	"github.com/go-the-way/unipay/events/logevent"
 	"github.com/go-the-way/unipay/models"
@@ -75,17 +79,131 @@ func (s *service) ReqPay(req Req) (resp Resp, err error) {
 			err = evalErr
 			return
 		}
-		respStr, respMap, respErr := reqDo(pm, pmm, evalEdParams, orderId)
+		reqStr, respStr, respMap, reqHeader, respHeader, respErr := reqDo(pm, pmm, evalEdParams, orderId)
 		if respErr != nil {
 			err = respErr
 			return
 		}
-		return reqCallback(req, pm, respStr, respMap, orderId)
+		if resp, err = reqCallback(req, pm, respStr, respMap, orderId); err != nil {
+			if debug.Enabled() {
+				filename, content := generateDebugLog(orderId, pm, pmm, evalEdParams, reqStr, respStr, respMap, reqHeader, respHeader, respErr, err)
+				debug.Store(filename, content)
+			}
+		}
+		return
 
 	case models.OrderTypeErc20, models.OrderTypeTrc20:
 		return e20Run(req, pm, orderId)
 
 	}
+}
+
+func jsonStr(v any) string {
+	buf, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		return err.Error()
+	}
+	return string(buf)
+}
+
+func generateDebugLog(
+	orderId string,
+	c channel.GetResp,
+	cp channelparam.GetChannelIdResp,
+	params map[string]any,
+	reqStr string,
+	respStr string,
+	respMap map[string]any,
+	reqHeader, respHeader http.Header,
+	respErr error,
+	callbackErr error,
+) (filename, content string) {
+	buf := new(bytes.Buffer)
+
+	buf.WriteString("\n")
+	buf.WriteString("orderId")
+	buf.WriteString("\n")
+	buf.WriteString("------------------------------------------------------------------")
+	buf.WriteString("\n")
+	buf.WriteString(orderId)
+
+	buf.WriteString("\n\n")
+	buf.WriteString("c")
+	buf.WriteString("\n")
+	buf.WriteString("------------------------------------------------------------------")
+	buf.WriteString("\n")
+	buf.WriteString(jsonStr(c))
+
+	buf.WriteString("\n\n")
+	buf.WriteString("cp")
+	buf.WriteString("\n")
+	buf.WriteString("------------------------------------------------------------------")
+	buf.WriteString("\n")
+	buf.WriteString(jsonStr(cp))
+
+	buf.WriteString("\n\n")
+	buf.WriteString("params")
+	buf.WriteString("\n")
+	buf.WriteString("------------------------------------------------------------------")
+	buf.WriteString("\n")
+	buf.WriteString(jsonStr(params))
+
+	buf.WriteString("\n\n")
+	buf.WriteString("reqStr")
+	buf.WriteString("\n")
+	buf.WriteString("------------------------------------------------------------------")
+	buf.WriteString("\n")
+	buf.WriteString(reqStr)
+
+	buf.WriteString("\n\n")
+	buf.WriteString("respStr")
+	buf.WriteString("\n")
+	buf.WriteString("------------------------------------------------------------------")
+	buf.WriteString("\n")
+	buf.WriteString(respStr)
+
+	buf.WriteString("\n\n")
+	buf.WriteString("respMap")
+	buf.WriteString("\n")
+	buf.WriteString("------------------------------------------------------------------")
+	buf.WriteString("\n")
+	buf.WriteString(jsonStr(respMap))
+
+	buf.WriteString("\n\n")
+	buf.WriteString("reqHeader")
+	buf.WriteString("\n")
+	buf.WriteString("------------------------------------------------------------------")
+	buf.WriteString("\n")
+	buf.WriteString(jsonStr(reqHeader))
+
+	buf.WriteString("\n\n")
+	buf.WriteString("respHeader")
+	buf.WriteString("\n")
+	buf.WriteString("------------------------------------------------------------------")
+	buf.WriteString("\n")
+	buf.WriteString(jsonStr(respHeader))
+
+	if respErr != nil {
+		buf.WriteString("\n\n")
+		buf.WriteString("respErr")
+		buf.WriteString("\n")
+		buf.WriteString("------------------------------------------------------------------")
+		buf.WriteString("\n")
+		buf.WriteString(respErr.Error())
+	}
+
+	if callbackErr != nil {
+		buf.WriteString("\n\n")
+		buf.WriteString("callbackErr")
+		buf.WriteString("\n")
+		buf.WriteString("------------------------------------------------------------------")
+		buf.WriteString("\n")
+		buf.WriteString(callbackErr.Error())
+	}
+
+	filename = orderId + ".log"
+	content = buf.String()
+	return
 }
 
 func rateHandle(channelCurrency, orderAmount, amountCurrency string, keepDecimal bool, orderId string) (realAmountYuan, realAmountFen string, err error) {

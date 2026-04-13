@@ -70,7 +70,7 @@ func channelAmountValid(c channel.GetResp, req Req) (err error) {
 	return
 }
 
-func reqDo(c channel.GetResp, cp channelparam.GetChannelIdResp, params map[string]any, orderId string) (respStr string, respMap map[string]any, err error) {
+func reqDo(c channel.GetResp, cp channelparam.GetChannelIdResp, params map[string]any, orderId string) (reqStr, respStr string, respMap map[string]any, reqHeader, respHeader http.Header, err error) {
 	parsedUrl, pErr := url.Parse(c.ReqUrl)
 	if pErr != nil {
 		err = errors.New("解析支付请求Url错误：" + pErr.Error())
@@ -79,6 +79,7 @@ func reqDo(c channel.GetResp, cp channelparam.GetChannelIdResp, params map[strin
 	}
 	skipInsecure := parsedUrl.Scheme == "https"
 	reqBody, postForm, contentType := getReqCT(c, cp, params)
+	reqStr = reqBody
 	req, _ := http.NewRequest(c.ReqMethod, c.ReqUrl, strings.NewReader(reqBody))
 	req.Header = make(http.Header)
 	req.Header.Set("Content-Type", contentType)
@@ -90,6 +91,8 @@ func reqDo(c channel.GetResp, cp channelparam.GetChannelIdResp, params map[strin
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	}
 	resp, rErr := client.Do(req)
+	reqHeader = req.Header
+	respHeader = resp.Header
 	if rErr != nil {
 		err = errors.New("支付请求错误：" + rErr.Error())
 		logevent.Save(models.NewLogError(orderId, err))
